@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+    <h1>Bienvenido</h1>
+
+    <form th:action="@{/auth/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+
+    <a th:href="@{/grupo3/list}">Ver informacion de ejemplo</a>
+
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/grupo3/form}">Agregar nueva informacion de ejemplo</a>
+    </div>
+</body>
+</html>

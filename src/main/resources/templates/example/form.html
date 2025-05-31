@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="${grupo3RequestDTO.id != null} ? 'Editar' : 'Nuevo'">Formulario</title>
+</head>
+<body>
+<h1 th:text="${grupo3RequestDTO.id != null} ? 'Editar Ejemplo' : 'Nuevo Ejemplo'"></h1>
+<br>
+<form th:action="${grupo3RequestDTO.id != null} ? @{/grupo3/update/{id}(id=${grupo3RequestDTO.id})} : @{/grupo3/save}" method="post" th:object="${grupo3RequestDTO}">
+    <input type="hidden" th:if="${grupo3RequestDTO.id != null}" th:field="*{id}" />
+
+    <label>Nombre:</label>
+    <input type="text" th:field="*{name}" />
+    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+
+    <label>Precio:</label>
+    <input type="number" th:field="*{price}" step="0.01"/>
+    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+
+    <button type="submit">Guardar</button>
+</form>
+<br>
+<a th:href="@{/grupo3/list}">Volver</a>
+</body>
+</html>

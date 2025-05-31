@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Lista de Ejemplos para el rol ADMIN</title>
+</head>
+<body>
+<h1>Todos los Ejemplos eliminados o no</h1>
+<br>
+<a th:href="@{/grupo3/form}">Nuevo</a>
+<a th:href="@{/grupo3/list}">Ver activos</a>
+<br>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Eliminado</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="grupo3 : ${grupo3s}">
+        <td th:text="${grupo3.name}"></td>
+        <td th:text="${grupo3.price}"></td>
+        <td th:text="${grupo3.softDeleted} ? 'Sí' : 'No'"></td>
+        <td>
+            <a th:href="@{/grupo3/edit/{id}(id=${grupo3.id})}">Editar</a>
+            <form th:if="!${grupo3.softDeleted}" th:action="@{/grupo3/delete/{id}(id=${grupo3.id})}" method="post" style="display:inline;">
+                <button type="submit">Eliminar</button>
+            </form>
+            <form th:if="${grupo3.softDeleted}" th:action="@{/grupo3/restore/{id}(id=${grupo3.id})}" method="post" style="display:inline;">
+                <button type="submit">Restaurar</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<div>
+    <span th:text="'Página ' + ${grupo3s.number + 1} + ' de ' + ${grupo3s.totalPages}"></span>
+</div>
+<div>
+    <ul>
+        <li th:if="${grupo3s.hasPrevious()}">
+            <a th:href="@{/grupo3/admin/list(page=${grupo3s.number - 1}, size=${grupo3s.size})}">Anterior</a>
+        </li>
+        <li th:each="pageNum : ${#numbers.sequence(0, grupo3s.totalPages - 1)}"
+            th:classappend="${pageNum == grupo3s.number} ? 'active'">
+            <a th:href="@{/grupo3/admin/list(page=${pageNum}, size=${grupo3s.size})}"
+               th:text="${pageNum + 1}"></a>
+        </li>
+        <li th:if="${grupo3s.hasNext()}">
+            <a th:href="@{/grupo3/admin/list(page=${grupo3s.number + 1}, size=${grupo3s.size})}">Siguiente</a>
+        </li>
+    </ul>
+</div>
+<br>
+<br>
+<a th:href="@{/index}">Volver al index</a>
+</body>
+</html>

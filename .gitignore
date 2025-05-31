@@ -1,0 +1,51 @@
+# Carpetas de compilación
+target/
+build/
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven Wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# Archivos de entorno
+.env
+*.env
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+
+# Archivos compilados de Java
+*.class
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# STS (Spring Tool Suite)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
