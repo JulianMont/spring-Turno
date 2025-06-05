@@ -14,6 +14,11 @@ import com.oo2.grupo3.repositories.EmpleadoRepository;
 import com.oo2.grupo3.repositories.TurnoRepository;
 import com.oo2.grupo3.repositories.DiaRepository;
 import com.oo2.grupo3.repositories.HoraRepository;
+import com.oo2.grupo3.repositories.IClienteRepository;
+import com.oo2.grupo3.repositories.IDiaRepository;
+import com.oo2.grupo3.repositories.IEmpleadoRepository;
+import com.oo2.grupo3.repositories.IHoraRepository;
+import com.oo2.grupo3.repositories.IServiceRepository;
 import com.oo2.grupo3.repositories.ServicioRepository;
 import com.oo2.grupo3.services.interfaces.TurnoService;
 import org.springframework.stereotype.Service;
@@ -27,15 +32,15 @@ import java.util.stream.Collectors;
 public class TurnoServiceImp implements TurnoService {
 
     private final TurnoRepository turnoRepository;
-    private final ClienteRepository clienteRepository;
-    private final EmpleadoRepository empleadoRepository;
-    private final DiaRepository diaRepository;
-    private final HoraRepository horaRepository;
-    private final ServicioRepository servicioRepository;
+    private final IClienteRepository clienteRepository;
+    private final IEmpleadoRepository empleadoRepository;
+    private final IDiaRepository diaRepository;
+    private final IHoraRepository horaRepository;
+    private final IServiceRepository servicioRepository;
 
-    public TurnoServiceImp(TurnoRepository turnoRepository, ClienteRepository clienteRepository,
-                            EmpleadoRepository empleadoRepository, DiaRepository diaRepository,
-                            HoraRepository horaRepository, ServicioRepository servicioRepository) {
+    public TurnoServiceImp(TurnoRepository turnoRepository, IClienteRepository clienteRepository,
+                            IEmpleadoRepository empleadoRepository, IDiaRepository diaRepository,
+                            IHoraRepository horaRepository, IServiceRepository servicioRepository) {
         this.turnoRepository = turnoRepository;
         this.clienteRepository = clienteRepository;
         this.empleadoRepository = empleadoRepository;
