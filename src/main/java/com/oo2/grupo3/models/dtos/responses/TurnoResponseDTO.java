@@ -1,26 +1,27 @@
 package com.oo2.grupo3.models.dtos.responses;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.oo2.grupo3.models.entities.Dia;
+import com.oo2.grupo3.models.entities.Hora;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class TurnoResponseDTO {
 
     private Integer idTurno;
 
-    private String clienteNombreCompleto;    
-    private String empleadoNombreCompleto;   
+    private String clienteNombre;
+
+    private String empleadoNombre;
+
     private String servicioNombre;
-    private LocalDate fechaDia;
-    private LocalTime hora;
-    
-    
-    
-    
+
+    private Dia dia;
+
+    private Hora hora;
+
 }

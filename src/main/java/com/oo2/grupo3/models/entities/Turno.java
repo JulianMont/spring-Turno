@@ -19,18 +19,18 @@ public class Turno {
     private Integer idTurno;
 
     @NotNull(message = "El cliente es obligatorio")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_cliente", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
     @NotNull(message = "El empleado es obligatorio")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_empleado", nullable = false)
     private Empleado empleado;
     
     @NotNull(message = "El servicio es obligatorio")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_servicio", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "servicio_id")
     private Servicio servicio;
 
     @NotNull(message = "El día es obligatorio")
@@ -38,8 +38,12 @@ public class Turno {
     @JoinColumn(name = "id_dia", nullable = false)
     private Dia dia;
     
-    @ManyToOne
-    @JoinColumn(name = "hora_id", nullable = false)
+    @NotNull(message = "El día es obligatorio")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_hora", nullable = false)
     private Hora hora;
+    
+    
+    
 
 }
