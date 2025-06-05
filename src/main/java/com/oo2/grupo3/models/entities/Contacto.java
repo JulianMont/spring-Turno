@@ -1,5 +1,8 @@
 package com.oo2.grupo3.models.entities;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,27 +18,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Ubicacion")
+@Table(name = "Contacto")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Ubicacion {
+
+
+public class Contacto {
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_ubicacion")
+    @Column(name = "id_contacto")
     @Setter(AccessLevel.NONE)
     private Integer id;
 	
 	
-	 @NotBlank(message = "La direccion no puede estar vacia")
-	    @Column(name = "direccion", nullable = false)
-	    private String direccion;
+	 @NotBlank(message = "El email no puede estar vacio")
+	    @Column(name = "email", nullable = false)
+	    private String email;
 	 
-	 @NotBlank(message = "La ciudad no puede ser vacia")
-	    @Column(name = "ciudad", nullable = false)
-	    private String ciudad;
-
+	 @NotBlank(message = "El telefono no puede estar vacio")
+	    @Column(name = "telefono", nullable = false)
+	    private String telefono;
 
 }
