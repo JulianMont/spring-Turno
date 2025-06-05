@@ -1,3 +1,4 @@
+
 package com.oo2.grupo3.models.entities;
 
 import jakarta.persistence.Column;
@@ -12,12 +13,14 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Entity
 @Table(name = "Servicio")
@@ -42,4 +45,6 @@ public class Servicio {
 	    @OneToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "id_ubicacion", nullable = false)
 	    private Ubicacion ubicacion;
+
 }
+

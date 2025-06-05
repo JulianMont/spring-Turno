@@ -1,8 +1,5 @@
 package com.oo2.grupo3.repositories;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

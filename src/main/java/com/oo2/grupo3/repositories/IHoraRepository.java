@@ -1,5 +1,6 @@
 package com.oo2.grupo3.repositories;
 
+
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -14,4 +15,3 @@ public interface IHoraRepository extends JpaRepository<Hora, Serializable> {
     
   
 }
-
