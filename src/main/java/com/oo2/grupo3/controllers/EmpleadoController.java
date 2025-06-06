@@ -1,3 +1,4 @@
+
 package com.oo2.grupo3.controllers;
 
 import org.springframework.data.domain.Page;
@@ -133,4 +134,3 @@ public class EmpleadoController {
     }
 	
 }
-	
