@@ -14,4 +14,11 @@ public class ViewRouteHelper {
     public static final String EXAMPLE_LIST = "example/list";
     public static final String EXAMPLE_ADMIN_LIST = "example/admin-list";
     public static final String EXAMPLE_FORM = "example/form";
+    
+    //Empleado
+    public static final String EMPLEADO_LIST = "empleados/listar";
+    public static final String EMPLEADO_DETALLE = "empleados/detalle";
+    public static final String EMPLEADO_NUEVO = "empleados/nuevo";
+    public static final String EMPLEADO_EDITAR = "empleados/editar";
+    public static final String REDIRECT_EMPLEADOS = "redirect:/empleados";
 }
