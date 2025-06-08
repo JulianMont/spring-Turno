@@ -7,6 +7,7 @@ import com.oo2.grupo3.models.enums.DiaSemana;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,7 +28,7 @@ public class HorarioLaboral {
 	 @Id
 	 @GeneratedValue(strategy = GenerationType.IDENTITY)
 	 @Setter(AccessLevel.NONE)
-	 private Long idHorarioLaboral;
+	 private Integer idHorarioLaboral;
 	 
 	 @Enumerated(EnumType.STRING)
 	 private DiaSemana diaSemana;
@@ -35,12 +36,9 @@ public class HorarioLaboral {
 	 private LocalTime horaInicio;
 	 private LocalTime horaFin;
 	 
-	 //revisar la linea de abajo
-	 
-	 @ManyToOne
+	 @ManyToOne(fetch = FetchType.LAZY)
 	 @JoinColumn(name = "empleado_legajo")
 	 private Empleado empleado;
-	 
-	 
+	  
 
 }

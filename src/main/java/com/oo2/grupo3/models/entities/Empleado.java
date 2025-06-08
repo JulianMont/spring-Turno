@@ -1,9 +1,7 @@
 package com.oo2.grupo3.models.entities;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -23,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Empleado{
+public class Empleado extends Persona{
 
     @NotBlank(message = "El legajo es obligatorio")
     @Column(unique = true, nullable = false)
@@ -35,8 +33,10 @@ public class Empleado{
     private Especialidad especialidad;
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HorarioLaboral> horariosLaborales = new HashSet<>();
+    private List<HorarioLaboral> horariosLaborales = new ArrayList<>();
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AusenciaEmpleado> diasAusentes;
+
+    private List<AusenciaEmpleado> diasAusentes = new ArrayList<>();
 }
+

@@ -17,10 +17,10 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 	
 	Page<Empleado> findByEspecialidad_IdEspecialidad(Long idEspecialidad, Pageable pageable);
 
-	Page<Empleado> findByNameContainingIgnoreCase(String nombre, Pageable pageable);
+	Page<Empleado> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 	
-	//para cuando el admin busque algun trabajador en especifico
-	//lo usa la parte de gestion de empleado
 	Optional<Empleado> findByLegajo(String legajo);
+	
+	boolean existsByLegajo(String legajo);
 
 }

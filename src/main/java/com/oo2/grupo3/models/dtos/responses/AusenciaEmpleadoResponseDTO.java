@@ -18,10 +18,8 @@ import lombok.Setter;
 public class AusenciaEmpleadoResponseDTO {
 	
 
-	private Long idAusenciaEmpleado;
+	private Integer idAusenciaEmpleado;
     private LocalDate fecha;
     private String motivo;
-    private Long empleadoId;
-
-
+    
 }

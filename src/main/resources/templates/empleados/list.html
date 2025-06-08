@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Empleados</title>
+</head>
+<body>
+
+    <h1>Listado de Empleados</h1>
+
+    <!-- 🔎 Formulario de filtros -->
+    <form th:action="@{/empleados/lista}" method="get">
+        <input type="text" name="nombre" placeholder="Buscar por nombre" th:value="${nombre}">
+        <input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}">
+
+        <select name="especialidadId">
+            <option value="">-- Todas las especialidades --</option>
+            <option th:each="esp : ${especialidades}"
+                    th:value="${esp.idEspecialidad}"
+                    th:text="${esp.nombre}"
+                    th:selected="${esp.idEspecialidad == especialidadId}"></option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <!-- 📋 Lista de empleados -->
+    <div th:if="${empleados.content.size() > 0}">
+        <div th:each="empleado : ${empleados.content}">
+            <hr>
+            <h3 th:text="|${empleado.nombre} ${empleado.apellido} (Legajo: ${empleado.legajo})|"></h3>
+            <p th:text="|DNI: ${empleado.dni}|"></p>
+            <p th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
+
+            <a th:href="@{'/empleados/' + ${empleado.idPersona}}">Ver Detalles</a>
+            <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
+            <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
+               onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
+        </div>
+    </div>
+
+    <div th:if="${empleados.content.size() == 0}">
+        <p>No se encontraron empleados con esos filtros.</p>
+    </div>
+
+</body>
+</html>

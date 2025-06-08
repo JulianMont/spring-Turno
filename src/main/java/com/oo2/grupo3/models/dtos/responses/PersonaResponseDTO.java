@@ -1,20 +1,19 @@
 package com.oo2.grupo3.models.dtos.responses;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@Builder
-
-public class EspecialidadResponseDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PersonaResponseDTO {
 	
-    private Long idEspecialidad;
+    private Integer idPersona;
     private String nombre;
+    private String apellido;
+    private Integer dni;
 
 }

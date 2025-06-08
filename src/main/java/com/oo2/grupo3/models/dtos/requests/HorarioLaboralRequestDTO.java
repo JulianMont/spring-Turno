@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 import com.oo2.grupo3.models.enums.DiaSemana;
 
-import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,7 @@ import lombok.Setter;
 public class HorarioLaboralRequestDTO {
 	
 	
-    @NotBlank(message = "El día de la semana es obligatorio")
+    @NotNull(message = "El día de la semana es obligatorio")
     private DiaSemana diaSemana;
 
     @NotNull(message = "La hora de inicio es obligatoria")
