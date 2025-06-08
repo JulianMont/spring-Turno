@@ -36,5 +36,7 @@ public class Empleado extends Persona{
     private List<HorarioLaboral> horariosLaborales = new ArrayList<>();
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+
     private List<AusenciaEmpleado> diasAusentes = new ArrayList<>();
 }
+

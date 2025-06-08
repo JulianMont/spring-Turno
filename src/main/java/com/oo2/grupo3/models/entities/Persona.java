@@ -1,3 +1,4 @@
+
 package com.oo2.grupo3.models.entities;
 
 import jakarta.persistence.Column;

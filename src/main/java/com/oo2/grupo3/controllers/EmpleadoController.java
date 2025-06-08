@@ -1,3 +1,4 @@
+
 package com.oo2.grupo3.controllers;
 
 import java.util.List;
@@ -156,5 +157,7 @@ public class EmpleadoController {
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
 
+
 }
 	
+
