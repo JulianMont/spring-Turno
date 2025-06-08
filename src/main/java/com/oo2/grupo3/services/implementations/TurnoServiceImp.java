@@ -1,6 +1,7 @@
+
 package com.oo2.grupo3.services.implementations;
 
-import com.oo2.grupo3.configurations.mapper.TurnoMapper;
+
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
@@ -9,17 +10,15 @@ import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.models.entities.Dia;
 import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Servicio;
-import com.oo2.grupo3.repositories.ClienteRepository;
-import com.oo2.grupo3.repositories.EmpleadoRepository;
+
 import com.oo2.grupo3.repositories.TurnoRepository;
-import com.oo2.grupo3.repositories.DiaRepository;
-import com.oo2.grupo3.repositories.HoraRepository;
+
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.IDiaRepository;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IHoraRepository;
 import com.oo2.grupo3.repositories.IServiceRepository;
-import com.oo2.grupo3.repositories.ServicioRepository;
+
 import com.oo2.grupo3.services.interfaces.TurnoService;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +48,7 @@ public class TurnoServiceImp implements TurnoService {
         this.servicioRepository = servicioRepository;
     }
 
-    @Override
+    /*@Override
     public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
         // Buscar las entidades relacionadas a partir de los IDs del request
         Cliente cliente = clienteRepository.findById(turnoRequestDTO.getIdCliente())
@@ -73,9 +72,8 @@ public class TurnoServiceImp implements TurnoService {
                 .build();
 
         // Guardar el turno
-        Turno turnoGuardado = turnoRepository.save(turno);
-
-        // Mapear a DTO de respuesta y devolver
+        Turno turnoGuardado = turnoRepository.save(turno);}
+      /*  // Mapear a DTO de respuesta y devolver
         return TurnoMapper.toResponseDTO(turnoGuardado);
     }
 
@@ -86,6 +84,18 @@ public class TurnoServiceImp implements TurnoService {
                 .map(TurnoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
-
+*/
     // Podés agregar más métodos para eliminar, actualizar, etc.
+
+	@Override
+	public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
