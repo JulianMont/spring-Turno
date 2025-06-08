@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario Horario Laboral</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<h2 th:text="${#strings.isEmpty(horarioLaboral.idHorario) ? 'Crear Nuevo Horario Laboral' : 'Editar Horario Laboral'}"></h2>
+
+<form th:action="@{${#strings.isEmpty(horarioLaboral.idHorario) ? '/empleados/' + ${idEmpleado} + '/horarios/save' : '/empleados/' + ${idEmpleado} + '/horarios/' + ${horarioLaboral.idHorario} + '/actualizar'}}"
+      th:object="${horarioLaboral}" method="post">
+
+    <div>
+        <label for="diaSemana">Día de la Semana:</label>
+        <select id="diaSemana" name="diaSemana" th:field="*{diaSemana}">
+            <option value="" disabled>Seleccione un día</option>
+            <option value="LUNES" th:selected="${horarioLaboral.diaSemana == 'LUNES'}">Lunes</option>
+            <option value="MARTES" th:selected="${horarioLaboral.diaSemana == 'MARTES'}">Martes</option>
+            <option value="MIERCOLES" th:selected="${horarioLaboral.diaSemana == 'MIERCOLES'}">Miércoles</option>
+            <option value="JUEVES" th:selected="${horarioLaboral.diaSemana == 'JUEVES'}">Jueves</option>
+            <option value="VIERNES" th:selected="${horarioLaboral.diaSemana == 'VIERNES'}">Viernes</option>
+            <option value="SABADO" th:selected="${horarioLaboral.diaSemana == 'SABADO'}">Sábado</option>
+            <option value="DOMINGO" th:selected="${horarioLaboral.diaSemana == 'DOMINGO'}">Domingo</option>
+        </select>
+        <div th:if="${#fields.hasErrors('diaSemana')}" th:errors="*{diaSemana}" class="error"></div>
+    </div>
+
+    <div>
+        <label for="horaInicio">Hora de Inicio:</label>
+        <input type="time" id="horaInicio" name="horaInicio" th:field="*{horaInicio}" />
+        <div th:if="${#fields.hasErrors('horaInicio')}" th:errors="*{horaInicio}" class="error"></div>
+    </div>
+
+    <div>
+        <label for="horaFin">Hora de Fin:</label>
+        <input type="time" id="horaFin" name="horaFin" th:field="*{horaFin}" />
+        <div th:if="${#fields.hasErrors('horaFin')}" th:errors="*{horaFin}" class="error"></div>
+    </div>
+
+    <div>
+        <button type="submit">Guardar</button>
+        <a th:href="@{'/empleados/' + ${idEmpleado}}">Cancelar</a>
+    </div>
+
+</form>
+
+</body>
+</html>
