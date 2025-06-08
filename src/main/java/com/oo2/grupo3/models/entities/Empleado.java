@@ -1,35 +1,50 @@
-
-
-
 package com.oo2.grupo3.models.entities;
 
-import jakarta.persistence.DiscriminatorValue;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.oo2.grupo3.models.enums.TipoPersona;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@DiscriminatorValue("EMPLEADO")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@Builder
-public class Empleado extends Persona {
+@AllArgsConstructor
+@Table(name = "empleado")
+@DiscriminatorValue("EMPLEADO")
+public class Empleado extends Persona{
 
-	
-	@NotBlank(message = "El empleado debe tener un legajo debe tener un nombre.")
-	private String legajo;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotBlank(message = "El legajo es obligatorio")
+    @Column(unique = true, nullable = false)
+    private String legajo;
+
+    @NotNull(message = "La especialidad es obligatoria")
+    @ManyToOne
     @JoinColumn(name = "especialidad_id")
     private Especialidad especialidad;
-}
 
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HorarioLaboral> horariosLaborales = new HashSet<>();
+
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AusenciaEmpleado> diasAusentes;
+    
+    public Empleado() {
+        super();
+        this.setTipoPersona(TipoPersona.EMPLEADO);
+    }
+}

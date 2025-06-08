@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.oo2.grupo3.models.entities.Ubicacion;
 
+
+@Repository
 public interface IUbicacionRepository extends JpaRepository<Ubicacion, Serializable> {
 	
 	public abstract Optional <Ubicacion> findById (int id);

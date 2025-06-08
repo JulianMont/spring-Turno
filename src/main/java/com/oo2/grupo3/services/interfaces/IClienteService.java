@@ -13,7 +13,7 @@ public interface IClienteService {
 	
 	public Optional<Cliente> findById(int id);
 	
-	public Optional<Cliente> findByName(String name);
+	public Optional<Cliente> findByNombre(String name);
 	
 	public Cliente save(Cliente cliente);
 

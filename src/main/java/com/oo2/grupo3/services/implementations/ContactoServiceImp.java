@@ -1,13 +1,18 @@
 package com.oo2.grupo3.services.implementations;
 
 import java.util.List;
+
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
 
 import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.models.entities.Contacto;
 import com.oo2.grupo3.repositories.IContactoRepository;
 import com.oo2.grupo3.services.interfaces.IContactoService;
 
+
+@Service
 public class ContactoServiceImp implements IContactoService{
 	private IContactoRepository contactoRepository;
 

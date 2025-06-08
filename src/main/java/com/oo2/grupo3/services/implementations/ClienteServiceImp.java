@@ -3,13 +3,20 @@ package com.oo2.grupo3.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.services.interfaces.IClienteService;
 
+@Service
 public class ClienteServiceImp implements IClienteService{
 	
-	private IClienteRepository clienteRepository;
+	private final IClienteRepository clienteRepository;
+	
+	public ClienteServiceImp(IClienteRepository clienteRepository) {
+		this.clienteRepository = clienteRepository;
+	}
 	
 	@Override
 	public List<Cliente> getAll() {
@@ -32,8 +39,8 @@ public class ClienteServiceImp implements IClienteService{
 	}
 
 	@Override
-	public Optional<Cliente> findByName(String name) {
-		return clienteRepository.findByName(name);
+	public Optional<Cliente> findByNombre(String nombre) {
+		return clienteRepository.findByNombre(nombre);
 	}
 
 	@Override
