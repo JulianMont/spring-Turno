@@ -7,6 +7,8 @@ import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 
 
+
+
 public interface IEmpleadoService {
 	
 	//Lo usa cualquier usuario
@@ -15,7 +17,7 @@ public interface IEmpleadoService {
 	
 	Page<EmpleadoResponseDTO> findByIdEspecialidad(Long idEspecialidad , Pageable pageable);
 
-	Page<EmpleadoResponseDTO> findByName(String nombre , Pageable pageable);
+	Page<EmpleadoResponseDTO> findByNombre(String nombre , Pageable pageable);
 	
 	EmpleadoResponseDTO findById(Integer id);
 	
@@ -27,6 +29,6 @@ public interface IEmpleadoService {
 	EmpleadoResponseDTO createEmpleado(EmpleadoRequestDTO empleadoRequestDTO);
 	EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado,EmpleadoRequestDTO empleadoRequestDTO);
 	boolean borrarEmpleado(Integer idEmpleado);
-
+	
 
 }

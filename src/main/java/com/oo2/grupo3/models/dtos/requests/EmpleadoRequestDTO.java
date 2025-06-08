@@ -1,5 +1,6 @@
 package com.oo2.grupo3.models.dtos.requests;
 
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,12 @@ import lombok.Setter;
 @Setter
 @Builder
 
-public class EmpleadoRequestDTO {
+public class EmpleadoRequestDTO extends PersonaRequestDTO {
 	
     @NotBlank(message = "El legajo es obligatorio")
     private String legajo;
 
     @NotNull(message = "La especialidad es obligatoria")
     private Long especialidadId;
-
+   
 }

@@ -14,7 +14,7 @@ import lombok.Setter;
 
 public class EspecialidadResponseDTO {
 	
-    private Long id;
+    private Long idEspecialidad;
     private String nombre;
 
 }

@@ -1,8 +1,6 @@
 package com.oo2.grupo3.models.dtos.responses;
 
 import java.util.List;
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Builder
 
-public class EmpleadoResponseDTO {
+public class EmpleadoResponseDTO extends PersonaResponseDTO {
 	
 	//faltan datos de persona
 
@@ -23,7 +21,7 @@ public class EmpleadoResponseDTO {
 
     private EspecialidadResponseDTO especialidad;
 
-    private Set<HorarioLaboralResponseDTO> horariosLaborales;
+    private List<HorarioLaboralResponseDTO> horariosLaborales;
 
     private List<AusenciaEmpleadoResponseDTO> diasAusentes;
 	

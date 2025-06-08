@@ -10,15 +10,23 @@ public class ViewRouteHelper {
     //Home
     public static final String HOME_INDEX = "home/index";
 
-    //Example
-    public static final String EXAMPLE_LIST = "example/list";
-    public static final String EXAMPLE_ADMIN_LIST = "example/admin-list";
-    public static final String EXAMPLE_FORM = "example/form";
-    
     //Empleado
-    public static final String EMPLEADO_LIST = "empleados/listar";
-    public static final String EMPLEADO_DETALLE = "empleados/detalle";
-    public static final String EMPLEADO_NUEVO = "empleados/nuevo";
-    public static final String EMPLEADO_EDITAR = "empleados/editar";
-    public static final String REDIRECT_EMPLEADOS = "redirect:/empleados";
+    public static final String EMPLEADOS_LIST = "empleados/list";
+    public static final String EMPLEADOS_FORM = "empleados/form";
+    public static final String EMPLEADOS_DETALLE = "empleados/detalle";
+    public static final String REDIRECT_EMPLEADOS_LIST = "redirect:/empleados/list";
+    public static final String EMPLEADOS_DETALLE_REDIRECT = "redirect:/empleados/";
+    
+    
+    // HorarioLaboral
+    public static final String HORARIO_FORM = "horarios/form";
+    
+    //AusenciaEmpleado
+    public static final String AUSENCIA_FORM = "ausencias/form";
+
+    //Especialidad
+    public static final String ESPECIALIDAD_LISTA = "especialidades/list";
+    public static final String ESPECIALIDAD_FORM = "especialidades/form";
+    public static final String REDIRECT_ESPECIALIDAD_LISTA = "redirect:/especialidades/list";
+
 }
