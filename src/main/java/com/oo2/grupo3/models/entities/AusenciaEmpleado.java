@@ -3,7 +3,9 @@ package com.oo2.grupo3.models.entities;
 import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
+
 import jakarta.persistence.FetchType;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +27,9 @@ public class AusenciaEmpleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
+
     private Integer idAusenciaEmpleado;
+
 
     @NotNull(message = "La fecha de ausencia es obligatoria")
     private LocalDate fecha;
@@ -33,7 +37,9 @@ public class AusenciaEmpleado {
     @NotBlank(message = "El motivo no puede estar vacío")
     private String motivo;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "empleado_id") 
     private Empleado empleado;
 }

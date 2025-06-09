@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Empleados</title>
+</head>
+<body>
+
+    <h1>Listado de Clientes</h1>
+
+    
+    <!-- 📋 Lista de clientes -->
+    <div th:if="${cliente.content.size() > 0}">
+        <div th:each="cliente : ${cliente.content}">
+            <hr>
+            <h3 th:text="|${cliente.nombre} ${cliente.apellido}|"></h3>
+            <p th:text="|DNI: ${cliente.dni}|"></p>
+
+            <a th:href="@{'/cliente/' + ${empleado.idPersona}}">Ver Detalles</a>
+            <a th:href="@{'/cliente/editar/' + ${empleado.idPersona}}">Editar</a>
+            <a th:href="@{'/cliente/eliminar/' + ${empleado.idPersona}}"
+               onclick="return confirm('¿Estás seguro de eliminar este cliente?')">Eliminar</a>
+        </div>
+    </div>
+
+    <div th:if="${cliente.content.size() == 0}">
+        <p>No se encontraron cliente con esos filtros.</p>
+    </div>
+
+</body>
+</html>

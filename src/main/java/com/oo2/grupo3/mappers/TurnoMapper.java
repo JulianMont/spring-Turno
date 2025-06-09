@@ -34,7 +34,7 @@ public class TurnoMapper {
     @Autowired
     private IHoraRepository horaRepository;
 
-    public static TurnoResponseDTO toResponse(Turno turno) {
+    public TurnoResponseDTO toResponse(Turno turno) {
         TurnoResponseDTO dto = new TurnoResponseDTO();
         dto.setIdTurno(turno.getIdTurno());
         dto.setClienteNombre(turno.getCliente().getNombreCompleto());

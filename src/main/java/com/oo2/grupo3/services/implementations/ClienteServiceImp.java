@@ -13,11 +13,13 @@ import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 import com.oo2.grupo3.models.dtos.requests.ExampleRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
 import com.oo2.grupo3.models.dtos.responses.ExampleResponseDTO;
+
 import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.models.entities.Example;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.IExampleRepository;
 import com.oo2.grupo3.services.interfaces.IClienteService;
+
 
 import jakarta.persistence.EntityNotFoundException;
 @Service
@@ -36,6 +38,7 @@ public class ClienteServiceImp implements IClienteService{
 	             .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class));
 	 }
 
+  
 	
 
 	@Override
@@ -68,7 +71,21 @@ public class ClienteServiceImp implements IClienteService{
         }
         return false;
 	}
+	@Override
+	public Optional<Cliente> findById(int id) {
+		return clienteRepository.findById(id);
+	}
 
+	@Override
+	public Optional<Cliente> findByNombre(String nombre) {
+		return clienteRepository.findByNombre(nombre);
+	}
+
+	@Override
+	public Cliente save(Cliente cliente) {
+		 return clienteRepository.save(cliente);
+	}
+  
 	
 	
 

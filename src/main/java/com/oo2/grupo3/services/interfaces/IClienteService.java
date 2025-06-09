@@ -19,7 +19,10 @@ public interface IClienteService {
 	
 	ClienteResponseDTO findById(int id);
 	
+	public Optional<Cliente> findByNombre(String name);
+
 	ClienteResponseDTO findByName(String name);
+
 	
 	 ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO );
 	}

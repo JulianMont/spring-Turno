@@ -2,6 +2,7 @@ package com.oo2.grupo3.models.dtos.responses;
 
 import java.util.List;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,4 +23,5 @@ public class ClienteResponseDTO {
     
     private List<TurnoResponseDTO> turnosSolicitados;
 
+  
 }
