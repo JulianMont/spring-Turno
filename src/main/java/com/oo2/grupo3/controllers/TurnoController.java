@@ -15,10 +15,12 @@ import com.oo2.grupo3.models.entities.Turno;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,8 +68,9 @@ public class TurnoController {
         turnoService.deleteById(id);
         return ResponseEntity.ok("Turno eliminado correctamente.");
     }
-/*
-    @PostMapping("/generar")
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/GenerarTurno")
     public Turno generarTurno(
             @RequestParam Integer idCliente,
             @RequestParam Integer idEmpleado,
@@ -85,19 +88,17 @@ public class TurnoController {
         Turno saved = turnoService.save(turno);
         return ResponseEntity.ok(turnoMapper.toResponse(saved));
     }
+    
+    
+    @GetMapping("/horas/dia/{id}")
+    @ResponseBody
+    public List<?> obtenerHorasPorDia(@PathVariable Integer id) {
+        return horaService.getHorasPorDia(id);
+    }
 
     
     
-    // --- NUEVOS MÉTODOS PARA FORMULARIO ---
-
-    @GetMapping("/crear")
-    public String mostrarFormularioTurno(Model model) {
-        model.addAttribute("turnoRequest", new TurnoRequestDTO());
-        model.addAttribute("empleados", empleadoService.getAll());
-        model.addAttribute("clientes", clienteService.getAll());
-
-
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/GenerarTurno")
     public String mostrarFormularioTurno(Model model) {
         model.addAttribute("turnoRequest", new TurnoRequestDTO());
@@ -112,10 +113,12 @@ public class TurnoController {
         return "turnos/GenerarTurno";
 
     }
-
-    @PostMapping("/guardar")
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/save")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,
+                                              RedirectAttributes redirectAttributes,
                                               Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("empleados", empleadoService.getAll());
@@ -125,25 +128,21 @@ public class TurnoController {
             model.addAttribute("horas", horaService.getAll());
 
             return "turnos/GenerarTurno";
-
-
         }
 
         Turno turno = turnoMapper.toEntity(turnoRequestDTO);
         turnoService.save(turno);
 
-        return "redirect:/turnos";
+        redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+        return "redirect:/turnos/confirmacion";
     }
-
-    @GetMapping("/horas/dia/{id}")
-    @ResponseBody
-    public List<?> obtenerHorasPorDia(@PathVariable Integer id) {
-        return horaService.getHorasPorDia(id);
-    }
-
-        model.addAttribute("mensaje", "¡Turno generado correctamente!");
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/confirmacion")
+    public String mostrarConfirmacion() {
         return "turnos/Confirmacion";
-        
     }
+
+    
 
 }
