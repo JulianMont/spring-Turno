@@ -25,6 +25,7 @@ public class AusenciaEmpleadoRequestDTO {
 
     @NotBlank(message = "El motivo no puede estar vacío")
     private String motivo;
+
     
     @NotNull(message = "El ID del empleado es obligatorio")
     private Long empleadoId;

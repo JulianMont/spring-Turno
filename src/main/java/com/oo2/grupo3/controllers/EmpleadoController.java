@@ -1,9 +1,14 @@
 
 package com.oo2.grupo3.controllers;
 
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
+
+
+import com.oo2.grupo3.models.dtos.responses.EspecialidadResponseDTO;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
+import com.oo2.grupo3.services.interfaces.IEspecialidadService;
+
 
 import jakarta.validation.Valid;
 
@@ -27,110 +37,142 @@ import jakarta.validation.Valid;
 public class EmpleadoController {
 
 	private final IEmpleadoService empleadoService;
+
+  
+    private final IEspecialidadService especialidadService;
+    private final ModelMapper modelMapper;
 	
-	public EmpleadoController(IEmpleadoService empleadoService) {
+	public EmpleadoController(IEmpleadoService empleadoService,IEspecialidadService especialidadService,ModelMapper modelMapper) {
 		this.empleadoService = empleadoService;
+        this.especialidadService = especialidadService;
+        this.modelMapper = modelMapper;
+
 	}
 	
 	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @GetMapping
-    public String listarEmpleados(Model model, @PageableDefault(size = 10) Pageable pageable) {
-        Page<EmpleadoResponseDTO> empleados = empleadoService.findAll(pageable);
+
+    @GetMapping("/list")
+    public String listarEmpleados(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String legajo,
+            @RequestParam(required = false) Long especialidadId,
+            Pageable pageable,
+            Model model
+    ) {
+        Page<EmpleadoResponseDTO> empleados;
+
+        //filtro de busqueda
+        
+        if (legajo != null && !legajo.isBlank()) {
+            EmpleadoResponseDTO empleado = empleadoService.findByLegajo(legajo);
+            empleados = new PageImpl<>(List.of(empleado));
+        } else if (nombre != null && !nombre.isBlank()) {
+            empleados = empleadoService.findByNombre(nombre, pageable);
+        } else if (especialidadId != null) {
+            empleados = empleadoService.findByIdEspecialidad(especialidadId, pageable);
+        } else {
+            empleados = empleadoService.findAll(pageable);
+        }
+
+        List<EspecialidadResponseDTO> especialidades = especialidadService.traerEspecialidades();
+
         model.addAttribute("empleados", empleados);
-        return ViewRouteHelper.EMPLEADO_LIST;
+        model.addAttribute("especialidades", especialidades);
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("legajo", legajo);
+        model.addAttribute("especialidadId", especialidadId);
+
+        
+        return ViewRouteHelper.EMPLEADOS_LIST;
+        
     }
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@GetMapping("/buscar/nombre")
-	public String buscarPorNombre(@RequestParam("nombre") String nombre,
-	                              @PageableDefault(size = 10) Pageable pageable,
-	                              Model model) {
-	    Page<EmpleadoResponseDTO> empleados = empleadoService.findByNombre(nombre, pageable);
-	    model.addAttribute("empleados", empleados);
-	    return ViewRouteHelper.EMPLEADO_LIST;
-	}
-
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-	@GetMapping("/buscar/especialidad")
-	public String buscarPorEspecialidad(@RequestParam("idEspecialidad") Long idEspecialidad,
-	                                    @PageableDefault(size = 10) Pageable pageable,
-	                                    Model model) {
-	    Page<EmpleadoResponseDTO> empleados = empleadoService.findByIdEspecialidad(idEspecialidad, pageable);
-	    model.addAttribute("empleados", empleados);
-	    return ViewRouteHelper.EMPLEADO_LIST;
-	}
-
-
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @GetMapping("/detalle/{id}")
-    public String verDetalle(@PathVariable Integer id, Model model) {
+    @GetMapping("/{id}")
+    public String verDetalleEmpleado(@PathVariable Integer id, Model model) {
+    	
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
         model.addAttribute("empleado", empleado);
-        return ViewRouteHelper.EMPLEADO_DETALLE;
+        
+        return ViewRouteHelper.EMPLEADOS_DETALLE;
     }
+    
 
-    // --- SOLO ADMIN ---
+	
+
+
+//    // --- SOLO ADMIN ---
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model model) {
+    @GetMapping("/form")
+    public String mostrarFormularioCrear(Model model) {
         model.addAttribute("empleadoRequestDTO", new EmpleadoRequestDTO());
-        return ViewRouteHelper.EMPLEADO_NUEVO;
+        model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+        return ViewRouteHelper.EMPLEADOS_FORM;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/nuevo")
-    public String crearEmpleado(@Valid @ModelAttribute("empleadoRequestDTO") EmpleadoRequestDTO dto,
+    @PostMapping("/save")
+    public String crearEmpleado(@Valid @ModelAttribute EmpleadoRequestDTO dto,
                                 BindingResult result,
                                 Model model) {
         if (result.hasErrors()) {
-            return ViewRouteHelper.EMPLEADO_NUEVO;
+        	model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+            return ViewRouteHelper.EMPLEADOS_FORM;
+
+          
         }
 
         try {
             empleadoService.createEmpleado(dto);
         } catch (IllegalArgumentException e) {
+
+        	
             model.addAttribute("errorLegajo", e.getMessage());
-            return ViewRouteHelper.EMPLEADO_NUEVO;
+            model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+            return ViewRouteHelper.EMPLEADOS_FORM;
+            
         }
 
-        return ViewRouteHelper.REDIRECT_EMPLEADOS;
+        return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
-
+    
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
-        model.addAttribute("empleadoRequestDTO", empleado);
-        return ViewRouteHelper.EMPLEADO_EDITAR;
-    }
 
+        
+        //TODO: CHECKEAR ESTO
+        EmpleadoRequestDTO requestDTO = modelMapper.map(empleado, EmpleadoRequestDTO.class);
+
+        model.addAttribute("empleado", requestDTO);
+        model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+        return ViewRouteHelper.EMPLEADOS_FORM;
+    }
+    
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/editar/{id}")
-    public String actualizarEmpleado(@PathVariable Integer id,
-                                     @Valid @ModelAttribute("empleadoRequestDTO") EmpleadoRequestDTO dto,
-                                     BindingResult result,
-                                     Model model) {
+    public String editarEmpleado(@PathVariable Integer id, @ModelAttribute("empleado") @Valid EmpleadoRequestDTO empleadoRequestDTO, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return ViewRouteHelper.EMPLEADO_EDITAR;
+            model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+            return ViewRouteHelper.EMPLEADOS_FORM;
         }
 
-        try {
-            empleadoService.actualizarEmpleado(id, dto);
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("errorLegajo", e.getMessage());
-            return ViewRouteHelper.EMPLEADO_EDITAR;
-        }
-
-        return ViewRouteHelper.REDIRECT_EMPLEADOS;
+        empleadoService.actualizarEmpleado(id, empleadoRequestDTO);
+        return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
-
+    
+  
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/eliminar/{id}")
     public String eliminarEmpleado(@PathVariable Integer id) {
         empleadoService.borrarEmpleado(id);
-        return ViewRouteHelper.REDIRECT_EMPLEADOS;
+
+        return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
-	
+
+
 }
+	
+

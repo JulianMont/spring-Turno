@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalle Empleado</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<h1>Detalle del Empleado</h1>
+
+<section>
+    <h2>Información Básica</h2>
+    <p><strong>Nombre:</strong> <span th:text="${empleado.nombre}"></span></p>
+    <p><strong>Apellido:</strong> <span th:text="${empleado.apellido}"></span></p>
+    <p><strong>Legajo:</strong> <span th:text="${empleado.legajo}"></span></p>
+    <p><strong>DNI:</strong> <span th:text="${empleado.dni}"></span></p>
+    <p><strong>Especialidad:</strong> <span th:text="${empleado.especialidad.nombre}"></span></p>
+</section>
+
+<hr/>
+
+<section>
+    <h2>Horarios Laborales</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Día</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="horario : ${empleado.horariosLaborales}">
+                <td th:text="${horario.dia}"></td>
+                <td th:text="${horario.horaInicio}"></td>
+                <td th:text="${horario.horaFin}"></td>
+                <td>
+                    <a th:href="@{/horarios/{id}/editar(id=${horario.idHorarioLaboral})}">Editar</a> |
+                    <a th:href="@{/horarios/{id}/eliminar(id=${horario.idHorarioLaboral})}" 
+                       onclick="return confirm('¿Seguro que desea eliminar este horario?');">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/horarios/nuevo/{empleadoId}(empleadoId=${empleado.idPersona})}">Agregar Horario</a>
+</section>
+
+<hr/>
+
+<section>
+    <h2>Días Ausentes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="ausencia : ${empleado.diasAusentes}">
+                <td th:text="${ausencia.fecha}"></td>
+                <td th:text="${ausencia.motivo}"></td>
+                <td>
+                    <a th:href="@{/ausencias/{id}/editar(id=${ausencia.idAusenciaEmpleado})}">Editar</a> |
+                    <a th:href="@{/ausencias/{id}/eliminar(id=${ausencia.idAusenciaEmpleado})}" 
+                       onclick="return confirm('¿Seguro que desea eliminar esta ausencia?');">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/ausencias/nuevo/{empleadoId}(empleadoId=${empleado.idPersona})}">Agregar Ausencia</a>
+</section>
+
+</body>
+</html>

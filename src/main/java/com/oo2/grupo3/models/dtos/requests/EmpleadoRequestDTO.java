@@ -14,12 +14,14 @@ import lombok.Setter;
 @Setter
 @Builder
 
-public class EmpleadoRequestDTO {
+public class EmpleadoRequestDTO extends PersonaRequestDTO {
+
 	
     @NotBlank(message = "El legajo es obligatorio")
     private String legajo;
 
     @NotNull(message = "La especialidad es obligatoria")
-    private int especialidadId;
 
+    private Long especialidadId;
+   
 }

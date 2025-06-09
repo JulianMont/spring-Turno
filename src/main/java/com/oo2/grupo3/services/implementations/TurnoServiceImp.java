@@ -1,6 +1,8 @@
+
 package com.oo2.grupo3.services.implementations;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
+
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
@@ -8,11 +10,18 @@ import com.oo2.grupo3.models.entities.Dia;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Servicio;
+
 import com.oo2.grupo3.models.entities.Turno;
+
+
+import com.oo2.grupo3.repositories.TurnoRepository;
+
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.IDiaRepository;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IHoraRepository;
+
+
 import com.oo2.grupo3.repositories.IServicioRepository;
 import com.oo2.grupo3.repositories.ITurnoRepository;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
@@ -51,7 +60,7 @@ public class TurnoServiceImp implements ITurnoService {
         this.turnoMapper = turnoMapper;
     }
 
-    @Override
+    /*@Override
     public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
 
         Cliente cliente = clienteRepository.findById(turnoRequestDTO.getIdCliente())
@@ -73,9 +82,11 @@ public class TurnoServiceImp implements ITurnoService {
                 .servicio(servicio)
                 .build();
 
+
         Turno turnoGuardado = turnoRepository.save(turno);
 
         return turnoMapper.toResponse(turnoGuardado);
+
     }
 
     @Override
@@ -85,6 +96,8 @@ public class TurnoServiceImp implements ITurnoService {
                 .map(turnoMapper::toResponse)
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public List<Turno> findAll() {
@@ -142,4 +155,18 @@ public class TurnoServiceImp implements ITurnoService {
 
         return turnoRepository.save(nuevoTurno);
     }
+
+    // Podés agregar más métodos para eliminar, actualizar, etc.
+
+	@Override
+	public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

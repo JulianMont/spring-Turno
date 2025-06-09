@@ -66,7 +66,7 @@ public class TurnoController {
         turnoService.deleteById(id);
         return ResponseEntity.ok("Turno eliminado correctamente.");
     }
-
+/*
     @PostMapping("/generar")
     public Turno generarTurno(
             @RequestParam Integer idCliente,
@@ -78,13 +78,16 @@ public class TurnoController {
         return turnoService.generarTurno(idCliente, idEmpleado, idServicio, idDia, idHora);
     }
 
+
     @PostMapping
     public ResponseEntity<TurnoResponseDTO> save(@RequestBody @Valid TurnoRequestDTO requestDTO) {
         Turno turno = turnoMapper.toEntity(requestDTO);
         Turno saved = turnoService.save(turno);
         return ResponseEntity.ok(turnoMapper.toResponse(saved));
     }
-    /*
+
+    
+    
     // --- NUEVOS MÉTODOS PARA FORMULARIO ---
 
     @GetMapping("/crear")
@@ -92,11 +95,22 @@ public class TurnoController {
         model.addAttribute("turnoRequest", new TurnoRequestDTO());
         model.addAttribute("empleados", empleadoService.getAll());
         model.addAttribute("clientes", clienteService.getAll());
+
+
+
+    @GetMapping("/GenerarTurno")
+    public String mostrarFormularioTurno(Model model) {
+        model.addAttribute("turnoRequest", new TurnoRequestDTO());
+        model.addAttribute("clientes", clienteService.getAll());
+        model.addAttribute("empleados", empleadoService.getAll());
+
         model.addAttribute("servicios", servicioService.getAll());
         model.addAttribute("dias", diaService.getAll());
         model.addAttribute("horas", horaService.getAll()); 
 
-        return "turnos/crear";
+
+        return "turnos/GenerarTurno";
+
     }
 
     @PostMapping("/guardar")
@@ -109,43 +123,10 @@ public class TurnoController {
             model.addAttribute("servicios", servicioService.getAll());
             model.addAttribute("dias", diaService.getAll());
             model.addAttribute("horas", horaService.getAll());
-            return "turnos/crear";
-        }
 
-        Turno turno = turnoMapper.toEntity(turnoRequestDTO);
-        turnoService.save(turno);
+            return "turnos/GenerarTurno";
 
-        return "redirect:/turnos";
-    }
-*/
-    
-    //---------------
-    
-    // --- NUEVOS MÉTODOS PARA FORMULARIO ---
 
-    @GetMapping("/crear")
-    public String mostrarFormularioTurno(Model model) {
-        model.addAttribute("turnoRequest", new TurnoRequestDTO());
-        model.addAttribute("empleados", empleadoService.getAll());
-        model.addAttribute("clientes", clienteService.getAll());
-        model.addAttribute("servicios", servicioService.getAll());
-        model.addAttribute("dias", diaService.getAll());
-        model.addAttribute("horas", horaService.getAll()); 
-
-        return "turnos/crear";
-    }
-
-    @PostMapping("/guardar")
-    public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
-                                              BindingResult bindingResult,
-                                              Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("empleados", empleadoService.getAll());
-            model.addAttribute("clientes", clienteService.getAll());
-            model.addAttribute("servicios", servicioService.getAll());
-            model.addAttribute("dias", diaService.getAll());
-            model.addAttribute("horas", horaService.getAll());
-            return "turnos/crear";
         }
 
         Turno turno = turnoMapper.toEntity(turnoRequestDTO);
@@ -154,10 +135,15 @@ public class TurnoController {
         return "redirect:/turnos";
     }
 
-    // --- NUEVO: Obtener horas disponibles para un día específico (AJAX) ---
     @GetMapping("/horas/dia/{id}")
     @ResponseBody
     public List<?> obtenerHorasPorDia(@PathVariable Integer id) {
         return horaService.getHorasPorDia(id);
     }
+
+        model.addAttribute("mensaje", "¡Turno generado correctamente!");
+        return "turnos/Confirmacion";
+        
+    }
+
 }

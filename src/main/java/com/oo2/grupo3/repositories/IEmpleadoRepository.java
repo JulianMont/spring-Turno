@@ -1,4 +1,5 @@
 
+
 package com.oo2.grupo3.repositories;
 
 import org.springframework.data.domain.Page;
@@ -20,5 +21,8 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 	Page<Empleado> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 	
 	Optional<Empleado> findByLegajo(String legajo);
+	
+	boolean existsByLegajo(String legajo);
 
 }
+
