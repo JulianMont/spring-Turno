@@ -3,6 +3,7 @@ package com.oo2.grupo3.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo3.models.entities.Servicio;
@@ -13,7 +14,11 @@ import com.oo2.grupo3.services.interfaces.IServicioService;
 @Service
 public class ServicioServiceImp implements IServicioService{
 	
-	private IServicioRepository servicioRepository;
+	private final IServicioRepository servicioRepository;
+
+    public ServicioServiceImp(IServicioRepository servicioRepository) {
+        this.servicioRepository = servicioRepository;
+    }
 
 	@Override
 	public List<Servicio> getAll() {
