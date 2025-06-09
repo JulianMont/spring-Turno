@@ -7,10 +7,10 @@
 
 <h1>Generar Nuevo Turno</h1>
 
-<form action="/turnos/guardar" method="post" th:object="${turnoRequest}">
+<form th:action="@{/turnos/save}" method="post" th:object="${turnoRequest}">
 
     <label>Cliente:</label>
-    <select th:field="*{clienteId}" required>
+    <select th:field="*{idCliente}" required>
         <option th:each="cliente : ${clientes}"
                 th:value="${cliente.id}"
                 th:text="${cliente.nombre}">Cliente</option>
@@ -18,7 +18,7 @@
     <br/>
 
     <label>Empleado:</label>
-    <select th:field="*{empleadoId}" required>
+    <select th:field="*{idEmpleado}" required>
         <option th:each="empleado : ${empleados}"
                 th:value="${empleado.id}"
                 th:text="${empleado.nombre}">Empleado</option>
@@ -26,7 +26,7 @@
     <br/>
 
     <label>Servicio:</label>
-    <select th:field="*{servicioId}" required>
+    <select th:field="*{idServicio}" required>
         <option th:each="servicio : ${servicios}"
                 th:value="${servicio.id}"
                 th:text="${servicio.nombre}">Servicio</option>
@@ -34,7 +34,7 @@
     <br/>
 
     <label>Día:</label>
-    <select th:field="*{diaId}" id="dia-select" required>
+    <select th:field="*{idDia}" id="dia-select" required>
         <option th:each="dia : ${dias}"
                 th:value="${dia.id}"
                 th:text="${dia.fecha}">Día</option>
@@ -42,7 +42,7 @@
     <br/>
 
     <label>Hora:</label>
-    <select th:field="*{horaId}" id="hora-select" required>
+    <select th:field="*{idHora}" id="hora-select" required>
         <option th:each="hora : ${horas}"
                 th:value="${hora.id}"
                 th:text="${hora.hora}">Hora</option>
@@ -51,6 +51,7 @@
 
     <button type="submit">Guardar Turno</button>
 </form>
+
 
 
 </body>
