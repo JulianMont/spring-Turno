@@ -1,5 +1,8 @@
 package com.oo2.grupo3.models.dtos.requests;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -18,10 +21,12 @@ public class TurnoRequestDTO {
 
     @NotNull(message = "El ID del servicio es obligatorio")
     private Integer idServicio;
+    
+    @NotNull(message = "La fecha es obligatoria")
+    private LocalDate fecha;
 
-    @NotNull(message = "El ID del día es obligatorio")
-    private Integer idDia;
+    @NotNull(message = "La hora es obligatoria")
+    private LocalTime hora;
 
-    @NotNull(message = "El ID de la hora es obligatorio")
-    private Integer idHora;
+	
 }

@@ -7,10 +7,11 @@ import com.oo2.grupo3.services.interfaces.IServicioService;
 import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.IHoraService;
 
-import com.oo2.grupo3.mappers.TurnoMapper;
-import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
+import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.entities.Turno;
+
+import com.oo2.grupo3.mappers.TurnoMapper;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,13 +118,40 @@ public class TurnoController {
 
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,
                                               RedirectAttributes redirectAttributes,
                                               Model model) {
-        if (bindingResult.hasErrors()) {
+    	
+    	DayOfWeek diaSemana = turnoRequestDTO.getFecha().getDayOfWeek();
+        if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
+            bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "No se pueden generar turnos los sábados ni domingos.");
+        }
+    	
+        int minutos = turnoRequestDTO.getHora().getMinute();
+        if (minutos != 0 && minutos != 30) {
+            bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden ser en intervalos de 30 minutos (ej: 10:00, 10:30).");
+        }
+        
+        int hora = turnoRequestDTO.getHora().getHour();
+        if (hora < 8 || hora > 19 || (hora == 19 && minutos == 30)) {
+            bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden generarse entre las 08:00 y las 20:00.");
+        }
+        
+        
+    	if (bindingResult.hasErrors()) {
             model.addAttribute("empleados", empleadoService.getAll());
             model.addAttribute("clientes", clienteService.getAll());
             model.addAttribute("servicios", servicioService.getAll());
@@ -134,15 +165,21 @@ public class TurnoController {
         turnoService.save(turno);
 
         redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
-        return "redirect:/turnos/confirmacion";
+        return "redirect:/turnos/list";
     }
+
+    
+
+    
+    
     
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/confirmacion")
-    public String mostrarConfirmacion() {
-        return "turnos/Confirmacion";
+    @GetMapping("/list")
+    public String listarTurnos(Model model) {
+        List<TurnoResponseDTO> turnos = turnoService.getAll().stream()
+            .map(turnoMapper::toResponse)
+            .collect(Collectors.toList());
+        model.addAttribute("turnos", turnos);
+        return "turnos/list"; 
     }
-
-    
-
 }
