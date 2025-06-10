@@ -5,7 +5,12 @@ package com.oo2.grupo3.services.interfaces;
 
 
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
@@ -18,10 +23,13 @@ public interface ITurnoService {
     Turno save(Turno turno);
 
     void deleteById(Integer id);
-    Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora);
     List<TurnoResponseDTO> obtenerTodosLosTurnos();
 	Turno save(TurnoRequestDTO requestDTO);
 	TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO);
+	List<Turno> getAll();
+	Page<TurnoResponseDTO> findAll(Pageable pageable);
+	Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora);
+
 	
 }
 
