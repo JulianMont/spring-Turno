@@ -18,5 +18,9 @@ public interface IServicioService {
 	public Servicio save(Servicio cliente);
 	
 	public Optional <Servicio> findByUbicacion (Ubicacion ubicacion);
+	public List<Servicio> getAll();
+	
+
+	
 
 }

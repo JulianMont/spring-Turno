@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.stereotype.Repository;
 
 import com.oo2.grupo3.models.entities.Contacto;
 
+@Repository
 public interface IContactoRepository extends JpaRepository<Contacto, Serializable>{
 	
 	public abstract Optional <Contacto> findById (int id);

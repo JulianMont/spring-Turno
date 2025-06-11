@@ -1,4 +1,5 @@
 
+
 package com.oo2.grupo3.repositories;
 
 import org.springframework.data.domain.Page;
@@ -24,3 +25,4 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 	boolean existsByLegajo(String legajo);
 
 }
+

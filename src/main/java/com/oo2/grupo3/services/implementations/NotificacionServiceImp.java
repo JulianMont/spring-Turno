@@ -3,11 +3,14 @@ package com.oo2.grupo3.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.oo2.grupo3.models.entities.Notificacion;
 import com.oo2.grupo3.models.entities.Persona;
 import com.oo2.grupo3.repositories.INotificacionRepository;
 import com.oo2.grupo3.services.interfaces.INotificacionService;
 
+@Service
 public class NotificacionServiceImp implements INotificacionService {
 	private INotificacionRepository notificacionRepository;
 

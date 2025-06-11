@@ -3,48 +3,72 @@ package com.oo2.grupo3.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo3.models.entities.Servicio;
 import com.oo2.grupo3.models.entities.Ubicacion;
 import com.oo2.grupo3.repositories.IServicioRepository;
 import com.oo2.grupo3.services.interfaces.IServicioService;
+
 @Service
 public class ServicioServiceImp implements IServicioService{
 	
-	private IServicioRepository serviceRepository;
+	private IServicioRepository servicioRepository;
+	
+	public ServicioServiceImp(IServicioRepository servicioRepository) {
+        this.servicioRepository = servicioRepository;
+    }
 
 	
 	public void deleteById(Integer id) {
-		Optional<Servicio> optionalServicio = serviceRepository.findById(id);
+		Optional<Servicio> optionalServicio = servicioRepository.findById(id);
         if (optionalServicio.isPresent()) {
-        	serviceRepository.deleteById(id);
+        	servicioRepository.deleteById(id);}}
           
+
+
+
+
+    
+
+	@Override
+	public List<Servicio> getAll() {
+		return servicioRepository.findAll();
+	}
+
+	
+	/*public boolean remove(int id) {
+		Optional<Servicio> optionalServicio = servicioRepository.findById(id);
+        if (optionalServicio.isPresent()) {
+        	servicioRepository.deleteById(id);
+            return true;
+        }
        
 		
-	}}
+	}*/
 
 	@Override
 	public Optional<Servicio> findById(int id) {
-		return serviceRepository.findById(id);
+		return servicioRepository.findById(id);
 	}
 
 	@Override
 	public Optional<Servicio> findByNombre(String name) {
 	
-		return serviceRepository.findByNombre(name);
-	}
+		return servicioRepository.findByNombre(name);}
+
 
 	@Override
 	public Servicio save(Servicio servicio) {
 		
-		return serviceRepository.save(servicio);
+		return servicioRepository.save(servicio);
 	}
 
 	@Override
 	public Optional<Servicio> findByUbicacion(Ubicacion ubicacion) {
 		
-		return serviceRepository.findByUbicacion(ubicacion);
+		return servicioRepository.findByUbicacion(ubicacion);
 	}
 
 }

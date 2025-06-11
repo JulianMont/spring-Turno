@@ -1,7 +1,9 @@
 package com.oo2.grupo3.services.implementations;
 
 
+
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -11,10 +13,15 @@ import org.springframework.stereotype.Service;
 
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
+import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Especialidad;
+
+
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IEspecialidadRepository;
+
+
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -118,5 +125,16 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		return true;
 	}
 
+	@Override
+	public Object getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public List<Empleado> getAllEmpleados() {
+	    return empleadoRepository.findAll();
+	}
 
 }

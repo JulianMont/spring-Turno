@@ -3,10 +3,13 @@ package com.oo2.grupo3.services.implementations;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.oo2.grupo3.models.entities.Ubicacion;
 import com.oo2.grupo3.repositories.IUbicacionRepository;
 import com.oo2.grupo3.services.interfaces.IUbicacionService;
 
+@Service
 public class UbicacionServiceImp implements IUbicacionService{
 	private IUbicacionRepository ubicacionRepository;
 

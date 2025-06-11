@@ -1,5 +1,8 @@
 package com.oo2.grupo3.repositories;
 
+import com.oo2.grupo3.models.entities.Dia;
+import com.oo2.grupo3.models.entities.Empleado;
+import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Turno;
 
 import java.io.Serializable;
@@ -8,6 +11,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ITurnoRepository extends JpaRepository<Turno, Serializable> {
+
+public interface ITurnoRepository extends JpaRepository<Turno, Integer> {
+
+	boolean existsByEmpleadoAndDiaAndHora(Empleado empleado, Dia dia, Hora hora);
+
 	
 }

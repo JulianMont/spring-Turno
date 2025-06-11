@@ -2,7 +2,6 @@ package com.oo2.grupo3.models.dtos.responses;
 
 import java.util.List;
 
-import com.oo2.grupo3.models.dtos.requests.PersonaRequestDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +21,5 @@ public class ClienteResponseDTO extends PersonaResponseDTO{
  
     private List<TurnoResponseDTO> turnosSolicitados;
 
+  
 }
