@@ -3,25 +3,18 @@ package com.oo2.grupo3.services.implementations;
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
-import com.oo2.grupo3.models.entities.Cliente;
-import com.oo2.grupo3.models.entities.Dia;
-import com.oo2.grupo3.models.entities.Empleado;
-import com.oo2.grupo3.models.entities.Hora;
-import com.oo2.grupo3.models.entities.Servicio;
-import com.oo2.grupo3.models.entities.Turno;
-import com.oo2.grupo3.repositories.IClienteRepository;
-import com.oo2.grupo3.repositories.IDiaRepository;
-import com.oo2.grupo3.repositories.IEmpleadoRepository;
-import com.oo2.grupo3.repositories.IHoraRepository;
-import com.oo2.grupo3.repositories.IServicioRepository;
-import com.oo2.grupo3.repositories.ITurnoRepository;
+import com.oo2.grupo3.models.entities.*;
+import com.oo2.grupo3.repositories.*;
+import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,14 +25,16 @@ public class TurnoServiceImp implements ITurnoService {
     private final ITurnoRepository turnoRepository;
     private final IClienteRepository clienteRepository;
     private final IEmpleadoRepository empleadoRepository;
-    private final IDiaRepository diaRepository;
     private final IHoraRepository horaRepository;
     private final IServicioRepository servicioRepository;
     private final TurnoMapper turnoMapper;
+    private final IDiaService diaService;
+    private final IDiaRepository diaRepository;
 
     public TurnoServiceImp(ITurnoRepository turnoRepository,
                            IClienteRepository clienteRepository,
                            IEmpleadoRepository empleadoRepository,
+                           IDiaService diaService,
                            IDiaRepository diaRepository,
                            IHoraRepository horaRepository,
                            IServicioRepository servicioRepository,
@@ -47,6 +42,7 @@ public class TurnoServiceImp implements ITurnoService {
         this.turnoRepository = turnoRepository;
         this.clienteRepository = clienteRepository;
         this.empleadoRepository = empleadoRepository;
+        this.diaService = diaService;
         this.diaRepository = diaRepository;
         this.horaRepository = horaRepository;
         this.servicioRepository = servicioRepository;
@@ -55,8 +51,7 @@ public class TurnoServiceImp implements ITurnoService {
 
     @Override
     public Page<TurnoResponseDTO> findAll(Pageable pageable) {
-        Page<Turno> turnos = turnoRepository.findAll(pageable);
-        return turnos.map(this::convertToDTO);
+        return turnoRepository.findAll(pageable).map(this::convertToDTO);
     }
 
     private TurnoResponseDTO convertToDTO(Turno turno) {
@@ -71,10 +66,8 @@ public class TurnoServiceImp implements ITurnoService {
 
     @Override
     public List<Turno> getAll() {
-        return turnoRepository.findAll(); 
+        return turnoRepository.findAll();
     }
-    
-    
 
     @Override
     public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
@@ -85,10 +78,14 @@ public class TurnoServiceImp implements ITurnoService {
         Servicio servicio = servicioRepository.findById(turnoRequestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
-        Dia dia = diaRepository.findByFecha(turnoRequestDTO.getFecha())
+        Dia dia = diaService.findByFecha(turnoRequestDTO.getFecha())
                 .orElseThrow(() -> new RuntimeException("Día no encontrado con fecha: " + turnoRequestDTO.getFecha()));
-        Hora hora = horaRepository.findByHora(turnoRequestDTO.getHora())
-                .orElseThrow(() -> new RuntimeException("Hora no encontrada: " + turnoRequestDTO.getHora()));
+
+        List<Hora> horas = horaRepository.findAllByHora(turnoRequestDTO.getHora());
+        if (horas.isEmpty()) {
+            throw new RuntimeException("Hora no encontrada: " + turnoRequestDTO.getHora());
+        }
+        Hora hora = horas.get(0);
 
         validarDisponibilidadEmpleado(empleado, dia, hora);
 
@@ -106,8 +103,7 @@ public class TurnoServiceImp implements ITurnoService {
 
     @Override
     public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
-        List<Turno> turnos = turnoRepository.findAll();
-        return turnos.stream()
+        return turnoRepository.findAll().stream()
                 .map(turnoMapper::toResponse)
                 .collect(Collectors.toList());
     }
@@ -136,17 +132,25 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Servicio servicio = servicioRepository.findById(requestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
-        Dia dia = diaRepository.findByFecha(requestDTO.getFecha())
-                .orElseThrow(() -> new RuntimeException("Día no encontrado con fecha: " + requestDTO.getFecha()));
-        Hora hora = horaRepository.findByHora(requestDTO.getHora())
-                .orElseThrow(() -> new RuntimeException("Hora no encontrada: " + requestDTO.getHora()));
+
+        List<Dia> dias = diaRepository.findAllByFecha(requestDTO.getFecha());
+        if (dias.isEmpty()) {
+            throw new RuntimeException("Día no encontrado con fecha: " + requestDTO.getFecha());
+        }
+        Dia dia = dias.get(0);
+
+        List<Hora> horas = horaRepository.findAllByHora(requestDTO.getHora());
+        if (horas.isEmpty()) {
+            throw new RuntimeException("Hora no encontrada: " + requestDTO.getHora());
+        }
+        Hora hora = horas.get(0);
 
         validarDisponibilidadEmpleado(empleado, dia, hora);
 
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, hora);
-
         return turnoRepository.save(turno);
     }
+
 
     @Override
     public void deleteById(Integer id) {
@@ -156,26 +160,31 @@ public class TurnoServiceImp implements ITurnoService {
     }
 
     @Override
-    public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora) {
+    public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha, LocalTime hora) {
         Cliente cliente = clienteRepository.findById(idCliente)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         Empleado empleado = empleadoRepository.findById(idEmpleado)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Servicio servicio = servicioRepository.findById(idServicio)
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
-        Dia dia = diaRepository.findById(idDia)
-                .orElseThrow(() -> new RuntimeException("Día no encontrado"));
-        Hora hora = horaRepository.findById(idHora)
-                .orElseThrow(() -> new RuntimeException("Hora no encontrada"));
 
-        validarDisponibilidadEmpleado(empleado, dia, hora);
+        Dia dia = diaService.findByFecha(fecha)
+                .orElseThrow(() -> new RuntimeException("Día no encontrado para la fecha: " + fecha));
+
+        List<Hora> horas = horaRepository.findAllByHora(hora);
+        if (horas.isEmpty()) {
+            throw new RuntimeException("Hora no encontrada");
+        }
+        Hora horaEntidad = horas.get(0); // o alguna lógica para decidir
+
+        validarDisponibilidadEmpleado(empleado, dia, horaEntidad);
 
         Turno nuevoTurno = new Turno();
         nuevoTurno.setCliente(cliente);
         nuevoTurno.setEmpleado(empleado);
         nuevoTurno.setServicio(servicio);
         nuevoTurno.setDia(dia);
-        nuevoTurno.setHora(hora);
+        nuevoTurno.setHora(horaEntidad);
 
         return turnoRepository.save(nuevoTurno);
     }
