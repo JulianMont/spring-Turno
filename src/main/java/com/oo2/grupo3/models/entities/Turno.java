@@ -20,7 +20,7 @@ public class Turno {
 
     @NotNull(message = "El cliente es obligatorio")
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @NotNull(message = "El empleado es obligatorio")
