@@ -1,86 +1,105 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	
     <title>Crear Turno</title>
-	
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
-	<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
-
-	
-	
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 </head>
 <body>
 
 <h1>Generar Nuevo Turno</h1>
 
-<form th:action="@{/turnos/save}" method="post" th:object="${turnoRequest}">
+<form th:action="@{/turnos/GenerarTurno}" method="post" th:object="${turnoRequest}">
 
     <label>Cliente:</label>
     <select th:field="*{idCliente}" required>
+		<option value="" th:selected="${turnoRequest.idCliente == null}"  style="color: gray;">
+		    Seleccione un cliente
+		</option>
         <option th:each="cliente : ${clientes}"
                 th:value="${cliente.id}"
-                th:text="${cliente.nombre}">Cliente</option>
+                th:text="${cliente.nombreCompleto}"></option>
     </select>
+				<div th:if="${#fields.hasErrors('idCliente')}" th:errors="*{idCliente}" style="color:red"></div>
     <br><br>
 
     <label>Empleado:</label>
     <select th:field="*{idEmpleado}" required>
+	<option value="" th:selected="${turnoRequest.idEmpleado == null}"  style="color: gray;">
+	    Seleccione un empleado
+	</option>
         <option th:each="empleado : ${empleados}"
                 th:value="${empleado.id}"
-                th:text="${empleado.nombre}">Empleado</option>
+                th:text="${empleado.nombreCompleto}"></option>
     </select>
+				<div th:if="${#fields.hasErrors('idEmpleado')}" th:errors="*{idEmpleado}" style="color:red"></div>
     <br><br>
 
     <label>Servicio:</label>
     <select th:field="*{idServicio}" required>
+	<option value="" th:selected="${turnoRequest.idServicio == null}"  style="color: gray;">
+		    Seleccione un empleado
+		</option>
         <option th:each="servicio : ${servicios}"
                 th:value="${servicio.id}"
-                th:text="${servicio.nombre}">Servicio</option>
+                th:text="${servicio.nombre}"></option>
     </select>
+				<div th:if="${#fields.hasErrors('idServicio')}" th:errors="*{idServicio}" style="color:red"></div>
     <br><br>
 
-	<input type="text"
-	       id="fecha"
-	       name="fecha"
-	       th:field="*{fecha}"
-	       placeholder="YYYY-MM-DD"
-	       autocomplete="off"
-	       required />
+    <input type="text"
+           id="fecha"
+           name="fecha"
+           th:field="*{fecha}"
+           placeholder="YYYY-MM-DD"
+           autocomplete="off"
+           required />
+		   <div th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}" style="color:red"></div>
+    <br><br>
 
-		   <br><br>
+    <label>Hora:</label>
+    <select th:field="*{hora}" required>
+        <option value="" disabled selected style="color: gray;">Seleccione una hora</option>
+        <option th:each="i : ${#numbers.sequence(0, 23)}"
+                th:value="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30).format(T(java.time.format.DateTimeFormatter).ofPattern('HH:mm'))}"
+                th:text="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30).format(T(java.time.format.DateTimeFormatter).ofPattern('HH:mm'))}">
+        </option>
+    </select>
+	<div th:if="${#fields.hasErrors('hora')}" th:errors="*{hora}" style="color:red"></div>
+    <br><br>
 
-
-		<label>Hora:</label>
-		<select th:field="*{hora}" required>
-			<option value="" disabled selected>Seleccione una hora</option>
-			    <option th:each="i : ${#numbers.sequence(0, 23)}"
-			            th:value="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30)}"
-			            th:text="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30)}">
-			    </option>
-		</select>
-
-		<br><br>
-    <button type="submit">Guardar Turno</button>
+    <button type="submit">Generar Turno</button>
 </form>
-	<br>
+
+<br>
+
 <form th:action="@{/index}" method="get">
     <button type="submit">Regresar al inicio</button>
 </form>
 
-<!-- Script para los turnos se den solo los fines de semana. -->
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        new Pikaday({
-            field: document.getElementById('fecha'),
-            format: 'YYYY-MM-DD',
-            minDate: new Date(),  // No permite fechas anteriores a hoy
-            disableWeekends: true // Bloquea sábados y domingos :contentReference[oaicite:1]{index=1}
-        });
-    });
+	document.addEventListener('DOMContentLoaded', function () {
+	    new Pikaday({
+	        field: document.getElementById('fecha'),
+	        format: 'YYYY-MM-DD', // clave
+	        toString(date, format) {
+	            const day = ('0' + date.getDate()).slice(-2);
+	            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+	            const year = date.getFullYear();
+	            return `${year}-${month}-${day}`; // devuelve en formato compatible
+	        },
+	        parse(dateString, format) {
+	            const parts = dateString.split('-');
+	            return new Date(parts[0], parts[1] - 1, parts[2]);
+	        },
+	        minDate: new Date(),
+	        disableDayFn: function(date) {
+	            const day = date.getDay();
+	            return day === 0 || day === 6;
+	        }
+	    });
+	});
 </script>
-
 
 </body>
 </html>
