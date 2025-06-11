@@ -13,18 +13,24 @@ import org.springframework.data.domain.Pageable;
 public interface IClienteService {
 	
 	
-	 Page<ClienteResponseDTO> getAll(Pageable pageable);
+	 Page<ClienteResponseDTO> getAll();
 	
 	public boolean remove (int id);
 	
 	ClienteResponseDTO findById(int id);
 	
-	public Optional<Cliente> findByNombre(String name);
+	public ClienteResponseDTO findByNombre(String name);
 
 	ClienteResponseDTO findByName(String name);
 
 	
 	 ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO );
+
+	Cliente save(Cliente cliente);
+
+	Page<ClienteResponseDTO> getAll(Pageable pageable);
+	
+	public List<Cliente> getAllClientes();
 	}
 
 	
