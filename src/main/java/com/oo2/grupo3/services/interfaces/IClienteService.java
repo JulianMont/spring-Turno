@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
+import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,17 @@ public interface IClienteService {
 	
 	ClienteResponseDTO findById(int id);
 	
-	ClienteResponseDTO findByName(String name);
+	ClienteResponseDTO findByNombre(String name);
 	
 	 ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO );
+	 
+	 List<TurnoResponseDTO> obtenerTurnosDelCliente(int idCliente);
+	 
+	 List<TurnoResponseDTO> obtenerTodosLosTurnos();
+
+	List<ClienteResponseDTO> getAllClientes();
+
+
 	}
 
 	

@@ -60,6 +60,6 @@ public class TurnoController {
     public ResponseEntity<TurnoResponseDTO> save(@RequestBody @Valid TurnoRequestDTO requestDTO) {
         Turno turno = turnoMapper.toEntity(requestDTO);
         Turno saved = turnoService.save(turno);
-        return ResponseEntity.ok(turnoMapper.toResponse(saved));
+        return ResponseEntity.ok(TurnoMapper.toResponse(saved));
     }
 }

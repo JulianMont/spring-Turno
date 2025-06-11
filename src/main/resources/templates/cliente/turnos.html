@@ -1,0 +1,20 @@
+<h2>Turnos del Cliente</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Empleado</th>
+            <th>Servicio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="turno : ${turnos}">
+            <td th:text="${turno.fecha}"></td>
+            <td th:text="${turno.hora}"></td>
+            <td th:text="${turno.empleado.nombre}"></td>
+            <td th:text="${turno.servicio.nombre}"></td>
+        </tr>
+    </tbody>
+</table>

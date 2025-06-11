@@ -28,5 +28,11 @@ public class ViewRouteHelper {
     public static final String ESPECIALIDAD_LISTA = "especialidades/list";
     public static final String ESPECIALIDAD_FORM = "especialidades/form";
     public static final String REDIRECT_ESPECIALIDAD_LISTA = "redirect:/especialidades/list";
+    
+    //Cliente
+    public static final String CLIENTE_TURNOS_LIST = "cliente/turnos";
+    public static final String CLIENTE_LIST = "cliente/list";
+    public static final String CLIENTE_FORM = "cliente/form";
+
 
 }

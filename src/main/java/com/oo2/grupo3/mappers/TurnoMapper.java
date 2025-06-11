@@ -37,8 +37,8 @@ public class TurnoMapper {
     public static TurnoResponseDTO toResponse(Turno turno) {
         TurnoResponseDTO dto = new TurnoResponseDTO();
         dto.setIdTurno(turno.getIdTurno());
-        dto.setClienteNombre(turno.getCliente().getNombreCompleto());
-        dto.setEmpleadoNombre(turno.getEmpleado().getNombreCompleto());
+        dto.setClienteNombre(turno.getCliente().getNombre());
+        dto.setEmpleadoNombre(turno.getEmpleado().getNombre());
         dto.setServicioNombre(turno.getServicio().getNombre());
         dto.setDia(turno.getDia());
         dto.setHora(turno.getHora());

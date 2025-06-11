@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Optional;
 
 import com.oo2.grupo3.models.entities.Servicio;
+import com.oo2.grupo3.models.entities.Ubicacion;
 
 public interface IServicioService {
-	public List <Servicio> getAll();
 	
-	public boolean remove (int id);
+	
+	public void deleteById(Integer id);
 	
 	public Optional<Servicio> findById(int id);
 	
-	public Optional<Servicio> findByName(String name);
+	public Optional<Servicio> findByNombre (String name);
 	
 	public Servicio save(Servicio cliente);
 	
-	public Optional <Servicio> findByUbicacion (String ubicacion);
+	public Optional <Servicio> findByUbicacion (Ubicacion ubicacion);
 
 }
