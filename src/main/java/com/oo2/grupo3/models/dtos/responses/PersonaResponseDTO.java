@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PersonaResponseDTO {
 	
-    private Integer idPersona;
+    private Integer id;
     private String nombre;
     private String apellido;
     private Integer dni;

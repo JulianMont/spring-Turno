@@ -21,7 +21,7 @@ import com.oo2.grupo3.services.interfaces.IEspecialidadService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("especialidades")
+@RequestMapping("/especialidades")
 public class EspecialidadController {
 
     private final IEspecialidadService especialidadService;
@@ -51,11 +51,18 @@ public class EspecialidadController {
     
     @PostMapping("/save")
     @PreAuthorize("hasRole('ADMIN')")
-    public String guardarEspecialidad(@Valid @ModelAttribute EspecialidadRequestDTO especialidadRequestDTO, BindingResult bindingResult) {
+    public String guardarEspecialidad(@Valid @ModelAttribute EspecialidadRequestDTO especialidadRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return ViewRouteHelper.ESPECIALIDAD_FORM;
         }
-        especialidadService.crearEspecialidad(especialidadRequestDTO);
+        try {
+            especialidadService.crearEspecialidad(especialidadRequestDTO);
+        } catch (IllegalArgumentException e) {
+    
+        	model.addAttribute("errorMessage", e.getMessage());
+            return ViewRouteHelper.ESPECIALIDAD_FORM;
+        }
+
         return ViewRouteHelper.REDIRECT_ESPECIALIDAD_LISTA;
     }
     
@@ -76,18 +83,29 @@ public class EspecialidadController {
     
     @PostMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String update(@PathVariable Long id, @Valid @ModelAttribute EspecialidadRequestDTO especialidadRequestDTO, BindingResult bindingResult) {
+    public String update(@PathVariable Long id, @Valid @ModelAttribute EspecialidadRequestDTO especialidadRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return ViewRouteHelper.ESPECIALIDAD_FORM;
         }
-        especialidadService.editarEspecialidad(id, especialidadRequestDTO);
+        
+        try {
+            especialidadService.editarEspecialidad(id, especialidadRequestDTO);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al actualizar la especialidad: " + e.getMessage());
+            return ViewRouteHelper.ESPECIALIDAD_FORM;
+        }
+         
         return ViewRouteHelper.REDIRECT_ESPECIALIDAD_LISTA;
     }
     
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String delete(@PathVariable Long id) {
-        especialidadService.borrarEspecialidad(id);
+    public String delete(@PathVariable Long id,Model model) {
+        try {
+            especialidadService.borrarEspecialidad(id);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "No se pudo eliminar la especialidad: " + e.getMessage());
+        }
         return ViewRouteHelper.REDIRECT_ESPECIALIDAD_LISTA;
     }
     

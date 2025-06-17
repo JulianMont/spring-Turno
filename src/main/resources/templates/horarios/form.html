@@ -7,10 +7,15 @@
 </head>
 <body>
 
-<h2 th:text="${#strings.isEmpty(horarioLaboral.idHorario) ? 'Crear Nuevo Horario Laboral' : 'Editar Horario Laboral'}"></h2>
+<h2 th:text="${horarioLaboral.idHorarioLaboral == null ? 'Crear Nuevo Horario Laboral' : 'Editar Horario Laboral'}"></h2>
 
-<form th:action="@{${#strings.isEmpty(horarioLaboral.idHorario) ? '/empleados/' + ${idEmpleado} + '/horarios/save' : '/empleados/' + ${idEmpleado} + '/horarios/' + ${horarioLaboral.idHorario} + '/actualizar'}}"
-      th:object="${horarioLaboral}" method="post">
+<form th:object="${horarioLaboral}"
+      th:action="@{${horarioLaboral.idHorarioLaboral == null} ? 
+                  '/empleados/' + ${idEmpleado} + '/horarios/save' : 
+                  '/empleados/' + ${idEmpleado} + '/horarios/' + ${horarioLaboral.idHorarioLaboral} + '/actualizar'}"
+      method="post">
+
+    <input type="hidden" th:field="*{idHorarioLaboral}" />
 
     <div>
         <label for="diaSemana">Día de la Semana:</label>

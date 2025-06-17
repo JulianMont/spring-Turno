@@ -17,11 +17,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
+
 // ----- @SuperBuilder
 
 public class PersonaRequestDTO {
 	
 	private Integer idPersona;
+
 	
     @NotBlank(message = "La Persona debe tener un nombre.")
     @Size(max = 20)

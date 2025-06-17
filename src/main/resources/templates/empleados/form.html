@@ -6,10 +6,10 @@
 </head>
 <body>
 
-<h2 th:text="${empleado.idPersona == null} ? 'Crear Empleado' : 'Editar Empleado'"></h2>
+<h2 th:text="${empleadoRequestDTO.id == null} ? 'Crear Empleado' : 'Editar Empleado'"></h2>
 
-<form th:action="@{${empleado.idPersona == null} ? '/empleados/save' : '/empleados/' + ${empleado.idPersona} + '/update'}" 
-      th:object="${empleado}" method="post">
+<form th:action="@{${empleadoRequestDTO.id == null} ? '/empleados/save' : '/empleados/editar/' + ${empleadoRequestDTO.id}}"
+      th:object="${empleadoRequestDTO}" method="post">
 
     <div>
         <label for="nombre">Nombre:</label>
@@ -38,15 +38,16 @@
     <div>
         <label for="especialidadId">Especialidad:</label>
         <select id="especialidadId" th:field="*{especialidadId}">
+            <option value="">-- Seleccione especialidad --</option>
             <option th:each="esp : ${especialidades}" 
                     th:value="${esp.idEspecialidad}" 
-                    th:text="${esp.nombre}">Especialidad</option>
+                    th:text="${esp.nombre}"></option>
         </select>
         <div th:if="${#fields.hasErrors('especialidadId')}" th:errors="*{especialidadId}"></div>
     </div>
 
     <button type="submit">Guardar</button>
-    <a th:href="@{/empleados}">Cancelar</a>
+    <a th:href="@{/empleados/list}">Cancelar</a>
 </form>
 
 </body>
