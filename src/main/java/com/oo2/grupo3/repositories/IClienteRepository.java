@@ -18,6 +18,8 @@ public interface IClienteRepository extends JpaRepository<Cliente, Serializable>
  
 	
 	public abstract Optional <Cliente> findByNombre (String name);
+	List<Cliente> findAllByOrderByNombreAsc();
+
 
 
 }

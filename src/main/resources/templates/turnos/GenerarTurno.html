@@ -18,7 +18,7 @@
 		</option>
         <option th:each="cliente : ${clientes}"
                 th:value="${cliente.id}"
-                th:text="${cliente.nombreCompleto}"></option>
+                th:text="${cliente.nombre}"></option>
     </select>
 				<div th:if="${#fields.hasErrors('idCliente')}" th:errors="*{idCliente}" style="color:red"></div>
     <br><br>

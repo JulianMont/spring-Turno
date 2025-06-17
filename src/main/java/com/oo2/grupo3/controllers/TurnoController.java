@@ -59,11 +59,12 @@ public class TurnoController {
     private TurnoMapper turnoMapper;
 
     // --- API REST ---
-
+     
+    
     @GetMapping
     public List<TurnoResponseDTO> findAll() {
         return turnoService.findAll().stream()
-                .map(TurnoMapper::toResponse)
+                .map(turnoMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -184,7 +185,7 @@ public class TurnoController {
     @GetMapping("/list")
     public String listarTurnos(Model model) {
         List<TurnoResponseDTO> turnos = turnoService.getAll().stream()
-            .map(TurnoMapper::toResponse)
+            .map(turnoMapper::toResponse)
             .collect(Collectors.toList());
         model.addAttribute("turnos", turnos);
 

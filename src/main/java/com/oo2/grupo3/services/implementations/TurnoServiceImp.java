@@ -9,6 +9,8 @@ import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
 
 import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -196,3 +198,117 @@ public class TurnoServiceImp implements ITurnoService {
         }
     }
 }
+
+/*@Service
+public class TurnoServiceImpl implements ITurnoService {
+
+    @Autowired
+    private ITurnoRepository turnoRepository;
+
+    @Autowired
+    private IClienteRepository clienteRepository;
+
+    @Autowired
+    private IEmpleadoRepository empleadoRepository;
+
+    @Autowired
+    private IServicioRepository servicioRepository;
+
+    @Autowired
+    private IDiaRepository diaRepository;
+
+    @Autowired
+    private IHoraRepository horaRepository;
+
+    @Autowired
+    private TurnoMapper turnoMapper;  
+
+    @Override
+    public List<Turno> findAll() {
+        return turnoRepository.findAll();
+    }
+
+    @Override
+    public Turno findById(Integer id) {
+        return turnoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Turno no encontrado."));
+    }
+
+    @Override
+    public Turno save(Turno turno) {
+        return turnoRepository.save(turno);
+    }
+
+    // IMPLEMENTACIÓN DEL MÉTODO OBLIGATORIO DE LA INTERFAZ PARA GUARDAR CON DTO
+    @Override
+    public Turno save(TurnoRequestDTO requestDTO) {
+        Turno turno = turnoMapper.toEntity(requestDTO);
+        return turnoRepository.save(turno);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        Turno turno = turnoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Turno no encontrado."));
+        turnoRepository.delete(turno);
+    }
+
+	@Override
+	public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Turno> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Page<TurnoResponseDTO> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha,
+			LocalTime hora) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    //@Override
+    /*public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora) {
+
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        Empleado empleado = empleadoRepository.findById(idEmpleado)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+        Servicio servicio = servicioRepository.findById(idServicio)
+                .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
+
+        Dia dia = diaRepository.findById(idDia)
+                .orElseThrow(() -> new RuntimeException("Día no encontrado"));
+
+        Hora hora = horaRepository.findById(idHora)
+                .orElseThrow(() -> new RuntimeException("Hora no encontrada"));
+
+        Turno nuevoTurno = new Turno();
+        nuevoTurno.setCliente(cliente);
+        nuevoTurno.setEmpleado(empleado);
+        nuevoTurno.setServicio(servicio);
+        nuevoTurno.setDia(dia);
+        nuevoTurno.setHora(hora);
+
+        return turnoRepository.save(nuevoTurno);
+    }*/
+

@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 public interface IClienteService {
 	
 	
-	 Page<ClienteResponseDTO> getAll();
+	Page<ClienteResponseDTO> getAll();
 	
 	public boolean remove (int id);
 	
@@ -30,17 +30,14 @@ public interface IClienteService {
 	 List<TurnoResponseDTO> obtenerTodosLosTurnos();
 
 	List<ClienteResponseDTO> getAllClientes();
-
-
 	
-	
-	// ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO );
-
 	Cliente save(Cliente cliente);
 
 	Page<ClienteResponseDTO> getAll(Pageable pageable);
+
+	List<ClienteResponseDTO> ordenadosPorNombre();
 	
-	//public List<Cliente> getAllClientes();
+
 
 	}
 

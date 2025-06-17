@@ -20,6 +20,7 @@ public class ClienteResponseDTO extends PersonaResponseDTO{
 	
  
     private List<TurnoResponseDTO> turnosSolicitados;
+    
 
   
 }

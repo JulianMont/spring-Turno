@@ -73,11 +73,6 @@ public class ClienteServiceImp implements IClienteService{
 	}
 
 	
-	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
-		Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
-		Cliente saved = clienteRepository.save(cliente);
-        return modelMapper.map(saved, ClienteResponseDTO.class);
-	}
 	
 	@Override
 	public boolean remove(int id) {
@@ -111,8 +106,21 @@ public class ClienteServiceImp implements IClienteService{
 	}
 
 	
-	
 
+	@Override
+	public List<ClienteResponseDTO> ordenadosPorNombre() {
+	    List<Cliente> clientes = clienteRepository.findAllByOrderByNombreAsc();
+	    return clientes.stream()
+	    		.map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
+	             .collect(Collectors.toList());
+	}
+
+
+	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
+		Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
+		Cliente saved = clienteRepository.save(cliente);
+        return modelMapper.map(saved, ClienteResponseDTO.class);
+	}
 
 
 	
@@ -127,6 +135,7 @@ public class ClienteServiceImp implements IClienteService{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
   
 	
 

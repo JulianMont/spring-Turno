@@ -40,11 +40,8 @@ public class ViewRouteHelper {
     public static final String TURNO_GENERAR_REDIRECT = "redirect:/turnos/GenerarTurno";
     
 
-    //Cliente
-    public static final String CLENTES_LIST = "clientes/list";
-    public static final String CLIENTES_FORM = "clientes/form";
-    public static final String REDIRECT_CLIENTES_LIST = "redirect:/clientes/list";
-    public static final String CLIENTES_DETALLE_REDIRECT = "redirect:/clientes/";
     
+   
+   
     
 }

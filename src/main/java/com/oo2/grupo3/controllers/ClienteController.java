@@ -40,68 +40,29 @@ public class ClienteController {
 	}
 	
 	
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @GetMapping("/list")
-    public String listarClientes(
-            @RequestParam(required = false) String nombre,
-            Pageable pageable,
-            Model model
-    ) {
-        Page<EmpleadoResponseDTO> cliente;
-
-        
-        return ViewRouteHelper.CLENTES_LIST;
-        
-    }
-	
-    
-//    // --- SOLO ADMIN ---
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/form")
-    public String mostrarFormularioCrear(Model model) {
-        model.addAttribute("clienteRequestDTO", new ClienteRequestDTO());
-        return ViewRouteHelper.CLIENTES_FORM;
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/save")
-    public String crearCliente(@Valid @ModelAttribute ClienteRequestDTO dto,
-                                BindingResult result,
-                                Model model) {
-        if (result.hasErrors()) {
-        	
-        }
-
-        return ViewRouteHelper.REDIRECT_CLIENTES_LIST;
-    }
-    
-        
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/eliminar/{id}")
-    public String eliminarCliente(@PathVariable Integer id) {
-        clienteService.remove(id);
-        return ViewRouteHelper.REDIRECT_CLIENTES_LIST;
-    }
-
-
-
-
-
     @GetMapping ("/list")
     public String listarClientes(Model model) {
-        List<ClienteResponseDTO> clientes = clienteService.getAllClientes(); 
+        List<ClienteResponseDTO> clientes = clienteService.ordenadosPorNombre(); 
         model.addAttribute("clientes", clientes);
         return "cliente/list";
     }
+
+
 
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevoCliente(Model model) {
         model.addAttribute("cliente", new ClienteRequestDTO());
         return "cliente/form";
     }
-
-   
+    
+    @GetMapping("/editar/{id}")
+    public String editarCliente(@PathVariable int id, Model model) {
+        ClienteResponseDTO cliente = clienteService.findById(id);
+        model.addAttribute("cliente", cliente);
+        return "cliente/form";
+    }
+    
+    
     @PostMapping("/guardar")
     public String guardarCliente(@Valid @ModelAttribute("cliente") ClienteRequestDTO clienteDTO, 
                                  BindingResult result,
@@ -113,20 +74,20 @@ public class ClienteController {
         clienteService.save(clienteDTO);
         return "redirect:/cliente/list";}
 
-
-    @GetMapping("/editar/{id}")
-    public String editarCliente(@PathVariable int id, Model model) {
-        ClienteResponseDTO cliente = clienteService.findById(id);
-        model.addAttribute("cliente", cliente);
-        return "cliente/form";
-    }
-
-    @GetMapping("/eliminar/{id}")
+    /*@GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable int id) {
         clienteService.remove(id);
         return "redirect:/cliente";
-    }
+    }*/
 }
 
+//// --- SOLO ADMIN ---
+
+/*@PreAuthorize("hasRole('ADMIN')")
+@GetMapping("/form")
+public String mostrarFormularioCrear(Model model) {
+  model.addAttribute("clienteRequestDTO", new ClienteRequestDTO());
+  return ViewRouteHelper.CLIENTES_FORM;
+}*/
 
 
