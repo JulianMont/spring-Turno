@@ -13,7 +13,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class PersonaRequestDTO {
+	
+	//TODO: eliminar
+	private Integer id;
 	
     @NotBlank(message = "La Persona debe tener un nombre.")
     @Size(max = 20)

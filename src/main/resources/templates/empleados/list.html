@@ -5,11 +5,20 @@
     <title>Listado de Empleados</title>
 </head>
 <body>
+	
+	<a th:href="@{/index}">
+	    <button type="button">Volver al Inicio</button>
+	</a>
 
     <h1>Listado de Empleados</h1>
 
+    <!-- Botón para crear nuevo empleado -->
+    <a th:href="@{/empleados/form}">
+        <button type="button">Crear Nuevo Empleado</button>
+    </a>
+
     <!-- 🔎 Formulario de filtros -->
-    <form th:action="@{/empleados/lista}" method="get">
+    <form th:action="@{/empleados/list}" method="get">
         <input type="text" name="nombre" placeholder="Buscar por nombre" th:value="${nombre}">
         <input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}">
 
@@ -32,9 +41,9 @@
             <p th:text="|DNI: ${empleado.dni}|"></p>
             <p th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
 
-            <a th:href="@{'/empleados/' + ${empleado.idPersona}}">Ver Detalles</a>
-            <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
-            <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
+            <a th:href="@{'/empleados/' + ${empleado.id}}">Ver Detalles</a>
+            <a th:href="@{'/empleados/editar/' + ${empleado.id}}">Editar</a>
+            <a th:href="@{'/empleados/eliminar/' + ${empleado.id}}"
                onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
         </div>
     </div>
