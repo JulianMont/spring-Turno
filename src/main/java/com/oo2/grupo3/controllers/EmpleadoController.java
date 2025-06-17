@@ -1,4 +1,6 @@
+
 package com.oo2.grupo3.controllers;
+
 
 import java.util.List;
 
@@ -6,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
+
+
 import com.oo2.grupo3.models.dtos.responses.EspecialidadResponseDTO;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IEspecialidadService;
+
 
 import jakarta.validation.Valid;
 
@@ -31,6 +37,8 @@ import jakarta.validation.Valid;
 public class EmpleadoController {
 
 	private final IEmpleadoService empleadoService;
+
+  
     private final IEspecialidadService especialidadService;
     private final ModelMapper modelMapper;
 	
@@ -38,9 +46,11 @@ public class EmpleadoController {
 		this.empleadoService = empleadoService;
         this.especialidadService = especialidadService;
         this.modelMapper = modelMapper;
+
 	}
 	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     @GetMapping("/list")
     public String listarEmpleados(
             @RequestParam(required = false) String nombre,
@@ -106,11 +116,14 @@ public class EmpleadoController {
         if (result.hasErrors()) {
         	model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
+
+          
         }
 
         try {
             empleadoService.createEmpleado(dto);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { 	
+
             model.addAttribute("errorLegajo", e.getMessage());
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
@@ -123,6 +136,12 @@ public class EmpleadoController {
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
+
+
+
+        
+        //TODO: CHECKEAR ESTO
+
         EmpleadoRequestDTO requestDTO = modelMapper.map(empleado, EmpleadoRequestDTO.class);
 
         model.addAttribute("empleadoRequestDTO", requestDTO);
@@ -152,15 +171,20 @@ public class EmpleadoController {
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
     
+  
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/eliminar/{id}")
+
     public String eliminarEmpleado(@PathVariable Integer id,Model model) {
         try {
             empleadoService.borrarEmpleado(id);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error al eliminar el empleado: " + e.getMessage());
         }
+
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
 
+
 }
+

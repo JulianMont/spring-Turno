@@ -20,6 +20,7 @@ import lombok.Setter;
 public class HorarioLaboralResponseDTO {
 	
     private Integer idHorarioLaboral;
+  
     private DiaSemana diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Turnos</title>
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
+		<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+
+		
+	
+</head>
+<body>
+<h1>Listado de Turnos</h1>
+
+<form method="get" th:action="@{/turnos/list}">
+
+    <label>Cliente:</label>
+	<select name="clienteId">
+	    <option value="">-- Seleccione Cliente --</option>
+	    <th:block th:each="cliente : ${clientes}">
+	        <option th:value="${cliente.id}" th:text="${cliente.nombreCompleto}"></option>
+	    </th:block>
+	</select>
+
+    <label>Empleado:</label>
+	<select name="empleadoId">
+	    <option value="">-- Seleccione Empleado --</option>
+	    <th:block th:each="empleado : ${empleados}">
+	        <option th:value="${empleado.id}" th:text="${empleado.nombreCompleto}"></option>
+	    </th:block>
+	</select>
+
+    <label>Servicio:</label>
+    <select name="servicioId">
+        <option value="">-- Seleccione Servicio --</option>
+        <option th:each="servicio : ${servicios}" 
+                th:value="${servicio.id}" 
+                th:text="${servicio.nombre}"
+                th:selected="${servicio.id == servicioId}">Servicio</option>
+    </select>
+
+    <label>Día:</label>
+	<input type="text" id="fecha" name="fecha" th:value="${fecha}" placeholder="Seleccionar fecha" />
+
+    <button type="submit">Buscar</button>
+	
+
+	<a th:href="@{/index}">
+	    <button type="button">Regresar al inicio</button>
+	</a>
+	
+</form>
+
+
+<hr/>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID Turno</th>
+        <th>Cliente</th>
+        <th>Empleado</th>
+        <th>Servicio</th>
+        <th>Día</th>
+        <th>Hora</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="turno : ${turnos}">
+        <td th:text="${turno.idTurno}">ID</td>
+        <td th:text="${turno.clienteNombre}">Cliente</td>
+        <td th:text="${turno.empleadoNombre}">Empleado</td>
+        <td th:text="${turno.servicioNombre}">Servicio</td>
+		<td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
+		    <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Pikaday({
+            field: document.getElementById('fecha'),
+            format: 'YYYY-MM-DD',
+            minDate: new Date(),  // No permite fechas anteriores a hoy
+            disableWeekends: true // Bloquea sábados y domingos :contentReference[oaicite:1]{index=1}
+        });
+    });
+</script>
+
+</body>
+</html>

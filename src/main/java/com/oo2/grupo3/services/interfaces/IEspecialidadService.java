@@ -1,3 +1,4 @@
+
 package com.oo2.grupo3.services.interfaces;
 
 import java.util.List;
@@ -14,3 +15,4 @@ public interface IEspecialidadService {
 	boolean borrarEspecialidad(Long id);
 
 }
+
