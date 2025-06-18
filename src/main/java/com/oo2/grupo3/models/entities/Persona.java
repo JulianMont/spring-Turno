@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) 
+@Inheritance(strategy = InheritanceType.JOINED) 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Persona {
+public abstract class Persona  {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer idPersona;
 	
 	@NotBlank(message = "La Persona debe tener un nombre.")
 	@Size(max = 20)
@@ -43,6 +43,9 @@ public abstract class Persona {
     @Column(unique = true, nullable = false)
     private int dni;
 	
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
+    }
 	
 	
 	

@@ -14,7 +14,7 @@ import com.oo2.grupo3.models.entities.Cliente;
 @Repository
 public interface IClienteRepository extends JpaRepository<Cliente, Serializable> {
 	
-	public abstract Optional<Cliente> findById(int id);
+	public abstract Optional<Cliente> findByIdPersona(int id);
  
 	
 	public abstract Optional <Cliente> findByNombre (String name);

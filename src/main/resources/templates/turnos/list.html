@@ -18,7 +18,7 @@
 	<select name="clienteId">
 	    <option value="">-- Seleccione Cliente --</option>
 	    <th:block th:each="cliente : ${clientes}">
-	        <option th:value="${cliente.id}" th:text="${cliente.nombreCompleto}"></option>
+	        <option th:value="${cliente.idPersona}" th:text="${cliente.getNombreCompleto()}"></option>
 	    </th:block>
 	</select>
 
@@ -26,7 +26,7 @@
 	<select name="empleadoId">
 	    <option value="">-- Seleccione Empleado --</option>
 	    <th:block th:each="empleado : ${empleados}">
-	        <option th:value="${empleado.id}" th:text="${empleado.nombreCompleto}"></option>
+	        <option th:value="${empleado.idPersona}" th:text="${empleado.getNombreCompleto()}"></option>
 	    </th:block>
 	</select>
 

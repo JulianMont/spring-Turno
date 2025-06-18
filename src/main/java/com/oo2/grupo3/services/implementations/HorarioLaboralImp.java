@@ -31,7 +31,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 
     @Override
     public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
-        List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdOrderByDiaSemanaAscHoraInicioAsc(idEmpleado);
+        List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdPersonaOrderByDiaSemanaAscHoraInicioAsc(idEmpleado);
         return horarios.stream()
                 .map(h -> modelMapper.map(h, HorarioLaboralResponseDTO.class))
                 .collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
         HorarioLaboral horario = horarioLaboralRepository.findById(idHorarioLaboral)
                 .orElseThrow(() -> new EntityNotFoundException("Horario laboral no encontrado"));
 
-        if (!horario.getEmpleado().getId().equals(idEmpleado)) {
+        if (!horario.getEmpleado().getIdPersona().equals(idEmpleado)) {
             throw new IllegalArgumentException("El horario no pertenece al empleado especificado");
         }
 
@@ -70,7 +70,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
     public boolean eliminarHorario(Integer idEmpleado, Integer idHorarioLaboral) {
         HorarioLaboral horario = horarioLaboralRepository.findById(idHorarioLaboral)
                 .orElseThrow(() -> new EntityNotFoundException("Horario laboral no encontrado"));
-        if (!horario.getEmpleado().getId().equals(idEmpleado)) {
+        if (!horario.getEmpleado().getIdPersona().equals(idEmpleado)) {
             throw new IllegalArgumentException("El horario no pertenece al empleado especificado");
         }
 

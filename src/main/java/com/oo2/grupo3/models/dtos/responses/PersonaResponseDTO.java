@@ -11,9 +11,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PersonaResponseDTO {
 	
-    private Integer id;
+    private Integer idPersona;
     private String nombre;
     private String apellido;
     private Integer dni;
 
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
+    }
 }

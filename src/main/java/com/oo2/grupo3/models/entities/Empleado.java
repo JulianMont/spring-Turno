@@ -30,7 +30,7 @@ import lombok.Setter;
 public class Empleado extends Persona{
 
     @NotBlank(message = "El legajo es obligatorio")
-    @Column(unique = true, nullable = true)
+    @Column(unique = true, nullable = false)
     private String legajo;
 
     @NotNull(message = "La especialidad es obligatoria")

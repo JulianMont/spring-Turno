@@ -8,6 +8,6 @@ import com.oo2.grupo3.models.entities.AusenciaEmpleado;
 
 public interface IAusenciaEmpleadoRepository extends JpaRepository<AusenciaEmpleado, Integer> {
 
-	List<AusenciaEmpleado> findByEmpleado_Id(Integer empleadoId);
+	List<AusenciaEmpleado> findByEmpleado_IdPersona(Integer empleadoId);
 	
 }

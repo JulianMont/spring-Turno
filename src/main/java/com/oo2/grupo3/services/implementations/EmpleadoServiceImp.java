@@ -98,7 +98,7 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		
 		//legajo en uso
 		Optional<Empleado> posibleDuplicado = empleadoRepository.findByLegajo(empleadoRequestDTO.getLegajo());
-		if (posibleDuplicado.isPresent() && !posibleDuplicado.get().getId().equals(idEmpleado)) {
+		if (posibleDuplicado.isPresent() && !posibleDuplicado.get().getIdPersona().equals(idEmpleado)) {
 			throw new IllegalArgumentException("Ya existe otro empleado con el legajo " + empleadoRequestDTO.getLegajo());
 		}
 		

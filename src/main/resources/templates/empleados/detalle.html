@@ -38,16 +38,16 @@
                 <td th:text="${horario.horaInicio}"></td>
                 <td th:text="${horario.horaFin}"></td>
                 <td>
-                    <a th:href="@{/empleados/{idEmpleado}/horarios/{idHorario}/editar(idEmpleado=${empleado.id}, idHorario=${horario.idHorarioLaboral})}">Editar</a>
+                    <a th:href="@{/empleados/{idEmpleado}/horarios/{idHorario}/editar(idEmpleado=${empleado.idPersona}, idHorario=${horario.idHorarioLaboral})}">Editar</a>
                     |
-                    <form th:action="@{/empleados/{idEmpleado}/horarios/{idHorario}/eliminar(idEmpleado=${empleado.id}, idHorario=${horario.idHorarioLaboral})}" method="post" style="display:inline;">
+                    <form th:action="@{/empleados/{idEmpleado}/horarios/{idHorario}/eliminar(idEmpleado=${empleado.idPersona}, idHorario=${horario.idHorarioLaboral})}" method="post" style="display:inline;">
                         <button type="submit" onclick="return confirm('¿Seguro que desea eliminar este horario?');">Eliminar</button>
                     </form>
                 </td>
             </tr>
         </tbody>
     </table>
-    <a th:href="@{/empleados/{id}/horarios/form(id=${empleado.id})}">Agregar Horario</a>
+    <a th:href="@{/empleados/{id}/horarios/form(id=${empleado.idPersona})}">Agregar Horario</a>
 </section>
 
 <section>
@@ -65,9 +65,9 @@
                 <td th:text="${ausencia.fecha}"></td>
                 <td th:text="${ausencia.motivo}"></td>
                 <td>
-                    <a th:href="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/editar(idEmpleado=${empleado.id}, idAusencia=${ausencia.idAusenciaEmpleado})}">Editar</a>
+                    <a th:href="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/editar(idEmpleado=${empleado.idPersona}, idAusencia=${ausencia.idAusenciaEmpleado})}">Editar</a>
                     |
-                    <form th:action="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/eliminar(idEmpleado=${empleado.id}, idAusencia=${ausencia.idAusenciaEmpleado})}" method="post" style="display:inline;">
+                    <form th:action="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/eliminar(idEmpleado=${empleado.idPersona}, idAusencia=${ausencia.idAusenciaEmpleado})}" method="post" style="display:inline;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="submit" onclick="return confirm('¿Seguro que desea eliminar esta ausencia?');">Eliminar</button>
                     </form>
@@ -75,7 +75,7 @@
             </tr>
         </tbody>
     </table>
-    <a th:href="@{/empleados/{id}/ausencias/form(id=${empleado.id})}">Agregar Ausencia</a>
+    <a th:href="@{/empleados/{id}/ausencias/form(id=${empleado.idPersona})}">Agregar Ausencia</a>
 </section>
 
 </body>

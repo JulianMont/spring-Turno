@@ -33,7 +33,7 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 
 	@Override
 	public List<AusenciaEmpleadoResponseDTO> traerAusenciasEmpleado(Integer idEmpleado) {
-		return ausenciaEmpleadoRepository.findByEmpleado_Id(idEmpleado)
+		return ausenciaEmpleadoRepository.findByEmpleado_IdPersona(idEmpleado)
 				.stream()
 				.map(ausencia -> modelMapper.map(ausencia, AusenciaEmpleadoResponseDTO.class))
 				.collect(Collectors.toList());
@@ -60,7 +60,7 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(idAusencia)
 				.orElseThrow(() -> new EntityNotFoundException("La Ausencia no existe"));
 		
-		if(!ausencia.getEmpleado().getId().equals(idEmpleado)) {
+		if(!ausencia.getEmpleado().getIdPersona().equals(idEmpleado)) {
 			throw new IllegalArgumentException("La ausencia no le pertenece a este empleado");
 		}
 		
@@ -79,7 +79,7 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(idAusencia)
 				.orElseThrow(() -> new EntityNotFoundException("La Ausencia no existe"));
 		
-		if(!ausencia.getEmpleado().getId().equals(idEmpleado)) {
+		if(!ausencia.getEmpleado().getIdPersona().equals(idEmpleado)) {
 			throw new IllegalArgumentException("La ausencia no le pertenece a este empleado");
 		}
 		

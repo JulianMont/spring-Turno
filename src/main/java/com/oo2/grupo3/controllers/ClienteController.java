@@ -49,12 +49,12 @@ public class ClienteController {
 
 
 
-    @GetMapping("/nuevo")
+    @GetMapping("/guardar")
     public String mostrarFormularioNuevoCliente(Model model) {
         model.addAttribute("cliente", new ClienteRequestDTO());
         return "cliente/form";
     }
-    
+    //TODO: No edita porque no tenes update,post o save
     @GetMapping("/editar/{id}")
     public String editarCliente(@PathVariable int id, Model model) {
         ClienteResponseDTO cliente = clienteService.findById(id);

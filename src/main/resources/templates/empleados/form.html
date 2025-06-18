@@ -6,9 +6,9 @@
 </head>
 <body>
 
-<h2 th:text="${empleadoRequestDTO.id == null} ? 'Crear Empleado' : 'Editar Empleado'"></h2>
+<h2 th:text="${empleadoRequestDTO.idPersona == null} ? 'Crear Empleado' : 'Editar Empleado'"></h2>
 
-<form th:action="@{${empleadoRequestDTO.id == null} ? '/empleados/save' : '/empleados/editar/' + ${empleadoRequestDTO.id}}"
+<form th:action="@{${empleadoRequestDTO.idPersona == null} ? '/empleados/save' : '/empleados/editar/' + ${empleadoRequestDTO.idPersona}}"
       th:object="${empleadoRequestDTO}" method="post">
 
     <div>

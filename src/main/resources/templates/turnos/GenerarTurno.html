@@ -17,8 +17,8 @@
 		    Seleccione un cliente
 		</option>
         <option th:each="cliente : ${clientes}"
-                th:value="${cliente.id}"
-                th:text="${cliente.nombre}"></option>
+                th:value="${cliente.idPersona}"
+                th:text="${cliente.getNombreCompleto}"></option>
     </select>
 				<div th:if="${#fields.hasErrors('idCliente')}" th:errors="*{idCliente}" style="color:red"></div>
     <br><br>
@@ -29,8 +29,8 @@
 	    Seleccione un empleado
 	</option>
         <option th:each="empleado : ${empleados}"
-                th:value="${empleado.id}"
-                th:text="${empleado.nombreCompleto}"></option>
+                th:value="${empleado.idPersona}"
+                th:text="${empleado.getNombreCompleto}"></option>
     </select>
 				<div th:if="${#fields.hasErrors('idEmpleado')}" th:errors="*{idEmpleado}" style="color:red"></div>
     <br><br>

@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
 
-import com.oo2.grupo3.models.dtos.responses.ExampleResponseDTO;
+
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
-import com.oo2.grupo3.models.entities.Example;
+
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.ITurnoRepository;
@@ -58,7 +58,7 @@ public class ClienteServiceImp implements IClienteService{
 
 	@Override
 	public ClienteResponseDTO findById(int id) {
-		Cliente cliente = clienteRepository.findById(id)
+		Cliente cliente = clienteRepository.findByIdPersona(id)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Cliente with id {0} not found",id)));
 		return modelMapper.map(cliente, ClienteResponseDTO.class);
 	}

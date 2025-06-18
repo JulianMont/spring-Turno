@@ -41,9 +41,9 @@
             <p th:text="|DNI: ${empleado.dni}|"></p>
             <p th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
 
-            <a th:href="@{'/empleados/' + ${empleado.id}}">Ver Detalles</a>
-            <a th:href="@{'/empleados/editar/' + ${empleado.id}}">Editar</a>
-            <a th:href="@{'/empleados/eliminar/' + ${empleado.id}}"
+            <a th:href="@{'/empleados/' + ${empleado.idPersona}}">Ver Detalles</a>
+            <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
+            <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
                onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
         </div>
     </div>
