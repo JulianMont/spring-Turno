@@ -68,7 +68,6 @@
                     <a th:href="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/editar(idEmpleado=${empleado.idPersona}, idAusencia=${ausencia.idAusenciaEmpleado})}">Editar</a>
                     |
                     <form th:action="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/eliminar(idEmpleado=${empleado.idPersona}, idAusencia=${ausencia.idAusenciaEmpleado})}" method="post" style="display:inline;">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="submit" onclick="return confirm('¿Seguro que desea eliminar esta ausencia?');">Eliminar</button>
                     </form>
                 </td>

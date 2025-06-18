@@ -1,5 +1,6 @@
 package com.oo2.grupo3.services.implementations;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,9 +16,11 @@ import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.services.interfaces.IAusenciaEmpleadoService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 
 @Service
+@Transactional
 public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	
 	private final IAusenciaEmpleadoRepository ausenciaEmpleadoRepository;
@@ -42,8 +45,18 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	@Override
 	public AusenciaEmpleadoResponseDTO agregarAusencia(Integer idEmpleado, AusenciaEmpleadoRequestDTO dtoAusencia) {
 		
+//		LocalDate fechaMin = LocalDate.now().plusDays(1);
+//		if(dtoAusencia.getFecha().isBefore(fechaMin)) {
+//			throw new IllegalArgumentException("La fecha de la ausencia debe ser al menos un día posterior a hoy");
+//
+//		}
+		
 		Empleado empleado = empleadoRepository.findById(idEmpleado)
 				.orElseThrow(()-> new EntityNotFoundException("Empleado no encontrado"));
+		
+	    if (ausenciaEmpleadoRepository.existsByEmpleado_IdPersonaAndFecha(idEmpleado, dtoAusencia.getFecha())) {
+	        throw new IllegalArgumentException("Ya existe una ausencia para esa fecha.");
+	    }
 		
 		AusenciaEmpleado ausencia = modelMapper.map(dtoAusencia, AusenciaEmpleado.class);
 		ausencia.setEmpleado(empleado);
