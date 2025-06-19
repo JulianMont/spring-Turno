@@ -78,8 +78,8 @@ public class TurnoMapper {
     public TurnoResponseDTO toResponse(Turno turno) {
         return TurnoResponseDTO.builder()
         		.idTurno(turno.getIdTurno())
-        		.clienteNombre(turno.getCliente().getNombreCompleto())  // uso de getNombreCompleto()
-                .empleadoNombre(turno.getEmpleado().getNombreCompleto()) // uso de getNombreCompleto()
+        		.clienteNombre(turno.getCliente().getNombre())  // uso de getNombreCompleto()
+                .empleadoNombre(turno.getEmpleado().getNombre()) // uso de getNombreCompleto()
                 .servicioNombre(turno.getServicio().getNombre())
                 .dia(turno.getDia().getFecha()) 
                 .hora(turno.getHora().getHora())

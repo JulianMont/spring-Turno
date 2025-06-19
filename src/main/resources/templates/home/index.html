@@ -11,10 +11,11 @@
         <button type="submit">Logout</button>
     </form>
 
-    <a th:href="@{/grupo3/list}">Ver informacion de ejemplo</a>
+    <a th:href="@{/empleados/list}">Ver empleados</a>
+	<a th:href="@{/especialidades/list}">Ver especialidades</a>
+	<a th:href="@{/cliente/list}">Ver clientes</a>
+	<a th:href="@{/turnos/list}">Ver turnos</a>
+	<a th:href="@{/turnos/GenerarTurno}">Generar turnos</a>
 
-    <div sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/grupo3/form}">Agregar nueva informacion de ejemplo</a>
-    </div>
 </body>
 </html>

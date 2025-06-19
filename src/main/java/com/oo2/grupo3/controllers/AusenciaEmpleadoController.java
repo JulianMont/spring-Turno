@@ -2,6 +2,9 @@ package com.oo2.grupo3.controllers;
 
 
 
+import java.time.LocalDate;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,33 +28,46 @@ import jakarta.validation.Valid;
 public class AusenciaEmpleadoController {
 
     private final IAusenciaEmpleadoService ausenciaService;
-
-    public AusenciaEmpleadoController(IAusenciaEmpleadoService ausenciaService) {
+    private final ModelMapper modelMapper;
+    
+    public AusenciaEmpleadoController(IAusenciaEmpleadoService ausenciaService,ModelMapper modelMapper) {
         this.ausenciaService = ausenciaService;
-
+        this.modelMapper = modelMapper;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/form")
     public String mostrarFormularioCrearAusencia(@PathVariable Integer idEmpleado, Model model) {
-        AusenciaEmpleadoRequestDTO ausencia = new AusenciaEmpleadoRequestDTO();
-        model.addAttribute("ausencia", ausencia);
+        model.addAttribute("ausenciaRequestDTO",  new AusenciaEmpleadoRequestDTO());
         model.addAttribute("idEmpleado", idEmpleado);
+        
+        //Fecha min para no agregar ausencias menor/igual al dia actual
+//        LocalDate fechaMin = LocalDate.now().plusDays(1);
+//        model.addAttribute("fechaMin", fechaMin);
+        
         return ViewRouteHelper.AUSENCIA_FORM;
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public String guardarNuevaAusencia(@PathVariable Integer idEmpleado,
-                                       @ModelAttribute("ausencia") @Valid AusenciaEmpleadoRequestDTO dto,
+                                       @ModelAttribute @Valid AusenciaEmpleadoRequestDTO ausenciaRequestDTO,
                                        BindingResult result,
                                        Model model) {
         if (result.hasErrors()) {
             model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
             return ViewRouteHelper.AUSENCIA_FORM;
         }
 
-        ausenciaService.agregarAusencia(idEmpleado, dto);
+        try {
+            ausenciaService.agregarAusencia(idEmpleado, ausenciaRequestDTO);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al guardar la ausencia: " + e.getMessage());
+            model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
+            return ViewRouteHelper.AUSENCIA_FORM;
+        }
         
         //TODO:CAMBIAR POR METODO
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
@@ -62,9 +78,16 @@ public class AusenciaEmpleadoController {
     public String mostrarFormularioEditar(@PathVariable Integer idEmpleado,
                                           @PathVariable Integer idAusencia,
                                           Model model) {
-        AusenciaEmpleadoResponseDTO dto = ausenciaService.findbyId(idAusencia);
-        model.addAttribute("ausencia", dto);
-        model.addAttribute("idEmpleado", idEmpleado);
+    	
+    	 try {
+             AusenciaEmpleadoResponseDTO dtoResp = ausenciaService.findbyId(idAusencia);
+             AusenciaEmpleadoRequestDTO ausenciaRequestDTO = modelMapper.map(dtoResp,AusenciaEmpleadoRequestDTO.class);
+             model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
+             model.addAttribute("idEmpleado", idEmpleado);
+         } catch (Exception e) {
+             model.addAttribute("errorMessage", "Error al cargar la ausencia: " + e.getMessage());
+             return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
+         }
         return ViewRouteHelper.AUSENCIA_FORM;
     }
     
@@ -72,23 +95,36 @@ public class AusenciaEmpleadoController {
     @PostMapping("/{idAusencia}/actualizar")
     public String actualizarAusencia(@PathVariable Integer idEmpleado,
                                      @PathVariable Integer idAusencia,
-                                     @ModelAttribute("ausencia") @Valid AusenciaEmpleadoRequestDTO dto,
+                                     @ModelAttribute @Valid AusenciaEmpleadoRequestDTO ausenciaRequestDTO,
                                      BindingResult result,
                                      Model model) {
         if (result.hasErrors()) {
             model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
             return ViewRouteHelper.AUSENCIA_FORM;
         }
 
-        ausenciaService.modificarAusencia(idEmpleado, idAusencia, dto);
+        try {
+            ausenciaService.modificarAusencia(idEmpleado, idAusencia, ausenciaRequestDTO);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al actualizar la ausencia: " + e.getMessage());
+            model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
+            return ViewRouteHelper.AUSENCIA_FORM;
+        }
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{idAusencia}/eliminar")
     public String eliminarAusencia(@PathVariable Integer idEmpleado,
-                                   @PathVariable Integer idAusencia) {
-        ausenciaService.eliminarAusencia(idEmpleado, idAusencia);
+                                   @PathVariable Integer idAusencia,Model model) {
+        try {
+            ausenciaService.eliminarAusencia(idEmpleado, idAusencia);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al eliminar la ausencia: " + e.getMessage());
+        }
+
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
     

@@ -12,8 +12,10 @@ import com.oo2.grupo3.models.entities.Ubicacion;
 
 @Repository
 public interface IServicioRepository extends JpaRepository<Servicio, Integer> {
+  
 
     Optional<Servicio> findByNombre(String name);
 
     Optional<Servicio> findByUbicacion(Ubicacion ubicacion);
 }
+

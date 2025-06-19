@@ -2,6 +2,7 @@ package com.oo2.grupo3.models.dtos.requests;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,10 +24,16 @@ public class TurnoRequestDTO {
     private Integer idServicio;
     
     @NotNull(message = "La fecha es obligatoria")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
 
     @NotNull(message = "La hora es obligatoria")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime hora;
 
 	
 }
+
+
+
+

@@ -136,6 +136,7 @@ public class TurnoServiceImp implements ITurnoService {
         Servicio servicio = servicioRepository.findById(requestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
+
         // Validación hora
         LocalTime horaTurno = requestDTO.getHora();
         int hora = horaTurno.getHour();
@@ -170,10 +171,9 @@ public class TurnoServiceImp implements ITurnoService {
         validarDisponibilidadEmpleado(empleado, dia, horaDia);
 
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, horaDia);
+
         return turnoRepository.save(turno);
     }
-
-
 
 
     @Override
@@ -228,54 +228,7 @@ public class TurnoServiceImp implements ITurnoService {
     }
 }
 
-/*@Service
-public class TurnoServiceImpl implements ITurnoService {
-
-    @Autowired
-    private ITurnoRepository turnoRepository;
-
-    @Autowired
-    private IClienteRepository clienteRepository;
-
-    @Autowired
-    private IEmpleadoRepository empleadoRepository;
-
-    @Autowired
-    private IServicioRepository servicioRepository;
-
-    @Autowired
-    private IDiaRepository diaRepository;
-
-    @Autowired
-    private IHoraRepository horaRepository;
-
-    @Autowired
-    private TurnoMapper turnoMapper;  
-
-    @Override
-    public List<Turno> findAll() {
-        return turnoRepository.findAll();
-    }
-
-    @Override
-    public Turno findById(Integer id) {
-        return turnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado."));
-    }
-
-    @Override
-    public Turno save(Turno turno) {
-        return turnoRepository.save(turno);
-    }
-
-    // IMPLEMENTACIÓN DEL MÉTODO OBLIGATORIO DE LA INTERFAZ PARA GUARDAR CON DTO
-    @Override
-    public Turno save(TurnoRequestDTO requestDTO) {
-        Turno turno = turnoMapper.toEntity(requestDTO);
-        return turnoRepository.save(turno);
-    }
-
-    @Override
+   @Override
     public void deleteById(Integer id) {
         Turno turno = turnoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Turno no encontrado."));
@@ -313,31 +266,4 @@ public class TurnoServiceImpl implements ITurnoService {
 		return null;
 	}
 
-    //@Override
-    /*public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora) {
-
-        Cliente cliente = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-
-        Empleado empleado = empleadoRepository.findById(idEmpleado)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
-
-        Servicio servicio = servicioRepository.findById(idServicio)
-                .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
-
-        Dia dia = diaRepository.findById(idDia)
-                .orElseThrow(() -> new RuntimeException("Día no encontrado"));
-
-        Hora hora = horaRepository.findById(idHora)
-                .orElseThrow(() -> new RuntimeException("Hora no encontrada"));
-
-        Turno nuevoTurno = new Turno();
-        nuevoTurno.setCliente(cliente);
-        nuevoTurno.setEmpleado(empleado);
-        nuevoTurno.setServicio(servicio);
-        nuevoTurno.setDia(dia);
-        nuevoTurno.setHora(hora);
-
-        return turnoRepository.save(nuevoTurno);
-    }*/
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista de Especialidades</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+</head>
+<body>
+	
+	<a th:href="@{/index}">
+	    <button type="button">Volver al Inicio</button>
+	</a>
+	
+    <div class="container mt-4">
+        <h1>Especialidades</h1>
+        
+        <a class="btn btn-primary mb-3" th:href="@{/especialidades/form}">Nueva Especialidad</a>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+			<tbody>
+			    <tr th:each="esp : ${especialidades}">
+			        <td th:text="${esp.nombre}">Nombre</td>
+			        <td>
+						<a class="btn btn-warning btn-sm" th:href="@{'/especialidades/edit/' + ${esp.idEspecialidad}}">Editar</a>
+
+						<form th:action="@{'/especialidades/delete/' + ${esp.idEspecialidad}}" method="post" style="display:inline" 
+						      onsubmit="return confirm('¿Está seguro que desea eliminar esta especialidad?');">
+						    <input type="hidden" name="_method" value="post" />
+						    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+						</form>
+			        </td>
+			    </tr>
+			</tbody>
+        </table>
+    </div>
+</body>
+</html>

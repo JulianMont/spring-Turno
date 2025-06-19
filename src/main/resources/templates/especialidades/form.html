@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'">Especialidad</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'"></h1>
+        
+        <form th:action="${id != null} ? @{/especialidades/update/{id}(id=${id})} : @{/especialidades/save}" 
+              th:object="${especialidadRequestDTO}" method="post">
+            
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" th:field="*{nombre}" id="nombre" class="form-control" placeholder="Ingrese nombre" />
+                <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-success" th:text="${id != null} ? 'Actualizar' : 'Guardar'"></button>
+            <a class="btn btn-secondary" th:href="@{/especialidades/list}">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

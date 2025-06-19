@@ -7,7 +7,7 @@ import com.oo2.grupo3.models.entities.Servicio;
 import com.oo2.grupo3.models.entities.Ubicacion;
 
 public interface IServicioService {
-
+  
     void deleteById(Integer id);
 
     Optional<Servicio> findById(Integer id);

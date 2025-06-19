@@ -30,7 +30,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 		this.empleadoRepository = empleadoRepository;
 		this.modelMapper = modelMapper;
 	}
-
+  
 	@Override
 	public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
 	    List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdPersona(idEmpleado);

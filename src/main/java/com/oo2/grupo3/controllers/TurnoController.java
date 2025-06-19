@@ -3,7 +3,9 @@ package com.oo2.grupo3.controllers;
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
+
 import com.oo2.grupo3.models.entities.Cliente;
+
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
@@ -36,6 +38,7 @@ public class TurnoController {
 
     // Servicios
     @Autowired
+
     private ITurnoService turnoService;
     @Autowired
     private IEmpleadoService empleadoService;
@@ -98,6 +101,7 @@ public class TurnoController {
         turnoRequest.setIdCliente(clienteLogueado.getIdPersona()); // setear el idCliente
 */
         model.addAttribute("turnoRequest", turnoRequest);
+
         model.addAttribute("clientes", clienteService.getAllClientes());
         model.addAttribute("empleados", empleadoService.getAllEmpleados());
         model.addAttribute("servicios", servicioService.getAll());
@@ -121,7 +125,9 @@ public class TurnoController {
         return turnoService.generarTurno(idCliente, idEmpleado, idServicio, idDia, idHora);
     }
 */
+  
     @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
+
     @PostMapping("/GenerarTurno")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,

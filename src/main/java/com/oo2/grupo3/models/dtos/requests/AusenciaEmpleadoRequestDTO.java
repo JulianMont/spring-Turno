@@ -19,15 +19,13 @@ import lombok.Setter;
 
 public class AusenciaEmpleadoRequestDTO {
 	
-
+	private Integer idAusenciaEmpleado;
+	
     @NotNull(message = "La fecha de ausencia es obligatoria")
     private LocalDate fecha;
 
     @NotBlank(message = "El motivo no puede estar vacío")
     private String motivo;
 
-    
-    @NotNull(message = "El ID del empleado es obligatorio")
-    private Long empleadoId;
 
 }

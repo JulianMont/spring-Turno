@@ -2,7 +2,10 @@ package com.oo2.grupo3.services.implementations;
 
 import java.text.MessageFormat;
 import java.util.List;
+
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -10,14 +13,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
-import com.oo2.grupo3.models.dtos.requests.ExampleRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
-import com.oo2.grupo3.models.dtos.responses.ExampleResponseDTO;
+
+
+import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
+import com.oo2.grupo3.models.entities.Cliente;
+
+import com.oo2.grupo3.models.entities.Turno;
+import com.oo2.grupo3.repositories.IClienteRepository;
+import com.oo2.grupo3.repositories.ITurnoRepository;
+
 
 import com.oo2.grupo3.models.entities.Cliente;
-import com.oo2.grupo3.models.entities.Example;
 import com.oo2.grupo3.repositories.IClienteRepository;
-import com.oo2.grupo3.repositories.IExampleRepository;
+
 import com.oo2.grupo3.services.interfaces.IClienteService;
 
 
@@ -26,6 +35,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class ClienteServiceImp implements IClienteService{
 	
 	private IClienteRepository clienteRepository;
+	private ITurnoRepository turnoRepository;
 	private final ModelMapper modelMapper;
 	 
 	 public ClienteServiceImp(IClienteRepository clienteRepository, ModelMapper modelMapper) {
@@ -38,29 +48,31 @@ public class ClienteServiceImp implements IClienteService{
 	             .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class));
 	 }
 
-  
-	
+	 public List<ClienteResponseDTO> getAllClientes() {
+	     List<Cliente> clientes = clienteRepository.findAll();
+	     return clientes.stream()
+	                    .map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
+	                    .collect(Collectors.toList());
+	 }
+
 
 	@Override
 	public ClienteResponseDTO findById(int id) {
-		Cliente cliente = clienteRepository.findById(id)
+		Cliente cliente = clienteRepository.findByIdPersona(id)
                 .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Cliente with id {0} not found",id)));
 		return modelMapper.map(cliente, ClienteResponseDTO.class);
 	}
 	
+	
+		
 	@Override
-	public ClienteResponseDTO findByName(String name) {
-		Cliente cliente = clienteRepository.findById(name)
-                .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Cliente con ese nombre no se encontro",name)));
+	public ClienteResponseDTO findByNombre(String nombre) {
+		Cliente cliente = clienteRepository.findByNombre(nombre)
+                .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Cliente con ese nombre no se encontro",nombre)));
 		return modelMapper.map(cliente, ClienteResponseDTO.class);
 	}
 
-	@Override
-	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
-		Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
-		Cliente saved = clienteRepository.save(cliente);
-        return modelMapper.map(saved, ClienteResponseDTO.class);
-	}
+	
 	
 	@Override
 	public boolean remove(int id) {
@@ -71,22 +83,60 @@ public class ClienteServiceImp implements IClienteService{
         }
         return false;
 	}
+
+	
 	@Override
-	public Optional<Cliente> findById(int id) {
-		return clienteRepository.findById(id);
+	public List<TurnoResponseDTO> obtenerTurnosDelCliente(int idCliente) {
+	    Cliente cliente = clienteRepository.findById(idCliente)
+	            .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado"));
+
+	    return cliente.getTurnosSolicitados()
+	                  .stream()
+	                  .map(turno -> modelMapper.map(turno, TurnoResponseDTO.class))
+	                  .collect(Collectors.toList());
+	}
+	
+	
+	public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
+	   
+	    List<Turno> turnos = turnoRepository.findAll();
+	    return turnos.stream()
+	             .map(turno -> modelMapper.map(turno, TurnoResponseDTO.class))
+	             .collect(Collectors.toList());
 	}
 
+	
+
 	@Override
-	public Optional<Cliente> findByNombre(String nombre) {
-		return clienteRepository.findByNombre(nombre);
+	public List<ClienteResponseDTO> ordenadosPorNombre() {
+	    List<Cliente> clientes = clienteRepository.findAllByOrderByNombreAsc();
+	    return clientes.stream()
+	    		.map(cliente -> modelMapper.map(cliente, ClienteResponseDTO.class))
+	             .collect(Collectors.toList());
+	}
+
+
+	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
+		Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
+		Cliente saved = clienteRepository.save(cliente);
+        return modelMapper.map(saved, ClienteResponseDTO.class);
+	}
+
+
+	
+	@Override
+	public Page<ClienteResponseDTO> getAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public Cliente save(Cliente cliente) {
-		 return clienteRepository.save(cliente);
+		// TODO Auto-generated method stub
+		return null;
 	}
+
   
-	
 	
 
 }

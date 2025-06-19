@@ -16,4 +16,7 @@ public class PersonaResponseDTO {
     private String apellido;
     private Integer dni;
 
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
+    }
 }

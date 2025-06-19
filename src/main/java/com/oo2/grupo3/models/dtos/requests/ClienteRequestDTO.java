@@ -1,10 +1,7 @@
 package com.oo2.grupo3.models.dtos.requests;
 
-import com.oo2.grupo3.models.dtos.requests.PersonaRequestDTO;
-
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
@@ -13,8 +10,6 @@ import lombok.Setter;
 @Builder
 public class ClienteRequestDTO extends PersonaRequestDTO {
 
-	
-	
 }
 
 
