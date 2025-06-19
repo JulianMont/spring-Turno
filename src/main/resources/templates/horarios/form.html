@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario Horario Laboral</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<h2 th:text="${modo == 'editar' ? 'Editar Horario Laboral' : 'Crear Nuevo Horario Laboral'}"></h2>
+
+<form th:object="${horarioLaboral}"
+      th:action="@{${modo == 'editar'} ? 
+                  '/empleados/' + ${idEmpleado} + '/horarios/' + ${idHorario} + '/actualizar' : 
+                  '/empleados/' + ${idEmpleado} + '/horarios/save'}"
+      method="post">
+
+    <div>
+        <label>Días de la Semana:</label><br/>
+
+        <label>
+            <input type="checkbox" name="diasSemana" value="LUNES"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).LUNES)}"/>
+            Lunes
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="MARTES"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).MARTES)}"/>
+            Martes
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="MIERCOLES"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).MIERCOLES)}"/>
+            Miércoles
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="JUEVES"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).JUEVES)}"/>
+            Jueves
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="VIERNES"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).VIERNES)}"/>
+            Viernes
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="SABADO"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).SABADO)}"/>
+            Sábado
+        </label><br/>
+        
+        <label>
+            <input type="checkbox" name="diasSemana" value="DOMINGO"
+                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).DOMINGO)}"/>
+            Domingo
+        </label><br/>
+
+        <div th:if="${#fields.hasErrors('diasSemana')}" th:errors="*{diasSemana}" class="error"></div>
+    </div>
+
+    <div>
+        <label for="horaInicio">Hora de Inicio:</label>
+        <input type="time" id="horaInicio" name="horaInicio" th:field="*{horaInicio}" />
+        <div th:if="${#fields.hasErrors('horaInicio')}" th:errors="*{horaInicio}" class="error"></div>
+    </div>
+
+    <div>
+        <label for="horaFin">Hora de Fin:</label>
+        <input type="time" id="horaFin" name="horaFin" th:field="*{horaFin}" />
+        <div th:if="${#fields.hasErrors('horaFin')}" th:errors="*{horaFin}" class="error"></div>
+    </div>
+
+    <div>
+        <button type="submit">Guardar</button>
+        <a th:href="@{'/empleados/' + ${idEmpleado}}">Cancelar</a>
+    </div>
+
+</form>
+
+</body>
+</html>
