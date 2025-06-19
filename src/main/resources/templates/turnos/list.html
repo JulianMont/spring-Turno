@@ -15,22 +15,20 @@
 <form method="get" th:action="@{/turnos/list}">
 
     <label>Cliente:</label>
-    <select name="clienteId">
-        <option value="">-- Seleccione Cliente --</option>
-        <option th:each="cliente : ${clientes}" 
-                th:value="${cliente.id}" 
-                th:text="${cliente.nombre}"
-                th:selected="${cliente.id == clienteId}">Cliente</option>
-    </select>
+	<select name="clienteId">
+	    <option value="">-- Seleccione Cliente --</option>
+	    <th:block th:each="cliente : ${clientes}">
+	        <option th:value="${cliente.idPersona}" th:text="${cliente.getNombreCompleto()}"></option>
+	    </th:block>
+	</select>
 
     <label>Empleado:</label>
-    <select name="empleadoId">
-        <option value="">-- Seleccione Empleado --</option>
-        <option th:each="empleado : ${empleados}" 
-                th:value="${empleado.id}" 
-                th:text="${empleado.nombre}"
-                th:selected="${empleado.id == empleadoId}">Empleado</option>
-    </select>
+	<select name="empleadoId">
+	    <option value="">-- Seleccione Empleado --</option>
+	    <th:block th:each="empleado : ${empleados}">
+	        <option th:value="${empleado.idPersona}" th:text="${empleado.getNombreCompleto()}"></option>
+	    </th:block>
+	</select>
 
     <label>Servicio:</label>
     <select name="servicioId">
@@ -70,11 +68,11 @@
     <tbody>
     <tr th:each="turno : ${turnos}">
         <td th:text="${turno.idTurno}">ID</td>
-        <td th:text="${turno.clienteNombre}">Cliente</td>
-        <td th:text="${turno.empleadoNombre}">Empleado</td>
+		<td th:text="${turno.clienteNombre}">Cliente</td>
+		<td th:text="${turno.empleadoNombre}">Empleado</td>
         <td th:text="${turno.servicioNombre}">Servicio</td>
-        <td th:text="${turno.dia.fecha}">Día</td>
-        <td th:text="${turno.hora.hora}">Hora</td>
+		<td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
+		    <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
     </tr>
     </tbody>
 </table>
@@ -84,8 +82,8 @@
         new Pikaday({
             field: document.getElementById('fecha'),
             format: 'YYYY-MM-DD',
-            minDate: new Date(),  // No permite fechas anteriores a hoy
-            disableWeekends: true // Bloquea sábados y domingos :contentReference[oaicite:1]{index=1}
+            minDate: new Date(),  
+            disableWeekends: true 
         });
     });
 </script>
