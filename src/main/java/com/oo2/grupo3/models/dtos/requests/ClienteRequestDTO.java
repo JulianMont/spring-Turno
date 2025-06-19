@@ -4,11 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
 public class ClienteRequestDTO extends PersonaRequestDTO {
-	 public ClienteRequestDTO() {}
+
 }
 
 

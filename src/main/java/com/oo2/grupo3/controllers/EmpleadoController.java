@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
@@ -26,9 +27,10 @@ import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 
 
 import com.oo2.grupo3.models.dtos.responses.EspecialidadResponseDTO;
+import com.oo2.grupo3.models.dtos.responses.HorarioLaboralResponseDTO;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IEspecialidadService;
-
+import com.oo2.grupo3.services.interfaces.IHorarioLaboralService;
 
 import jakarta.validation.Valid;
 
@@ -37,20 +39,33 @@ import jakarta.validation.Valid;
 public class EmpleadoController {
 
 	private final IEmpleadoService empleadoService;
+	private final IHorarioLaboralService horarioLaboralService;
 
   
+	
     private final IEspecialidadService especialidadService;
     private final ModelMapper modelMapper;
 	
-	public EmpleadoController(IEmpleadoService empleadoService, IEspecialidadService especialidadService, ModelMapper modelMapper) {
-		this.empleadoService = empleadoService;
+    public EmpleadoController(
+            IEmpleadoService empleadoService,
+            IEspecialidadService especialidadService,
+            ModelMapper modelMapper,
+            IHorarioLaboralService horarioLaboralService) {
+        this.empleadoService = empleadoService;
         this.especialidadService = especialidadService;
         this.modelMapper = modelMapper;
-
+        this.horarioLaboralService = horarioLaboralService;
+    }
+	
+	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
+	@GetMapping("/{idEmpleado}/horarios")
+	public @ResponseBody List<HorarioLaboralResponseDTO> obtenerHorariosEmpleado(@PathVariable Integer idEmpleado) {
+	    return horarioLaboralService.traerHorariosLaborales(idEmpleado);
 	}
 	
+	
+	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-
     @GetMapping("/list")
     public String listarEmpleados(
             @RequestParam(required = false) String nombre,

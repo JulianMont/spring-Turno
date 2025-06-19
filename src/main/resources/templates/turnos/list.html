@@ -68,8 +68,8 @@
     <tbody>
     <tr th:each="turno : ${turnos}">
         <td th:text="${turno.idTurno}">ID</td>
-        <td th:text="${turno.clienteNombre}">Cliente</td>
-        <td th:text="${turno.empleadoNombre}">Empleado</td>
+		<td th:text="${turno.clienteNombre}">Cliente</td>
+		<td th:text="${turno.empleadoNombre}">Empleado</td>
         <td th:text="${turno.servicioNombre}">Servicio</td>
 		<td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
 		    <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
@@ -82,8 +82,8 @@
         new Pikaday({
             field: document.getElementById('fecha'),
             format: 'YYYY-MM-DD',
-            minDate: new Date(),  // No permite fechas anteriores a hoy
-            disableWeekends: true // Bloquea sábados y domingos :contentReference[oaicite:1]{index=1}
+            minDate: new Date(),  
+            disableWeekends: true 
         });
     });
 </script>

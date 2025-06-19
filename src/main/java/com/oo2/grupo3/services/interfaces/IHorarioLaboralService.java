@@ -9,8 +9,9 @@ public interface IHorarioLaboralService {
 	
 	List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado);
 	HorarioLaboralResponseDTO findbyId(Integer id);
-    HorarioLaboralResponseDTO agregarHorario(Integer idEmpleado,HorarioLaboralRequestDTO dto);
-    HorarioLaboralResponseDTO editarHorario(Integer idEmpleado, Integer idHorarioLaboral, HorarioLaboralRequestDTO dto);
+	HorarioLaboralResponseDTO agregarHorario(Integer idEmpleado, HorarioLaboralRequestDTO dto);
+	HorarioLaboralResponseDTO editarHorario(Integer idEmpleado, Integer idHorarioLaboral, HorarioLaboralRequestDTO dto);
+
     boolean eliminarHorario(Integer idEmpleado, Integer idHorarioLaboral);
 
 }

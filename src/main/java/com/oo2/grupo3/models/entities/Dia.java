@@ -27,7 +27,8 @@ public class Dia {
 	@Column(name = "fecha", nullable = false, unique = true)
 	private LocalDate fecha;
 
-	@NotNull(message = "Debe tener al menos una hora")
+  
+	//@NotNull(message = "Debe tener al menos una hora")
 	@OneToMany(mappedBy = "dia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<Hora> hora;
 	

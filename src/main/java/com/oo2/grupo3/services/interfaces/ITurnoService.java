@@ -14,6 +14,10 @@ import org.springframework.data.domain.Page;
 
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
+import com.oo2.grupo3.models.entities.Cliente;
+import com.oo2.grupo3.models.entities.Dia;
+import com.oo2.grupo3.models.entities.Empleado;
+import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Turno;
 
 
@@ -31,6 +35,6 @@ public interface ITurnoService {
 	//Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora);
 	Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha, LocalTime hora);
 
-	
+	void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora);
 }
 

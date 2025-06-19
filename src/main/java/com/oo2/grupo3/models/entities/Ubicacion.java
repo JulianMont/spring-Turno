@@ -30,7 +30,7 @@ public class Ubicacion {
 	
 	
 	 @NotBlank(message = "La direccion no puede estar vacia")
-	    @Column(name = "direccion", nullable = false)
+	    @Column(name = "direccion" 	, nullable = false )
 	    private String direccion;
 	 
 	 @NotBlank(message = "La ciudad no puede ser vacia")

@@ -3,6 +3,9 @@ package com.oo2.grupo3.controllers;
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
+
+import com.oo2.grupo3.models.entities.Cliente;
+
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
@@ -24,6 +27,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +36,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/turnos")
 public class TurnoController {
 
-    // Repositorios
-    @Autowired
-    private IClienteRepository clienteRepository;
-    @Autowired
-    private IEmpleadoRepository empleadoRepository;
-    @Autowired
-    private ITurnoRepository turnoRepository;
-
     // Servicios
     @Autowired
+
     private ITurnoService turnoService;
     @Autowired
     private IEmpleadoService empleadoService;
@@ -95,15 +92,22 @@ public class TurnoController {
 
     // --- Formulario WEB ---
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
     @GetMapping("/GenerarTurno")
-    public String mostrarFormularioTurno(Model model) {
-        model.addAttribute("turnoRequest", new TurnoRequestDTO());
+    public String mostrarFormularioTurno(Model model, Principal principal) {
+        TurnoRequestDTO turnoRequest = new TurnoRequestDTO();
+/*
+        Cliente clienteLogueado = clienteService.findByUsername(principal.getName());
+        turnoRequest.setIdCliente(clienteLogueado.getIdPersona()); // setear el idCliente
+*/
+        model.addAttribute("turnoRequest", turnoRequest);
+
         model.addAttribute("clientes", clienteService.getAllClientes());
         model.addAttribute("empleados", empleadoService.getAllEmpleados());
         model.addAttribute("servicios", servicioService.getAll());
         model.addAttribute("dias", diaService.getAll());
         model.addAttribute("horas", horaService.getAll());
+
         return "turnos/GenerarTurno";
     }
     
@@ -121,7 +125,9 @@ public class TurnoController {
         return turnoService.generarTurno(idCliente, idEmpleado, idServicio, idDia, idHora);
     }
 */
-    @PreAuthorize("hasRole('ADMIN')")
+  
+    @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
+
     @PostMapping("/GenerarTurno")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,
