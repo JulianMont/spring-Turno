@@ -16,6 +16,8 @@ public interface IUbicacionService {
 	
 	public Optional<Ubicacion> findByCiudad(String name);
 	
-	public Ubicacion save(Ubicacion ubicacion);
+	public Ubicacion save(Ubicacion ubicacion) throws Exception;
 
+	boolean existeUbicacion(String direccion, String ciudad);
+	
 }
