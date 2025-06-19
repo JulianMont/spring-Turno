@@ -5,7 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Table(name = "turno")
+@Table(name = "turno",
+uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"cliente_id", "id_dia", "id_hora"}),   // Un cliente no puede tener dos turnos en el mismo día y hora
+    @UniqueConstraint(columnNames = {"id_empleado", "id_dia", "id_hora"})  // Un empleado no puede tener dos turnos en el mismo día y hora
+}
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,11 +25,11 @@ public class Turno {
 
     @NotNull(message = "El cliente es obligatorio")
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @NotNull(message = "El empleado es obligatorio")
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "id_empleado", nullable = false)
     private Empleado empleado;
     

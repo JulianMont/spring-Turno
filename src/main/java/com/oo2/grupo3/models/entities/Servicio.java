@@ -37,7 +37,7 @@ public class Servicio {
 	
 	
 	 @NotBlank(message = "El nombre no puede estar vacio")
-	    @Column(name = "nombre", nullable = false)
+	    @Column(name = "nombre", nullable = false, unique = true)
 	    private String nombre;
 	 
 	 @NotNull(message = "La ubicacion no puede ser vacia")
