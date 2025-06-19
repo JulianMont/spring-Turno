@@ -1,5 +1,6 @@
 package com.oo2.grupo3.services.implementations;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import com.oo2.grupo3.models.dtos.requests.HorarioLaboralRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.HorarioLaboralResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.HorarioLaboral;
+import com.oo2.grupo3.models.enums.DiaSemana;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IHorarioLaboralRepository;
 import com.oo2.grupo3.services.interfaces.IHorarioLaboralService;
@@ -29,14 +31,30 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 		this.modelMapper = modelMapper;
 	}
 
-    @Override
-    public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
-        List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdOrderByDiaSemanaAscHoraInicioAsc(idEmpleado);
-        return horarios.stream()
-                .map(h -> modelMapper.map(h, HorarioLaboralResponseDTO.class))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
+	    List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdPersona(idEmpleado);
 
+	    horarios.sort(Comparator
+	        .comparing(
+	        		(HorarioLaboral h) -> {
+	                if (h.getDiasSemana() != null && !h.getDiasSemana().isEmpty()) {
+	                    return h.getDiasSemana().get(0);
+	                }
+	                return null;
+	            },
+	            Comparator.nullsLast(Comparator.naturalOrder())
+	        )
+	        .thenComparing(
+	            HorarioLaboral::getHoraInicio,
+	            Comparator.nullsLast(Comparator.naturalOrder())
+	        )
+	    );
+
+	    return horarios.stream()
+	            .map(h -> modelMapper.map(h, HorarioLaboralResponseDTO.class))
+	            .collect(Collectors.toList());
+	}
     @Override
     public HorarioLaboralResponseDTO agregarHorario(Integer idEmpleado, HorarioLaboralRequestDTO dto) {
         Empleado empleado = empleadoRepository.findById(idEmpleado)
@@ -54,11 +72,11 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
         HorarioLaboral horario = horarioLaboralRepository.findById(idHorarioLaboral)
                 .orElseThrow(() -> new EntityNotFoundException("Horario laboral no encontrado"));
 
-        if (!horario.getEmpleado().getId().equals(idEmpleado)) {
+        if (!horario.getEmpleado().getIdPersona().equals(idEmpleado)) {
             throw new IllegalArgumentException("El horario no pertenece al empleado especificado");
         }
 
-        horario.setDiaSemana(dto.getDiaSemana());
+        horario.setDiasSemana(dto.getDiasSemana());
         horario.setHoraInicio(dto.getHoraInicio());
         horario.setHoraFin(dto.getHoraFin());
 
@@ -70,7 +88,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
     public boolean eliminarHorario(Integer idEmpleado, Integer idHorarioLaboral) {
         HorarioLaboral horario = horarioLaboralRepository.findById(idHorarioLaboral)
                 .orElseThrow(() -> new EntityNotFoundException("Horario laboral no encontrado"));
-        if (!horario.getEmpleado().getId().equals(idEmpleado)) {
+        if (!horario.getEmpleado().getIdPersona().equals(idEmpleado)) {
             throw new IllegalArgumentException("El horario no pertenece al empleado especificado");
         }
 
