@@ -45,8 +45,15 @@ public class HorarioLaboralController {
             model.addAttribute("idEmpleado", idEmpleado);
             return ViewRouteHelper.HORARIO_FORM;
         }
-
-        horarioLaboralService.agregarHorario(idEmpleado, dto);
+        
+        try {
+            horarioLaboralService.agregarHorario(idEmpleado, dto);
+        } catch (Exception e) {
+            model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("errorMessage", "Error al guardar el horario: " + e.getMessage());
+            return ViewRouteHelper.HORARIO_FORM;
+        }
+        
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
 
@@ -55,9 +62,15 @@ public class HorarioLaboralController {
     public String mostrarFormularioEditar(@PathVariable Integer idEmpleado,
                                           @PathVariable Integer idHorario,
                                           Model model) {
-        HorarioLaboralResponseDTO dto = horarioLaboralService.findbyId(idHorario);
-        model.addAttribute("horarioLaboral", dto);
-        model.addAttribute("idEmpleado", idEmpleado);
+        try {
+            HorarioLaboralResponseDTO dto = horarioLaboralService.findbyId(idHorario);
+            model.addAttribute("horarioLaboral", dto);
+            model.addAttribute("idEmpleado", idEmpleado);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al cargar el horario laboral: " + e.getMessage());
+            return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
+        }
+        
         return ViewRouteHelper.HORARIO_FORM;
     }
 
@@ -73,15 +86,26 @@ public class HorarioLaboralController {
             return ViewRouteHelper.HORARIO_FORM;
         }
 
-        horarioLaboralService.editarHorario(idEmpleado, idHorario, dto);
+        try {
+            horarioLaboralService.editarHorario(idEmpleado, idHorario, dto);
+        } catch (Exception e) {
+            model.addAttribute("idEmpleado", idEmpleado);
+            model.addAttribute("errorMessage", "Error al actualizar el horario: " + e.getMessage());
+            return ViewRouteHelper.HORARIO_FORM;
+        }
+        
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{idHorario}/eliminar")
     public String eliminarHorario(@PathVariable Integer idEmpleado,
-                                  @PathVariable Integer idHorario) {
-        horarioLaboralService.eliminarHorario(idEmpleado, idHorario);
+                                  @PathVariable Integer idHorario,Model model) {
+        try {
+            horarioLaboralService.eliminarHorario(idEmpleado, idHorario);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al eliminar el horario: " + e.getMessage());
+        }
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
 }

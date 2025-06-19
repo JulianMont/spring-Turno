@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
@@ -26,9 +27,10 @@ import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 
 
 import com.oo2.grupo3.models.dtos.responses.EspecialidadResponseDTO;
+import com.oo2.grupo3.models.dtos.responses.HorarioLaboralResponseDTO;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IEspecialidadService;
-
+import com.oo2.grupo3.services.interfaces.IHorarioLaboralService;
 
 import jakarta.validation.Valid;
 
@@ -37,21 +39,33 @@ import jakarta.validation.Valid;
 public class EmpleadoController {
 
 	private final IEmpleadoService empleadoService;
+	private final IHorarioLaboralService horarioLaboralService;
 
   
+	
     private final IEspecialidadService especialidadService;
     private final ModelMapper modelMapper;
 	
-	public EmpleadoController(IEmpleadoService empleadoService,IEspecialidadService especialidadService,ModelMapper modelMapper) {
-		this.empleadoService = empleadoService;
+    public EmpleadoController(
+            IEmpleadoService empleadoService,
+            IEspecialidadService especialidadService,
+            ModelMapper modelMapper,
+            IHorarioLaboralService horarioLaboralService) {
+        this.empleadoService = empleadoService;
         this.especialidadService = especialidadService;
         this.modelMapper = modelMapper;
-
+        this.horarioLaboralService = horarioLaboralService;
+    }
+	
+	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
+	@GetMapping("/{idEmpleado}/horarios")
+	public @ResponseBody List<HorarioLaboralResponseDTO> obtenerHorariosEmpleado(@PathVariable Integer idEmpleado) {
+	    return horarioLaboralService.traerHorariosLaborales(idEmpleado);
 	}
 	
 	
+	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-
     @GetMapping("/list")
     public String listarEmpleados(
             @RequestParam(required = false) String nombre,
@@ -62,14 +76,20 @@ public class EmpleadoController {
     ) {
         Page<EmpleadoResponseDTO> empleados;
 
-        //filtro de busqueda
+        //TODO: Crear listarEmpleadosByLegajo , listarEmpleadosByNombre y listarEmpleadosByEspecialidad
+        
+        //Generado temporalmente para mostrar en video el funcionamiento de los filtros
         
         if (legajo != null && !legajo.isBlank()) {
             EmpleadoResponseDTO empleado = empleadoService.findByLegajo(legajo);
-            empleados = new PageImpl<>(List.of(empleado));
+            if (empleado != null) {
+                empleados = new PageImpl<>(List.of(empleado), pageable, 1);
+            } else {
+                empleados = Page.empty(pageable);
+            }
         } else if (nombre != null && !nombre.isBlank()) {
             empleados = empleadoService.findByNombre(nombre, pageable);
-        } else if (especialidadId != null) {
+        } else if (especialidadId != null && especialidadId > 0) {
             empleados = empleadoService.findByIdEspecialidad(especialidadId, pageable);
         } else {
             empleados = empleadoService.findAll(pageable);
@@ -83,25 +103,17 @@ public class EmpleadoController {
         model.addAttribute("legajo", legajo);
         model.addAttribute("especialidadId", especialidadId);
 
-        
         return ViewRouteHelper.EMPLEADOS_LIST;
-        
     }
 	
     @GetMapping("/{id}")
     public String verDetalleEmpleado(@PathVariable Integer id, Model model) {
-    	
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
         model.addAttribute("empleado", empleado);
-        
         return ViewRouteHelper.EMPLEADOS_DETALLE;
     }
-    
 
-	
-
-
-//    // --- SOLO ADMIN ---
+    // --- SOLO ADMIN ---
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/form")
@@ -113,7 +125,7 @@ public class EmpleadoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
-    public String crearEmpleado(@Valid @ModelAttribute EmpleadoRequestDTO dto,
+    public String crearEmpleado(@Valid @ModelAttribute("empleadoRequestDTO") EmpleadoRequestDTO dto,
                                 BindingResult result,
                                 Model model) {
         if (result.hasErrors()) {
@@ -125,13 +137,11 @@ public class EmpleadoController {
 
         try {
             empleadoService.createEmpleado(dto);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { 	
 
-        	
             model.addAttribute("errorLegajo", e.getMessage());
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
-            
         }
 
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
@@ -142,37 +152,54 @@ public class EmpleadoController {
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
 
+
+
         
         //TODO: CHECKEAR ESTO
+
         EmpleadoRequestDTO requestDTO = modelMapper.map(empleado, EmpleadoRequestDTO.class);
 
-        model.addAttribute("empleado", requestDTO);
+        model.addAttribute("empleadoRequestDTO", requestDTO);
         model.addAttribute("especialidades", especialidadService.traerEspecialidades());
         return ViewRouteHelper.EMPLEADOS_FORM;
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/editar/{id}")
-    public String editarEmpleado(@PathVariable Integer id, @ModelAttribute("empleado") @Valid EmpleadoRequestDTO empleadoRequestDTO, BindingResult result, Model model) {
+    public String editarEmpleado(@PathVariable Integer id,
+                                 @ModelAttribute("empleadoRequestDTO") @Valid EmpleadoRequestDTO empleadoRequestDTO,
+                                 BindingResult result,
+                                 Model model) {
         if (result.hasErrors()) {
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
         }
 
-        empleadoService.actualizarEmpleado(id, empleadoRequestDTO);
+        try {
+            empleadoService.actualizarEmpleado(id, empleadoRequestDTO);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al actualizar el empleado: " + e.getMessage());
+            model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+            return ViewRouteHelper.EMPLEADOS_FORM;
+        }
+        
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
     
   
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/eliminar/{id}")
-    public String eliminarEmpleado(@PathVariable Integer id) {
-        empleadoService.borrarEmpleado(id);
+
+    public String eliminarEmpleado(@PathVariable Integer id,Model model) {
+        try {
+            empleadoService.borrarEmpleado(id);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error al eliminar el empleado: " + e.getMessage());
+        }
 
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
 
 
 }
-	
 
