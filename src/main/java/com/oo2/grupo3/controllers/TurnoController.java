@@ -15,6 +15,7 @@ import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IHoraService;
 import com.oo2.grupo3.services.interfaces.IServicioService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
+import com.oo2.grupo3.exceptions.TurnoOcupadoException;
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 
 import jakarta.validation.Valid;
@@ -110,8 +111,10 @@ public class TurnoController {
     }
 
     // --- Formulario WEB ---
+    
+    // pasarlo a CLIENTE
 
-    @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/GenerarTurno")
     public String mostrarFormularioTurno(Model model, Principal principal) {
         TurnoRequestDTO turnoRequest = new TurnoRequestDTO();
@@ -124,7 +127,7 @@ public class TurnoController {
 
         return ViewRouteHelper.TURNO_GENERAR;
     }
-
+    
     @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
     @PostMapping("/GenerarTurno")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
@@ -169,9 +172,9 @@ public class TurnoController {
             turnoService.save(turnoRequestDTO);
             redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
             return ViewRouteHelper.TURNO_LIST_REDIRECT;
-        } catch (Exception e) {
+        } catch (TurnoOcupadoException e) {
             e.printStackTrace();
-            model.addAttribute("error", "Error al generar el turno: " + e.getMessage());
+            model.addAttribute("errorMensaje", "Error al generar el turno: " + e.getMessage());
             model.addAttribute("clientes", clienteService.getAllClientes());
             model.addAttribute("empleados", empleadoService.getAllEmpleados());
             model.addAttribute("servicios", servicioService.getAll());
