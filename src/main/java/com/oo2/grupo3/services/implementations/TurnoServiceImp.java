@@ -146,6 +146,20 @@ public class TurnoServiceImp implements ITurnoService {
                 .build();
 
         Turno turnoGuardado = turnoRepository.save(turno);
+        
+       //agregarrr para que cuadno se crea el turno, se manda el email
+        /*Notificacion noti = Notificacion.builder()
+        	    .persona(turno.getCliente().getUser()) // si la persona es el UserEntity
+        	    .tipo("Confirmación de turno")
+        	    .mensaje("Hola " + turno.getCliente().getUser().getFirstname() +
+        	             ", tu turno ha sido registrado para el día " +
+        	             turno.getDia().getFecha() + " a las " + turno.getHora().getHora() + ".")
+        	    .fechaEnvio(LocalDateTime.now())
+        	    .build();
+
+        	notificacionService.save(noti);*/ // Esto también enviará el correo
+
+        
         return turnoMapper.toResponse(turnoGuardado);
     }
 
