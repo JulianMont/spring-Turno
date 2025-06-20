@@ -4,6 +4,7 @@ import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.*;
+import com.oo2.grupo3.models.enums.EstadoTurno;
 import com.oo2.grupo3.repositories.*;
 import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
@@ -65,6 +66,39 @@ public class TurnoServiceImp implements ITurnoService {
                 .hora(turno.getHora().getHora())
                 .build();
     }
+    
+    @Override
+    public void cancelarTurno(Integer idTurno) {
+        Turno turno = turnoRepository.findById(idTurno)
+            .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
+        
+        turno.setEstado(EstadoTurno.CANCELADO);
+        turnoRepository.save(turno);
+    }
+    
+    
+    @Override
+    public void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        System.out.println("Actualizando turno ID: " + id);
+
+        Turno turno = findById(id);
+
+        Dia dia = diaService.findByFecha(nuevaFecha)
+                .orElseGet(() -> diaService.save(Dia.builder().fecha(nuevaFecha).build()));
+
+        Hora hora = horaRepository.findByHoraAndDia(nuevaHora, dia)
+                .orElseGet(() -> horaRepository.save(Hora.builder().hora(nuevaHora).dia(dia).build()));
+
+        System.out.println("Validando disponibilidad del cliente y el empleado...");
+        validarDisponibilidadClienteYEmpleado(turno.getCliente(), turno.getEmpleado(), dia, hora, id);
+
+        turno.setDia(dia);
+        turno.setHora(hora);
+
+        turnoRepository.save(turno);
+        System.out.println("Turno actualizado con éxito.");
+    }
+
 
     @Override
     public List<Turno> getAll() {
@@ -80,6 +114,18 @@ public class TurnoServiceImp implements ITurnoService {
         Servicio servicio = servicioRepository.findById(turnoRequestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
+
+        LocalTime horaTurno = turnoRequestDTO.getHora();
+        int hora = horaTurno.getHour();
+        int minutos = horaTurno.getMinute();
+
+        if (hora < 8 || hora > 20 || (hora == 20 && minutos > 0)) {
+            throw new RuntimeException("La hora del turno debe estar entre 08:00 y 20:00");
+        }
+        if (minutos != 0 && minutos != 30) {
+            throw new RuntimeException("Los turnos solo pueden comenzar en minutos 00 o 30");
+        }
+
         Dia dia = diaService.findByFecha(turnoRequestDTO.getFecha())
                 .orElseThrow(() -> new RuntimeException("Día no encontrado con fecha: " + turnoRequestDTO.getFecha()));
 
@@ -87,21 +133,22 @@ public class TurnoServiceImp implements ITurnoService {
         if (horas.isEmpty()) {
             throw new RuntimeException("Hora no encontrada: " + turnoRequestDTO.getHora());
         }
-        Hora hora = horas.get(0);
+        Hora horaEntidad = horas.get(0);
 
-        validarDisponibilidadEmpleado(empleado, dia, hora);
+        validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaEntidad);
 
         Turno turno = Turno.builder()
                 .cliente(cliente)
                 .empleado(empleado)
                 .dia(dia)
-                .hora(hora)
+                .hora(horaEntidad)
                 .servicio(servicio)
                 .build();
 
         Turno turnoGuardado = turnoRepository.save(turno);
         return turnoMapper.toResponse(turnoGuardado);
     }
+
 
     @Override
     public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
@@ -136,7 +183,6 @@ public class TurnoServiceImp implements ITurnoService {
         Servicio servicio = servicioRepository.findById(requestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
-
         // Validación hora
         LocalTime horaTurno = requestDTO.getHora();
         int hora = horaTurno.getHour();
@@ -164,16 +210,17 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseGet(() -> {
                     Hora nuevaHora = new Hora();
                     nuevaHora.setHora(requestDTO.getHora());
-                    nuevaHora.setDia(dia);  // <- importante asignar el día aquí
+                    nuevaHora.setDia(dia);  
                     return horaRepository.save(nuevaHora);
                 });
 
-        validarDisponibilidadEmpleado(empleado, dia, horaDia);
-
+        validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaDia);
+        
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, horaDia);
-
         return turnoRepository.save(turno);
     }
+
+
 
 
     @Override
@@ -201,24 +248,21 @@ public class TurnoServiceImp implements ITurnoService {
         }
         Hora horaEntidad = horas.get(0); // o alguna lógica para decidir
 
-        validarDisponibilidadEmpleado(empleado, dia, horaEntidad);
-
+        validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaEntidad);
+        
         Turno nuevoTurno = new Turno();
         nuevoTurno.setCliente(cliente);
         nuevoTurno.setEmpleado(empleado);
         nuevoTurno.setServicio(servicio);
         nuevoTurno.setDia(dia);
         nuevoTurno.setHora(horaEntidad);
+        nuevoTurno.setEstado(EstadoTurno.EN_PROCESO);
 
         return turnoRepository.save(nuevoTurno);
     }
 
-    private void validarDisponibilidadEmpleado(Empleado empleado, Dia dia, Hora horaEntidad) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora) {
+    @Override
+    public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora) {
         if (turnoRepository.existsByEmpleadoAndDiaAndHora(empleado, dia, hora)) {
             throw new RuntimeException("El empleado ya tiene un turno asignado en ese día y hora.");
         }
@@ -226,44 +270,16 @@ public class TurnoServiceImp implements ITurnoService {
             throw new RuntimeException("El cliente ya tiene un turno asignado en ese día y hora.");
         }
     }
-}
-
-   @Override
-    public void deleteById(Integer id) {
-        Turno turno = turnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado."));
-        turnoRepository.delete(turno);
+    
+    @Override
+    public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora, Integer idTurnoActual) {
+        if (turnoRepository.existsByEmpleadoAndDiaAndHoraAndIdTurnoNot(empleado, dia, hora, idTurnoActual)) {
+            throw new RuntimeException("El empleado ya tiene un turno asignado en ese día y hora.");
+        }
+        if (turnoRepository.existsByClienteAndDiaAndHoraAndIdTurnoNot(cliente, dia, hora, idTurnoActual)) {
+            throw new RuntimeException("El cliente ya tiene un turno asignado en ese día y hora.");
+        }
     }
-
-	@Override
-	public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Turno> getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Page<TurnoResponseDTO> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha,
-			LocalTime hora) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
+}
 
