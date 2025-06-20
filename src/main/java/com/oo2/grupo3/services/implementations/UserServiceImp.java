@@ -1,6 +1,7 @@
 package com.oo2.grupo3.services.implementations;
 
 import com.oo2.grupo3.models.dtos.requests.UserRequestDTO;
+import com.oo2.grupo3.models.entities.Persona;
 import com.oo2.grupo3.models.entities.RoleEntity;
 import com.oo2.grupo3.models.entities.UserEntity;
 import com.oo2.grupo3.models.enums.RoleType;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,7 @@ public class UserServiceImp implements UserDetailsService, IUserService {
     }
 
 	@Override
-	public UserEntity createUser(UserRequestDTO userRequestDTO, RoleType role){
+	public UserEntity createUser(UserRequestDTO userRequestDTO, RoleType role,Persona persona){
 		
 		if(userRepository.existsByEmail(userRequestDTO.getEmail())) {
 			throw new IllegalArgumentException("El email ya está en uso: " + userRequestDTO.getEmail());
@@ -64,7 +66,9 @@ public class UserServiceImp implements UserDetailsService, IUserService {
 	            .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + role));
 
 
-		user.setRoleEntities(Set.of(rolDefault));
+		user.setRoleEntities(new HashSet<>(Set.of(rolDefault)));
+		
+		user.setPersona(persona);
 		
 		return userRepository.save(user);
 	}
