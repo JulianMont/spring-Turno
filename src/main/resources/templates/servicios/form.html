@@ -7,33 +7,37 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h1>Crear Nuevo Servicio</h1>
+    <h1 class="mb-4">Crear Nuevo Servicio</h1>
 
     <!-- Mensaje global de error -->
     <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
     <form th:action="@{/servicios/form}" th:object="${servicioRequestDTO}" method="post" novalidate>
+        <!-- Nombre del servicio -->
         <div class="mb-3">
             <label for="nombre" class="form-label">Nombre:</label>
             <input type="text" id="nombre" th:field="*{nombre}" class="form-control" placeholder="Nombre del servicio" required />
             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
         </div>
 
+        <!-- Selección de ubicación -->
         <div class="mb-3">
             <label for="idUbicacion" class="form-label">Ubicación:</label>
             <select id="idUbicacion" th:field="*{idUbicacion}" class="form-select" required>
                 <option value="" disabled th:selected="*{idUbicacion} == null">-- Seleccione una ubicación --</option>
                 <option th:each="ubicacion : ${ubicaciones}" 
                         th:value="${ubicacion.id}" 
-                        th:text="${ubicacion.direccion + ', ' + ubicacion.ciudad}" 
-                        th:selected="*{idUbicacion} == ${ubicacion.id}">
+                        th:text="${ubicacion.direccion + ', ' + ubicacion.ciudad}">
                 </option>
             </select>
             <div class="text-danger" th:if="${#fields.hasErrors('idUbicacion')}" th:errors="*{idUbicacion}"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Crear Servicio</button>
-        <a href="/servicios" class="btn btn-secondary ms-2">Volver a la lista</a>
+        <!-- Botones -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Crear Servicio</button>
+            <a th:href="@{/servicios/list}" class="btn btn-secondary">Volver a la lista</a>
+        </div>
     </form>
 </div>
 
