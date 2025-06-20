@@ -13,21 +13,20 @@
 	    <p th:text="${errorMessage}"></p>
 	</div>
 	
-	<p style="color: red;" th:text="'DEBUG FECHA DTO: ' + ${ausenciaRequestDTO.fecha}"></p>
-	
 	<form th:object="${ausenciaRequestDTO}" 
 	      th:action="${ausenciaRequestDTO.idAusenciaEmpleado == null} ?
 	                   @{/empleados/{idEmpleado}/ausencias/save(idEmpleado=${idEmpleado})} :
 	                   @{/empleados/{idEmpleado}/ausencias/{idAusencia}/actualizar(idEmpleado=${idEmpleado}, idAusencia=${ausenciaRequestDTO.idAusenciaEmpleado})}" 
 	      method="post">
-		   <!-- th:attr="min=${fechaMin} Esto va luego de th:field=fecha -->
-		   <div>
-		     <label for="fecha">Fecha:</label>
-		     <input type="date" id="fecha" name="fecha"
-		            th:value="${#temporals.format(ausenciaRequestDTO.fecha, 'yyyy-MM-dd')}"
-		            required />
-		     <div th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></div>
-		   </div>
+		  <div>
+		    <label for="fecha">Fecha:</label>
+		    <input type="date"
+		           th:field="*{fecha}"
+		           th:attr="min=${#temporals.format(fechaMin, 'yyyy-MM-dd')}"
+		           required />
+		    
+		    <div th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></div>
+		  </div>
 	    <div>
 	        <label for="motivo">Motivo:</label>
 	        <input type="text" id="motivo" th:field="*{motivo}" placeholder="Motivo de la ausencia" required maxlength="255"/>

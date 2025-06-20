@@ -14,9 +14,11 @@ public interface IUserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findById(Integer integer);
 
     Optional<UserEntity> findByEmail(String email);
+    
+    boolean existsByEmail(String email);
 
     @Query(value = "from UserEntity u order by u.id")
     List<UserEntity> findAll();
 
-    List<UserEntity> findAllByActive(boolean active);
+//    List<UserEntity> findAllByActive(boolean active);
 }

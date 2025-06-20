@@ -45,7 +45,7 @@ public class HorarioLaboralController {
             model.addAttribute("idEmpleado", idEmpleado);
             return ViewRouteHelper.HORARIO_FORM;
         }
-        
+
         try {
             horarioLaboralService.agregarHorario(idEmpleado, dto);
         } catch (Exception e) {

@@ -6,6 +6,10 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+	
+	<div th:if="${errorMessage}" class="error">
+	    <p th:text="${errorMessage}"></p>
+	</div>
 
 <h2 th:text="${modo == 'editar' ? 'Editar Horario Laboral' : 'Crear Nuevo Horario Laboral'}"></h2>
 

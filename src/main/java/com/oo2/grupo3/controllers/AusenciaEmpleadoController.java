@@ -41,9 +41,9 @@ public class AusenciaEmpleadoController {
         model.addAttribute("ausenciaRequestDTO",  new AusenciaEmpleadoRequestDTO());
         model.addAttribute("idEmpleado", idEmpleado);
         
-        //Fecha min para no agregar ausencias menor/igual al dia actual
-//        LocalDate fechaMin = LocalDate.now().plusDays(1);
-//        model.addAttribute("fechaMin", fechaMin);
+//        para permitir que solamente se puedan registrar fechas con 7 dias de retraso
+        LocalDate fechaMin = LocalDate.now().minusDays(7);
+        model.addAttribute("fechaMin", fechaMin);
         
         return ViewRouteHelper.AUSENCIA_FORM;
     }
@@ -79,11 +79,17 @@ public class AusenciaEmpleadoController {
                                           @PathVariable Integer idAusencia,
                                           Model model) {
     	
+
+      	
+    	
     	 try {
+//    	      para permitir que solamente se pueda modificar fechas con 7 dias de retraso
+    	      LocalDate fechaMin = LocalDate.now().minusDays(7);
              AusenciaEmpleadoResponseDTO dtoResp = ausenciaService.findbyId(idAusencia);
              AusenciaEmpleadoRequestDTO ausenciaRequestDTO = modelMapper.map(dtoResp,AusenciaEmpleadoRequestDTO.class);
              model.addAttribute("ausenciaRequestDTO", ausenciaRequestDTO);
              model.addAttribute("idEmpleado", idEmpleado);
+             model.addAttribute("fechaMin", fechaMin);
          } catch (Exception e) {
              model.addAttribute("errorMessage", "Error al cargar la ausencia: " + e.getMessage());
              return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;

@@ -24,9 +24,6 @@ import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.ITurnoRepository;
 
 
-import com.oo2.grupo3.models.entities.Cliente;
-import com.oo2.grupo3.repositories.IClienteRepository;
-
 import com.oo2.grupo3.services.interfaces.IClienteService;
 
 
