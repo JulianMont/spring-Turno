@@ -7,6 +7,8 @@ import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Turno;
 
 import java.io.Serializable;
+import java.time.LocalTime;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,10 @@ public interface ITurnoRepository extends JpaRepository<Turno, Integer> {
 
 	boolean existsByClienteAndDiaAndHora(Cliente cliente, Dia dia, Hora hora);
 
+	boolean existsByEmpleadoAndDiaAndHoraAndIdTurnoNot(Empleado empleado, Dia dia, Hora hora, Integer idTurnoActual);
+
+	boolean existsByClienteAndDiaAndHoraAndIdTurnoNot(Cliente cliente, Dia dia, Hora hora, Integer idTurnoActual);
+
+	
 	
 }
