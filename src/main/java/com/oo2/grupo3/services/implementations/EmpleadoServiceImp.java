@@ -74,6 +74,7 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		return modelMapper.map(empleado, EmpleadoResponseDTO.class) ;
 	}
 
+	//TODO:Revisar el createEmpleado debido al UserEntity
 	@Override
 	public EmpleadoResponseDTO createEmpleado(EmpleadoRequestDTO empleadoRequestDTO){
 		
@@ -84,16 +85,24 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		//especialidad existe?
 		 Especialidad especialidad = especialidadRepository.findById(empleadoRequestDTO.getEspecialidadId())
 			        .orElseThrow(() -> new EntityNotFoundException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));
+
+		//seteo de datos
+		Empleado empleado = modelMapper.map(empleadoRequestDTO, Empleado.class);
+		empleado.setEspecialidad(especialidad);
+		empleado.setUser(null); 
+
+		//guardo en db para tener una id para el user
+		empleado = empleadoRepository.save(empleado);
+		
+		
 		
 		 //TODO: Modificar asignacion automatica del rol
 		 //La asignacion del role es temporal
 		 //2° entrega agregar roles cliente,empleado y admin(gerente o algo asi)
-		 UserEntity user = userService.createUser(empleadoRequestDTO.getUser(),RoleType.ADMIN);
-		 
-		 
-		//seteo de datos
-		Empleado empleado = modelMapper.map(empleadoRequestDTO, Empleado.class);
-		empleado.setEspecialidad(especialidad);
+		
+		UserEntity user = userService.createUser(empleadoRequestDTO.getUser(),RoleType.ADMIN,empleado);
+
+		
 		empleado.setUser(user);
 		Empleado empleadoCreado = empleadoRepository.save(empleado);
 		return modelMapper.map(empleadoCreado, EmpleadoResponseDTO.class);

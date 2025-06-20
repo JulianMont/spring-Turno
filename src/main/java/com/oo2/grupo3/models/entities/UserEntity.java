@@ -27,7 +27,7 @@ public class UserEntity implements UserDetails {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_persona")
     private Persona persona;
 
     @NotBlank
