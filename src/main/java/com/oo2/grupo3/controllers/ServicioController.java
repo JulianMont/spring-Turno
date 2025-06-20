@@ -1,5 +1,6 @@
 package com.oo2.grupo3.controllers;
 
+import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.ServicioRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ServicioResponseDTO;
 import com.oo2.grupo3.models.entities.Servicio;
@@ -73,18 +74,18 @@ public class ServicioController {
         if (servicioService.findByNombre(dto.getNombre()).isPresent()) {
             model.addAttribute("error", "Ya existe un servicio con ese nombre.");
             model.addAttribute("ubicaciones", ubicacionService.getAll()); // necesario para el combo
-            return "servicios/form";
+            return ViewRouteHelper.SERVICIO_FORM;
         }
 
         if (result.hasErrors()) {
             model.addAttribute("ubicaciones", ubicacionService.getAll());
-            return "servicios/form";
+            return ViewRouteHelper.SERVICIO_FORM;
         }
 
         Servicio servicio = modelMapper.map(dto, Servicio.class);
         servicio.setUbicacion(ubicacionService.findById(dto.getIdUbicacion()).orElse(null));
         servicioService.save(servicio);
-        return "redirect:/servicios/list";
+        return ViewRouteHelper.REDIRECT_SERVICIO_LIST;
     }
     
     @GetMapping("/list")
