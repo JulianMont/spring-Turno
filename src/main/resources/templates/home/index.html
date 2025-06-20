@@ -1,21 +1,60 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Bienvenido</h1>
+<body class="bg-light">
 
-    <form th:action="@{/auth/logout}" method="post">
-        <button type="submit">Logout</button>
-    </form>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Bienvenido</h1>
 
-    <a th:href="@{/empleados/list}">Ver empleados</a>
-	<a th:href="@{/especialidades/list}">Ver especialidades</a>
-	<a th:href="@{/cliente/list}">Ver clientes</a>
-	<a th:href="@{/turnos/list}">Ver turnos</a>
-	<a th:href="@{/turnos/GenerarTurno}">Generar turnos</a>
+    <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
 
+        <a class="btn btn-primary my-1" th:href="@{/empleados/list}">Ver empleados</a>
+        <a class="btn btn-primary my-1" th:href="@{/especialidades/list}">Ver especialidades</a>
+        <a class="btn btn-primary my-1" th:href="@{/cliente/list}">Ver clientes</a>
+
+        <div class="dropdown my-1">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Ubicaciones
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/ubicaciones/list}">Ver Ubicaciones</a></li>
+                <li><a class="dropdown-item" th:href="@{/ubicaciones/form}">Crear Nueva Ubicación</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown my-1">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Servicios
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/servicios/list}">Ver Servicios</a></li>
+                <li><a class="dropdown-item" th:href="@{/servicios/form}">Crear Nuevo Servicio</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown my-1">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Turnos
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" th:href="@{/turnos/list}">Ver Turnos</a></li>
+                <li><a class="dropdown-item" th:href="@{/turnos/GenerarTurno}">Generar Turno</a></li>
+            </ul>
+        </div>
+
+        <form th:action="@{/auth/logout}" method="post" class="m-0 my-1">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS (requerido para dropdowns) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

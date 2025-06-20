@@ -33,4 +33,9 @@ public class DiaServiceImp implements IDiaService {
         return diaRepository.findByFecha(fecha);
     }
     
+    public Dia save(Dia dia) {
+        return diaRepository.save(dia);
+    }
+
+    
 }

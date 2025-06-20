@@ -1,11 +1,18 @@
 package com.oo2.grupo3.models.entities;
 
+import com.oo2.grupo3.models.enums.EstadoTurno;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Table(name = "turno")
+@Table(name = "turno",
+uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"cliente_id", "id_dia", "id_hora"}),   // Un cliente no puede tener dos turnos en el mismo día y hora
+    @UniqueConstraint(columnNames = {"id_empleado", "id_dia", "id_hora"})  // Un empleado no puede tener dos turnos en el mismo día y hora
+}
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +31,7 @@ public class Turno {
     private Cliente cliente;
 
     @NotNull(message = "El empleado es obligatorio")
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "id_empleado", nullable = false)
     private Empleado empleado;
     
@@ -43,7 +50,8 @@ public class Turno {
     @JoinColumn(name = "id_hora", nullable = false)
     private Hora hora;
     
-    
+    @Enumerated(EnumType.STRING)
+    private EstadoTurno estado;
     
 
 }

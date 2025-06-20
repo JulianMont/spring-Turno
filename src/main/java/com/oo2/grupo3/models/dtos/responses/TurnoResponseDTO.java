@@ -13,6 +13,11 @@ import lombok.*;
 public class TurnoResponseDTO {
 
     private Integer idTurno;
+    
+    private Integer idCliente;      // agregado
+    private Integer idEmpleado;     // agregado
+    private Integer idServicio;     // agregado
+    
 
     private String clienteNombre;
 
@@ -24,7 +29,7 @@ public class TurnoResponseDTO {
 
     private LocalTime hora;
 
-    
+    private String estado;
     
 
 }

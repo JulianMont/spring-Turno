@@ -16,5 +16,8 @@ public interface IUbicacionRepository extends JpaRepository<Ubicacion, Serializa
 	
 	public abstract Optional <Ubicacion> findByCiudad (String ciudad);
 	 
-
+	Optional<Ubicacion> findByDireccion(String direccion);
+	
+	boolean existsByDireccionAndCiudad(String direccion, String ciudad);
+	
 }

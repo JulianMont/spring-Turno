@@ -1,0 +1,50 @@
+/* styles.css */
+
+.btn, .dropdown-toggle {
+    width: 140px; /* mismo ancho fijo */
+    background-color: #0d6efd !important; /* azul btn-primary */
+    border-color: #0d6efd !important;
+    color:  #0d6efd  !important;
+}
+
+/* Dropdown menú igual de ancho y color */
+.dropdown-menu {
+    width: 140px;
+    background-color: #0d6efd; /* azul btn-primary */
+    border-radius: 0 0 0.375rem 0.375rem;
+    border: none;
+    margin-top: 0;
+}
+
+.dropdown-menu .dropdown-item {
+    color:  #0b5ed7;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #0b5ed7;
+    color:  #0b5ed7;
+}
+
+/* Override hover del dropdown-toggle para que no cambie de color */
+.dropdown-toggle:hover, .dropdown-toggle:focus {
+    background-color: #0b5ed7 !important;
+    border-color: #0b5ed7 !important;
+    color: white !important;
+}
+
+/* Botón Logout: mismo ancho y alto pero color rojo */
+form button.btn-danger {
+    width: 140px;
+    height: 38px; /* para que coincida con los botones */
+    color: white;
+    border-color: #dc3545;
+    background-color: #dc3545;
+}
+
+/* Mantener el tamaño y color al hacer hover en logout */
+form button.btn-danger:hover, 
+form button.btn-danger:focus {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+    color: white;
+}

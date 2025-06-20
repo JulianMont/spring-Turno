@@ -2,104 +2,180 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Crear Turno</title>
+    <meta charset="UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 </head>
+
+<!-- BODY -->
 <body>
+<div class="container mt-5">
+    <h2 class="mb-4">Generar Nuevo Turno</h2>
 
-<h1>Generar Nuevo Turno</h1>
+    <form th:action="@{/turnos/GenerarTurno}" method="post" th:object="${turnoRequest}">
+       
+		<!-- Cliente -->
+		<div class="mb-3">
+			<label for="idCliente" class="form-label">Cliente</label>
+			<select th:field="*{idCliente}" class="form-select" required>
+			        <option value="" disabled selected style="color: gray;">Seleccione un cliente</option>
+					    Seleccione un cliente
+					</option>
+			        <option th:each="cliente : ${clientes}"
+			                th:value="${cliente.idPersona}"
+			                th:text="${cliente.getNombreCompleto}"></option>
+			    </select>
 
-<form th:action="@{/turnos/GenerarTurno}" method="post" th:object="${turnoRequest}">
+        <!-- Empleado -->
+        <div class="mb-3">
+            <label for="empleado" class="form-label">Empleado</label>
+            <select id="empleado" th:field="*{idEmpleado}" class="form-select" required>
+                <option value="" disabled selected style="color: gray;">Seleccione un empleado</option>
+                <option th:each="empleado : ${empleados}"
+                        th:value="${empleado.idPersona}"
+                        th:text="${empleado.getNombreCompleto}"></option>
+            </select>
+        </div>
 
-    <label>Cliente:</label>
-    <select th:field="*{idCliente}" required>
-		<option value="" th:selected="${turnoRequest.idCliente == null}"  style="color: gray;">
-		    Seleccione un cliente
-		</option>
-        <option th:each="cliente : ${clientes}"
-                th:value="${cliente.idPersona}"
-                th:text="${cliente.getNombreCompleto}"></option>
-    </select>
-				<div th:if="${#fields.hasErrors('idCliente')}" th:errors="*{idCliente}" style="color:red"></div>
-    <br><br>
+        <!-- Servicio -->
+        <div class="mb-3">
+            <label for="servicio" class="form-label">Servicio</label>
+            <select id="servicio" th:field="*{idServicio}" class="form-select" required>
+                <option value="" disabled selected style="color: gray;">Seleccione un servicio</option>
+                <option th:each="servicio : ${servicios}"
+                        th:value="${servicio.id}"
+                        th:text="${servicio.nombre}"></option>
+            </select>
+        </div>
 
-    <label>Empleado:</label>
-    <select th:field="*{idEmpleado}" required>
-	<option value="" th:selected="${turnoRequest.idEmpleado == null}"  style="color: gray;">
-	    Seleccione un empleado
-	</option>
-        <option th:each="empleado : ${empleados}"
-                th:value="${empleado.idPersona}"
-                th:text="${empleado.getNombreCompleto}"></option>
-    </select>
-				<div th:if="${#fields.hasErrors('idEmpleado')}" th:errors="*{idEmpleado}" style="color:red"></div>
-    <br><br>
+        <!-- Fecha -->
+        <div class="mb-3">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="text"
+                   id="fecha"
+                   th:field="*{fecha}"
+                   class="form-control"
+                   placeholder="YYYY-MM-DD"
+                   autocomplete="off"
+                   required />
+            <div class="text-danger" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></div>
+        </div>
 
-    <label>Servicio:</label>
-    <select th:field="*{idServicio}" required>
-	<option value="" th:selected="${turnoRequest.idServicio == null}"  style="color: gray;">
-		    Seleccione un empleado
-		</option>
-        <option th:each="servicio : ${servicios}"
-                th:value="${servicio.id}"
-                th:text="${servicio.nombre}"></option>
-    </select>
-				<div th:if="${#fields.hasErrors('idServicio')}" th:errors="*{idServicio}" style="color:red"></div>
-    <br><br>
+        <!-- Hora -->
+        <div class="mb-3">
+            <label for="hora" class="form-label">Hora</label>
+            <select id="hora" th:field="*{hora}" class="form-select" required>
+                <option value="" disabled selected>Seleccione una hora</option>
+            </select>
+        </div>
 
-    <input type="text"
-           id="fecha"
-           name="fecha"
-           th:field="*{fecha}"
-           placeholder="YYYY-MM-DD"
-           autocomplete="off"
-           required />
-		   <div th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}" style="color:red"></div>
-    <br><br>
-
-    <label>Hora:</label>
-    <select th:field="*{hora}" required>
-        <option value="" disabled selected style="color: gray;">Seleccione una hora</option>
-        <option th:each="i : ${#numbers.sequence(0, 23)}"
-                th:value="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30).format(T(java.time.format.DateTimeFormatter).ofPattern('HH:mm'))}"
-                th:text="${T(java.time.LocalTime).of(i / 2 + 8, (i % 2) * 30).format(T(java.time.format.DateTimeFormatter).ofPattern('HH:mm'))}">
-        </option>
-    </select>
-	<div th:if="${#fields.hasErrors('hora')}" th:errors="*{hora}" style="color:red"></div>
-    <br><br>
-
-    <button type="submit">Generar Turno</button>
-</form>
-
-<br>
-
-<form th:action="@{/index}" method="get">
-    <button type="submit">Regresar al inicio</button>
-</form>
+        <!-- Botones -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Generar Turno</button>
+            <a href="/index" class="btn btn-secondary">Regresar al inicio</a>
+        </div>
+    </form>
+</div>
 
 <script>
-	document.addEventListener('DOMContentLoaded', function () {
-	    new Pikaday({
-	        field: document.getElementById('fecha'),
-	        format: 'YYYY-MM-DD', // clave
-	        toString(date, format) {
-	            const day = ('0' + date.getDate()).slice(-2);
-	            const month = ('0' + (date.getMonth() + 1)).slice(-2);
-	            const year = date.getFullYear();
-	            return `${year}-${month}-${day}`; // devuelve en formato compatible
-	        },
-	        parse(dateString, format) {
-	            const parts = dateString.split('-');
-	            return new Date(parts[0], parts[1] - 1, parts[2]);
-	        },
-	        minDate: new Date(),
-	        disableDayFn: function(date) {
-	            const day = date.getDay();
-	            return day === 0 || day === 6;
-	        }
-	    });
-	});
-</script>
+    let picker;
+    let diasPermitidos = [];
 
+    function crearPikaday(dias) {
+        if (picker) picker.destroy();
+
+        picker = new Pikaday({
+            field: document.getElementById('fecha'),
+            format: 'YYYY-MM-DD',
+            minDate: new Date(),
+            disableDayFn: function(date) {
+                if (dias.length === 0) return true;
+                return !dias.includes(date.getDay());
+            },
+            toString: function(date) {
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const empleadoSelect = document.getElementById('empleado');
+        const horaSelect = document.getElementById('hora');
+
+        crearPikaday(diasPermitidos); // iniciar vacío
+
+        empleadoSelect.addEventListener('change', () => {
+            const idEmpleado = empleadoSelect.value;
+            horaSelect.innerHTML = '<option disabled selected>Cargando horarios...</option>';
+            diasPermitidos = [];
+
+            if (!idEmpleado) {
+                horaSelect.innerHTML = '<option disabled selected>Seleccione una hora</option>';
+                crearPikaday(diasPermitidos);
+                return;
+            }
+
+            fetch(`/empleados/${idEmpleado}/horarios`)
+                .then(res => res.json())
+                .then(horarios => {
+                    horaSelect.innerHTML = '';
+                    if (horarios.length === 0) {
+                        horaSelect.innerHTML = '<option disabled>No hay horarios disponibles</option>';
+                        crearPikaday([]);
+                        return;
+                    }
+
+                    const diasJS = {
+                        "DOMINGO": 0,
+                        "LUNES": 1,
+                        "MARTES": 2,
+                        "MIERCOLES": 3,
+                        "JUEVES": 4,
+                        "VIERNES": 5,
+                        "SABADO": 6
+                    };
+
+                    horarios.forEach(horario => {
+                        horario.diasSemana.forEach(dia => {
+                            const diaNum = diasJS[dia.toUpperCase()];
+                            if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
+                                diasPermitidos.push(diaNum);
+                            }
+                        });
+                    });
+
+                    crearPikaday(diasPermitidos);
+
+                    horarios.forEach(horario => {
+                        const [startH, startM] = horario.horaInicio.split(':').map(Number);
+                        const [endH, endM] = horario.horaFin.split(':').map(Number);
+
+                        let startMin = startH * 60 + startM;
+                        const endMin = endH * 60 + endM;
+
+                        while (startMin < endMin) {
+                            const hh = String(Math.floor(startMin / 60)).padStart(2, '0');
+                            const mm = String(startMin % 60).padStart(2, '0');
+                            const timeStr = `${hh}:${mm}`;
+                            horaSelect.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
+                            startMin += 30;
+                        }
+                    });
+                })
+                .catch(() => {
+                    horaSelect.innerHTML = '<option disabled>Error cargando horarios</option>';
+                    crearPikaday([]);
+                });
+        });
+
+        // Si ya hay empleado seleccionado, cargar datos
+        if (empleadoSelect.value) {
+            empleadoSelect.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
 </body>
-</html>

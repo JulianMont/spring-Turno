@@ -38,9 +38,19 @@ public class ViewRouteHelper {
     //Turno
     public static final String TURNO_GENERAR = "turnos/GenerarTurno";
     public static final String TURNO_GENERAR_REDIRECT = "redirect:/turnos/GenerarTurno";
+    public static final String TURNO_LIST = "turnos/list";
+    public static final String TURNO_LIST_REDIRECT = "redirect:/turnos/list";
     
 
-    
+    // Servicio
+    public static final String SERVICIO_LIST = "servicios/list";
+    public static final String SERVICIO_FORM = "servicios/form";
+    public static final String REDIRECT_SERVICIO_LIST = "redirect:/servicios/list";
+
+    // Ubicación
+    public static final String UBICACION_LIST = "ubicaciones/list";
+    public static final String UBICACION_FORM = "ubicaciones/form";
+    public static final String REDIRECT_UBICACION_LIST = "redirect:/ubicaciones/list";
    
    
     

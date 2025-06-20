@@ -4,18 +4,9 @@ import org.springframework.stereotype.Component;
 
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
-import com.oo2.grupo3.models.entities.Cliente;
-import com.oo2.grupo3.models.entities.Dia;
-import com.oo2.grupo3.models.entities.Empleado;
-import com.oo2.grupo3.models.entities.Hora;
-import com.oo2.grupo3.models.entities.Servicio;
-import com.oo2.grupo3.models.entities.Turno;
-
-import com.oo2.grupo3.repositories.IClienteRepository;
-import com.oo2.grupo3.repositories.IDiaRepository;
-import com.oo2.grupo3.repositories.IEmpleadoRepository;
-import com.oo2.grupo3.repositories.IHoraRepository;
-import com.oo2.grupo3.repositories.IServicioRepository;
+import com.oo2.grupo3.models.entities.*;
+import com.oo2.grupo3.models.enums.EstadoTurno;
+import com.oo2.grupo3.repositories.*;
 
 @Component
 public class TurnoMapper {
@@ -36,7 +27,6 @@ public class TurnoMapper {
         this.servicioRepository = servicioRepository;
         this.diaRepository = diaRepository;
         this.horaRepository = horaRepository;
-
     }
 
     public Turno toEntity(TurnoRequestDTO dto) {
@@ -50,7 +40,7 @@ public class TurnoMapper {
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
         Dia dia = diaRepository.findByFecha(dto.getFecha())
-        	    .orElseGet(() -> diaRepository.save(Dia.builder().fecha(dto.getFecha()).build()));
+                .orElseGet(() -> diaRepository.save(Dia.builder().fecha(dto.getFecha()).build()));
 
         Hora hora = horaRepository.findByHoraAndDia(dto.getHora(), dia)
                 .orElseGet(() -> horaRepository.save(Hora.builder().hora(dto.getHora()).dia(dia).build()));
@@ -62,6 +52,12 @@ public class TurnoMapper {
         turno.setDia(dia);
         turno.setHora(hora);
 
+        if (dto.getEstado() != null) {
+        	turno.setEstado(dto.getEstado());
+        } else {
+            turno.setEstado(EstadoTurno.EN_PROCESO);
+        }
+
         return turno;
     }
 
@@ -72,17 +68,39 @@ public class TurnoMapper {
         turno.setServicio(servicio);
         turno.setDia(dia);
         turno.setHora(hora);
+
+        if (dto.getEstado() != null) {
+            turno.setEstado(dto.getEstado());
+        } else {
+            turno.setEstado(EstadoTurno.EN_PROCESO);
+        }
+
         return turno;
     }
-
+    
     public TurnoResponseDTO toResponse(Turno turno) {
         return TurnoResponseDTO.builder()
-        		.idTurno(turno.getIdTurno())
-        		.clienteNombre(turno.getCliente().getNombre())  // uso de getNombreCompleto()
-                .empleadoNombre(turno.getEmpleado().getNombre()) // uso de getNombreCompleto()
+                .idTurno(turno.getIdTurno())
+                .idCliente(turno.getCliente().getIdPersona())
+                .idEmpleado(turno.getEmpleado().getIdPersona())
+                .idServicio(turno.getServicio().getId())
+                .clienteNombre(turno.getCliente().getNombreCompleto())
+                .empleadoNombre(turno.getEmpleado().getNombreCompleto())
                 .servicioNombre(turno.getServicio().getNombre())
-                .dia(turno.getDia().getFecha()) 
+                .dia(turno.getDia().getFecha())
                 .hora(turno.getHora().getHora())
+                .estado(turno.getEstado().name()) 
+                .build();
+    }
+
+    public TurnoRequestDTO toRequest(Turno turno) {
+        return TurnoRequestDTO.builder()
+                .idCliente(turno.getCliente().getIdPersona())
+                .idEmpleado(turno.getEmpleado().getIdPersona())
+                .idServicio(turno.getServicio().getId())
+                .fecha(turno.getDia().getFecha())
+                .hora(turno.getHora().getHora())
+                .estado(turno.getEstado())
                 .build();
     }
 }
