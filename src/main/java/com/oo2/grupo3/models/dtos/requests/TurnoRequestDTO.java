@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.oo2.grupo3.models.enums.EstadoTurno;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -31,6 +33,7 @@ public class TurnoRequestDTO {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime hora;
 
+    private EstadoTurno estado;
 	
 }
 
