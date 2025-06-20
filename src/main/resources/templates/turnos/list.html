@@ -4,10 +4,7 @@
     <title>Lista de Turnos</title>
 	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
-		<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
-
-		
-	
+	<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 </head>
 <body>
 <h1>Listado de Turnos</h1>
@@ -44,13 +41,11 @@
 
     <button type="submit">Buscar</button>
 	
-
 	<a th:href="@{/index}">
 	    <button type="button">Regresar al inicio</button>
 	</a>
 	
 </form>
-
 
 <hr/>
 
@@ -63,16 +58,29 @@
         <th>Servicio</th>
         <th>Día</th>
         <th>Hora</th>
+        <th>Estado</th> 
+        <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="turno : ${turnos}">
         <td th:text="${turno.idTurno}">ID</td>
-		<td th:text="${turno.clienteNombre}">Cliente</td>
-		<td th:text="${turno.empleadoNombre}">Empleado</td>
+        <td th:text="${turno.clienteNombre}">Cliente</td>
+        <td th:text="${turno.empleadoNombre}">Empleado</td>
         <td th:text="${turno.servicioNombre}">Servicio</td>
-		<td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
-		    <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
+        <td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
+        <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
+        <td th:text="${turno.estado}">Estado</td>
+        <td>
+			<form th:action="@{/turnos/editar/{id}(id=${turno.idTurno})}" method="get" style="display:inline;">
+			        <button type="submit" class="btn btn-primary btn-sm">Editar</button>
+			    </form>
+            
+			<form th:action="@{/turnos/cancelar/{id}(id=${turno.idTurno})}" method="post" style="display:inline;">
+			    <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+			    <button type="submit" onclick="return confirm('¿Seguro que desea cancelar este turno?');">Cancelar</button>
+			</form>
+        </td>
     </tr>
     </tbody>
 </table>
