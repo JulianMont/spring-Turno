@@ -16,14 +16,14 @@ import lombok.*;
 @Builder
 public class TurnoRequestDTO {
 
-    @NotNull(message = "El ID del cliente es obligatorio")
-    private Integer idCliente;
+	@NotNull(message = "Debe seleccionar un cliente")
+	private Integer idCliente;
 
-    @NotNull(message = "El ID del empleado es obligatorio")
-    private Integer idEmpleado;
+	@NotNull(message = "Debe seleccionar un empleado")
+	private Integer idEmpleado;
 
-    @NotNull(message = "El ID del servicio es obligatorio")
-    private Integer idServicio;
+	@NotNull(message = "Debe seleccionar un servicio")
+	private Integer idServicio;
     
     @NotNull(message = "La fecha es obligatoria")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
