@@ -10,7 +10,10 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">📍 Ubicaciones Registradas</h2>
-        <a href="/ubicaciones/form" class="btn btn-success">Nueva Ubicación</a>
+		<div class="d-flex gap-2">
+		        <a th:href="@{/ubicaciones/form}" class="btn btn-success">Nueva Ubicación</a>
+		        <a th:href="@{/index}" class="btn btn-secondary">Volver al inicio</a>
+		    </div>
     </div>
 
     <div class="card shadow">
