@@ -3,9 +3,6 @@ package com.oo2.grupo3.models.dtos.responses;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.oo2.grupo3.models.entities.Dia;
-import com.oo2.grupo3.models.entities.Hora;
-
 import lombok.*;
 
 @Getter

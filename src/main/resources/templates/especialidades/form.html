@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
 </head>
 <body>
+	<div th:if="${errorMessage}" class="error">
+	    <p th:text="${errorMessage}"></p>
+	</div>
+
     <div class="container mt-4">
         <h1 th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'"></h1>
         

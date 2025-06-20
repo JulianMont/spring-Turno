@@ -20,10 +20,9 @@ import lombok.Setter;
 
 public class HorarioLaboralRequestDTO {
 	
+	private Integer idHorarioLaboral;
 
     @NotNull(message = "El día de la semana es obligatorio")
-
-  
     private DiaSemana diaSemana;
 
     @NotNull(message = "La hora de inicio es obligatoria")

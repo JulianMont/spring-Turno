@@ -1,29 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Listado de Empleados</title>
 </head>
 <body>
-	
-	<a th:href="@{/index}">
-	    <button type="button">Volver al Inicio</button>
-	</a>
-
-    <h1>Listado de Empleados</h1>
-
-    <!-- Botón para crear nuevo empleado -->
-    <a th:href="@{/empleados/form}">
-        <button type="button">Crear Nuevo Empleado</button>
+    
+    <a th:href="@{/index}">
+        <button type="button">Volver al Inicio</button>
     </a>
 
-    <!-- 🔎 Formulario de filtros -->
+    <h1>Listado de Empleados</h1>
+    <span sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/empleados/form}">
+            <button type="button">Crear Nuevo Empleado</button>
+        </a>
+    </span>
+
+
     <form th:action="@{/empleados/list}" method="get">
         <input type="text" name="nombre" placeholder="Buscar por nombre" th:value="${nombre}">
-        <input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}">
+        
+ 
+        <span sec:authorize="hasRole('ADMIN')">
+            <input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}">
+        </span>
 
         <select name="especialidadId">
-            <option value="">-- Todas las especialidades --</option>
+            <option value="0">Todas las especialidades</option>
             <option th:each="esp : ${especialidades}"
                     th:value="${esp.idEspecialidad}"
                     th:text="${esp.nombre}"
@@ -33,18 +38,27 @@
         <button type="submit">Filtrar</button>
     </form>
 
-    <!-- 📋 Lista de empleados -->
+
     <div th:if="${empleados.content.size() > 0}">
         <div th:each="empleado : ${empleados.content}">
             <hr>
-            <h3 th:text="|${empleado.nombre} ${empleado.apellido} (Legajo: ${empleado.legajo})|"></h3>
+            <h3>
+                <span th:text="|${empleado.nombre} ${empleado.apellido}|"></span>
+                <span sec:authorize="hasRole('ADMIN')" th:text="| (Legajo: ${empleado.legajo})|"></span>
+            </h3>
+
             <p th:text="|DNI: ${empleado.dni}|"></p>
             <p th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
+			<p><strong>Email:</strong> <span th:text="${empleado.user.email}"></span></p> 
 
             <a th:href="@{'/empleados/' + ${empleado.idPersona}}">Ver Detalles</a>
-            <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
-            <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
-               onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
+
+
+            <span sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
+                <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
+                   onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
+            </span>
         </div>
     </div>
 

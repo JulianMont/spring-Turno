@@ -1,5 +1,7 @@
 package com.oo2.grupo3.models.dtos.responses;
 
+import com.oo2.grupo3.models.dtos.requests.UserRequestDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ public class PersonaResponseDTO {
     private String nombre;
     private String apellido;
     private Integer dni;
+    private UserRequestDTO user;
 
     public String getNombreCompleto() {
         return nombre + " " + apellido;

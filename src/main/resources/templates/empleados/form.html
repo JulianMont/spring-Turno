@@ -10,6 +10,18 @@
 
 <form th:action="@{${empleadoRequestDTO.idPersona == null} ? '/empleados/save' : '/empleados/editar/' + ${empleadoRequestDTO.idPersona}}"
       th:object="${empleadoRequestDTO}" method="post">
+	  
+	 <div>
+	      <label for="email">Email:</label>
+	      <input type="email" id="email" th:field="*{user.email}" />
+	      <div th:if="${#fields.hasErrors('user.email')}" th:errors="*{user.email}"></div>
+	 </div>
+
+	 <div>
+	      <label for="password">Contraseña:</label>
+	      <input type="password" id="password" th:field="*{user.password}" />
+	      <div th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}"></div>
+	 </div>
 
     <div>
         <label for="nombre">Nombre:</label>

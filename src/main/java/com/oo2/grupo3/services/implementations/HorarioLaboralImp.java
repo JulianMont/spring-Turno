@@ -1,5 +1,6 @@
 package com.oo2.grupo3.services.implementations;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +40,46 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 
     @Override
     public HorarioLaboralResponseDTO agregarHorario(Integer idEmpleado, HorarioLaboralRequestDTO dto) {
+    	
         Empleado empleado = empleadoRepository.findById(idEmpleado)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
+        
+        if (dto.getHoraFin().isBefore(dto.getHoraInicio()) || dto.getHoraFin().equals(dto.getHoraInicio())) {
+            throw new IllegalArgumentException("La hora de fin debe ser posterior a la hora de inicio.");
+        }
+        
+        long tiempoExistente = empleado.getHorariosLaborales().stream()
+                .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
+                .mapToLong(h -> Duration.between(h.getHoraInicio(), h.getHoraFin()).toMinutes())
+                .sum();
+        
+        //filtro para que 1 turno o 2 no superen las 8 hrs , las horas extras preguntar si es mejor agregarlas desde una entitie nueva
+        long tiempoNuevo = java.time.Duration.between(dto.getHoraInicio(), dto.getHoraFin()).toMinutes();
+        // Recordatorio: horas*minutos = tiempo 
+        if( (tiempoExistente + tiempoNuevo) > 8*60) {
+        	throw new IllegalArgumentException("El total de horas trabajadas no puede ser superior a 8 hrs");
+        }
+        
+        //filtro para evitar que se pisen los horarios. ej: 8 a 12 y 10 a 14
+        
+        boolean superpone = empleado.getHorariosLaborales().stream()
+        	    .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
+        	    .anyMatch(h -> 
+        	        (dto.getHoraInicio().isBefore(h.getHoraFin()) && dto.getHoraFin().isAfter(h.getHoraInicio()))
+        	    );
 
+        if (superpone) {
+        	
+        	throw new IllegalArgumentException("El horario que ingresaste se superpone con otro existente");
+        }
+        
+        //filtro para tener 2 turnos por dia
+        long cantHorarioXDia = empleado.getHorariosLaborales().stream().filter(h -> h.getDiaSemana().equals(dto.getDiaSemana())).count();
+        if(cantHorarioXDia >= 2) {
+        	throw new IllegalArgumentException("No se pueden registrar más de 2 horarios en el mismo día.");
+        }
+        
+        
         HorarioLaboral horario = modelMapper.map(dto, HorarioLaboral.class);
         horario.setEmpleado(empleado);
 
@@ -57,6 +95,51 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
         if (!horario.getEmpleado().getIdPersona().equals(idEmpleado)) {
             throw new IllegalArgumentException("El horario no pertenece al empleado especificado");
         }
+        
+        if (dto.getHoraFin().isBefore(dto.getHoraInicio()) || dto.getHoraFin().equals(dto.getHoraInicio())) {
+            throw new IllegalArgumentException("La hora de fin debe ser posterior a la hora de inicio.");
+        }
+
+        //filtro para tener 2 turnos por dia
+        long cantHorarioXDia = horario.getEmpleado().getHorariosLaborales().stream()
+        	    .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
+        	    .filter(h -> !h.getIdHorarioLaboral().equals(dto.getIdHorarioLaboral())) // excluir el que estoy editando
+        	    .count();
+        if(cantHorarioXDia >= 2) {
+        	throw new IllegalArgumentException("No se pueden registrar más de 2 horarios en el mismo día.");
+        }
+        
+        long tiempoExistente = horario.getEmpleado().getHorariosLaborales().stream()
+                .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
+                .mapToLong(h -> Duration.between(h.getHoraInicio(), h.getHoraFin()).toMinutes())
+                .sum();
+        
+        //filtro para que 1 turno o 2 no superen las 8 hrs , las horas extras preguntar si es mejor agregarlas desde una entitie nueva
+        long tiempoNuevo = java.time.Duration.between(dto.getHoraInicio(), dto.getHoraFin()).toMinutes();
+        // Recordatorio: horas*minutos = tiempo 
+        if( (tiempoExistente + tiempoNuevo) > 8*60) {
+        	throw new IllegalArgumentException("El total de horas trabajadas no puede ser superior a 8 hrs");
+        }
+        
+        //filtro para evitar que se pisen los horarios. ej: 8 a 12 y 10 a 14
+        
+        boolean superpone = horario.getEmpleado().getHorariosLaborales().stream()
+        	    .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
+        	    .anyMatch(h -> 
+        	        (dto.getHoraInicio().isBefore(h.getHoraFin()) && dto.getHoraFin().isAfter(h.getHoraInicio()))
+        	    );
+
+        if (superpone) {
+        	
+        	throw new IllegalArgumentException("El horario que ingresaste se superpone con otro existente");
+        }
+        
+        
+        
+        
+        
+        
+        
 
         horario.setDiaSemana(dto.getDiaSemana());
         horario.setHoraInicio(dto.getHoraInicio());

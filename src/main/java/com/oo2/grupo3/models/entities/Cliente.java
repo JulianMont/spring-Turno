@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
+import lombok.experimental.SuperBuilder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -22,11 +22,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @DiscriminatorValue("CLIENTE")
 public class Cliente extends Persona {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Turno> turnosSolicitados = new ArrayList<>();
 
 }

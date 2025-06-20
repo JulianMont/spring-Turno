@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,7 +49,6 @@ public class EmpleadoController {
 	}
 	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-
     @GetMapping("/list")
     public String listarEmpleados(
             @RequestParam(required = false) String nombre,
@@ -59,26 +57,9 @@ public class EmpleadoController {
             Pageable pageable,
             Model model
     ) {
-        Page<EmpleadoResponseDTO> empleados;
-
-        //TODO: Crear listarEmpleadosByLegajo , listarEmpleadosByNombre y listarEmpleadosByEspecialidad
-        
-        //Generado temporalmente para mostrar en video el funcionamiento de los filtros
-        
-        if (legajo != null && !legajo.isBlank()) {
-            EmpleadoResponseDTO empleado = empleadoService.findByLegajo(legajo);
-            if (empleado != null) {
-                empleados = new PageImpl<>(List.of(empleado), pageable, 1);
-            } else {
-                empleados = Page.empty(pageable);
-            }
-        } else if (nombre != null && !nombre.isBlank()) {
-            empleados = empleadoService.findByNombre(nombre, pageable);
-        } else if (especialidadId != null && especialidadId > 0) {
-            empleados = empleadoService.findByIdEspecialidad(especialidadId, pageable);
-        } else {
-            empleados = empleadoService.findAll(pageable);
-        }
+		
+		
+        Page<EmpleadoResponseDTO> empleados = empleadoService.buscarEmpleadosFiltrados(nombre, legajo, especialidadId, pageable);
 
         List<EspecialidadResponseDTO> especialidades = especialidadService.traerEspecialidades();
 
