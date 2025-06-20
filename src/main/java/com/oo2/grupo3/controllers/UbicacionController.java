@@ -1,5 +1,6 @@
 package com.oo2.grupo3.controllers;
 
+import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.UbicacionRequestDTO;
 import com.oo2.grupo3.models.entities.Ubicacion;
 import com.oo2.grupo3.services.interfaces.IUbicacionService;
@@ -31,7 +32,7 @@ public class UbicacionController {
     @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioUbicacion(Model model) {
         model.addAttribute("ubicacionRequestDTO", new UbicacionRequestDTO());
-        return "ubicaciones/form";
+        return ViewRouteHelper.UBICACION_FORM;
     }
 
     @PostMapping("/form")
@@ -42,12 +43,12 @@ public class UbicacionController {
         Model model) {
 
         if (result.hasErrors()) {
-            return "ubicaciones/form";
+            return ViewRouteHelper.UBICACION_FORM;
         }
 
         if (ubicacionService.existeUbicacion(dto.getDireccion(), dto.getCiudad())) {
             model.addAttribute("errorMensaje", "Ya existe una ubicación con esa dirección en esa ciudad.");
-            return "ubicaciones/form";
+            return ViewRouteHelper.UBICACION_FORM;
         }
 
         Ubicacion ubicacion = modelMapper.map(dto, Ubicacion.class);
@@ -56,10 +57,10 @@ public class UbicacionController {
             ubicacionService.save(ubicacion);
         } catch (Exception e) {
             model.addAttribute("errorMensaje", e.getMessage());
-            return "ubicaciones/form";
+            return ViewRouteHelper.UBICACION_FORM;
         }
 
-        return "redirect:/ubicaciones/list";
+        return ViewRouteHelper.REDIRECT_UBICACION_LIST;
     }
 
     
@@ -68,7 +69,7 @@ public class UbicacionController {
     public String listarUbicaciones(Model model) {
         List<Ubicacion> ubicaciones = ubicacionService.getAll();
         model.addAttribute("ubicaciones", ubicaciones);
-        return "ubicaciones/list"; 
+        return ViewRouteHelper.UBICACION_LIST;
     }
     
 }
