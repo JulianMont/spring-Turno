@@ -32,9 +32,12 @@ public interface ITurnoService {
 	TurnoResponseDTO solicitarTurno(TurnoRequestDTO turnoRequestDTO);
 	List<Turno> getAll();
 	Page<TurnoResponseDTO> findAll(Pageable pageable);
-	//Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, Integer idDia, Integer idHora);
-	Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha, LocalTime hora);
 
+	Turno generarTurno(Integer idCliente, Integer idEmpleado, Integer idServicio, LocalDate fecha, LocalTime hora);
+	
+	public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora, Integer idTurnoActual);
 	void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora);
+	void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora);
+	void cancelarTurno(Integer id);
 }
 

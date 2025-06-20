@@ -11,4 +11,5 @@ public interface IDiaService {
     Dia findById(Integer id);
     
     Optional<Dia> findByFecha(LocalDate fecha);
+	Dia save(Dia dia);
 }
