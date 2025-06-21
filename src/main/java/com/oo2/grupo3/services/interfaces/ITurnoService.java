@@ -39,5 +39,10 @@ public interface ITurnoService {
 	void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora);
 	void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora);
 	void cancelarTurno(Integer id);
+
+	
+	
+	boolean empleadoTrabajaEseDiaYHora(Empleado empleado, Dia dia, Hora hora);
+	
 }
 

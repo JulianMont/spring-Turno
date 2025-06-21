@@ -1,9 +1,13 @@
 package com.oo2.grupo3.services.implementations;
 
+import com.oo2.grupo3.exceptions.TurnoOcupadoException;
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.*;
+
+import com.oo2.grupo3.models.enums.DiaSemana;
+
 import com.oo2.grupo3.models.enums.EstadoTurno;
 import com.oo2.grupo3.repositories.*;
 import com.oo2.grupo3.services.interfaces.IDiaService;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -100,6 +105,42 @@ public class TurnoServiceImp implements ITurnoService {
 
 
     @Override
+    public void cancelarTurno(Integer idTurno) {
+        Turno turno = turnoRepository.findById(idTurno)
+            .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
+
+        turno.setEstado(EstadoTurno.CANCELADO);
+        turnoRepository.save(turno);
+    }
+
+    @Override
+    public void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        System.out.println("Actualizando turno ID: " + id);
+
+        Turno turno = findById(id);
+
+        Dia dia = diaService.findByFecha(nuevaFecha)
+                .orElseGet(() -> diaService.save(Dia.builder().fecha(nuevaFecha).build()));
+
+        Hora hora = horaRepository.findByHoraAndDia(nuevaHora, dia)
+                .orElseGet(() -> horaRepository.save(Hora.builder().hora(nuevaHora).dia(dia).build()));
+
+        if (!empleadoTrabajaEseDiaYHora(turno.getEmpleado(), dia, hora)) {
+            throw new RuntimeException("El empleado no trabaja en ese día y horario.");
+        }
+
+        System.out.println("Validando disponibilidad del cliente y el empleado...");
+        validarDisponibilidadClienteYEmpleado(turno.getCliente(), turno.getEmpleado(), dia, hora, id);
+
+        turno.setDia(dia);
+        turno.setHora(hora);
+
+        turnoRepository.save(turno);
+        System.out.println("Turno actualizado con éxito.");
+    }
+
+
+    @Override
     public List<Turno> getAll() {
         return turnoRepository.findAll();
     }
@@ -112,7 +153,6 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
         Servicio servicio = servicioRepository.findById(turnoRequestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
-
 
         LocalTime horaTurno = turnoRequestDTO.getHora();
         int hora = horaTurno.getHour();
@@ -134,6 +174,10 @@ public class TurnoServiceImp implements ITurnoService {
         }
         Hora horaEntidad = horas.get(0);
 
+        if (!empleadoTrabajaEseDiaYHora(empleado, dia, horaEntidad)) {
+            throw new RuntimeException("El empleado no trabaja en ese día y horario.");
+        }
+
         validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaEntidad);
 
         Turno turno = Turno.builder()
@@ -145,6 +189,7 @@ public class TurnoServiceImp implements ITurnoService {
                 .build();
 
         Turno turnoGuardado = turnoRepository.save(turno);
+
         
        //agregarrr para que cuadno se crea el turno, se manda el email
         /*Notificacion noti = Notificacion.builder()
@@ -158,7 +203,6 @@ public class TurnoServiceImp implements ITurnoService {
 
         	notificacionService.save(noti);*/ // Esto también enviará el correo
 
-        
         return turnoMapper.toResponse(turnoGuardado);
     }
 
@@ -183,10 +227,26 @@ public class TurnoServiceImp implements ITurnoService {
 
     @Override
     public Turno save(Turno turno) {
+        Dia dia = turno.getDia();
+        Hora hora = turno.getHora();
+        Empleado empleado = turno.getEmpleado();
+
+        // Usamos método para convertir el DayOfWeek a DiaSemana correcto
+        DiaSemana diaSemana = convertirDayOfWeekADiaSemana(dia.getFecha().getDayOfWeek());
+        LocalTime horaTurno = hora.getHora();
+
+        boolean trabaja = empleado.getHorariosLaborales().stream()
+            .anyMatch(hl -> hl.getDiaSemana() == diaSemana
+                    && !horaTurno.isBefore(hl.getHoraInicio())
+                    && !horaTurno.isAfter(hl.getHoraFin()));
+
+        if (!trabaja) {
+            throw new RuntimeException("El empleado no trabaja en el día y hora especificados.");
+        }
+
         return turnoRepository.save(turno);
     }
-    
-    
+
     @Override
     public Turno save(TurnoRequestDTO requestDTO) {
         Cliente cliente = clienteRepository.findById(requestDTO.getIdCliente())
@@ -197,6 +257,7 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
         // Validación hora
+      
         LocalTime horaTurno = requestDTO.getHora();
         int hora = horaTurno.getHour();
         int minutos = horaTurno.getMinute();
@@ -223,17 +284,20 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseGet(() -> {
                     Hora nuevaHora = new Hora();
                     nuevaHora.setHora(requestDTO.getHora());
-                    nuevaHora.setDia(dia);  
+
+                    nuevaHora.setDia(dia);
                     return horaRepository.save(nuevaHora);
                 });
 
+        if (!empleadoTrabajaEseDiaYHora(empleado, dia, horaDia)) {
+            throw new RuntimeException("El empleado no trabaja en ese día y horario.");
+        }
+
         validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaDia);
-        
+
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, horaDia);
         return turnoRepository.save(turno);
     }
-
-
 
 
     @Override
@@ -259,10 +323,10 @@ public class TurnoServiceImp implements ITurnoService {
         if (horas.isEmpty()) {
             throw new RuntimeException("Hora no encontrada");
         }
-        Hora horaEntidad = horas.get(0); // o alguna lógica para decidir
+        Hora horaEntidad = horas.get(0);
 
         validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaEntidad);
-        
+
         Turno nuevoTurno = new Turno();
         nuevoTurno.setCliente(cliente);
         nuevoTurno.setEmpleado(empleado);
@@ -277,22 +341,48 @@ public class TurnoServiceImp implements ITurnoService {
     @Override
     public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora) {
         if (turnoRepository.existsByEmpleadoAndDiaAndHora(empleado, dia, hora)) {
-            throw new RuntimeException("El empleado ya tiene un turno asignado en ese día y hora.");
+            throw new TurnoOcupadoException("El empleado ya tiene un turno asignado en ese día y hora.");
         }
         if (turnoRepository.existsByClienteAndDiaAndHora(cliente, dia, hora)) {
-            throw new RuntimeException("El cliente ya tiene un turno asignado en ese día y hora.");
+            throw new TurnoOcupadoException("El cliente ya tiene un turno asignado en ese día y hora.");
         }
     }
-    
+
     @Override
     public void validarDisponibilidadClienteYEmpleado(Cliente cliente, Empleado empleado, Dia dia, Hora hora, Integer idTurnoActual) {
         if (turnoRepository.existsByEmpleadoAndDiaAndHoraAndIdTurnoNot(empleado, dia, hora, idTurnoActual)) {
-            throw new RuntimeException("El empleado ya tiene un turno asignado en ese día y hora.");
+            throw new TurnoOcupadoException("El empleado ya tiene un turno asignado en ese día y hora.");
         }
         if (turnoRepository.existsByClienteAndDiaAndHoraAndIdTurnoNot(cliente, dia, hora, idTurnoActual)) {
-            throw new RuntimeException("El cliente ya tiene un turno asignado en ese día y hora.");
+            throw new TurnoOcupadoException("El cliente ya tiene un turno asignado en ese día y hora.");
         }
     }
-	
-}
 
+    @Override
+    public boolean empleadoTrabajaEseDiaYHora(Empleado empleado, Dia dia, Hora hora) {
+        if (empleado.getHorariosLaborales() == null) return false;
+
+        DiaSemana diaSemana = convertirDayOfWeekADiaSemana(dia.getFecha().getDayOfWeek());
+        LocalTime horaTurno = hora.getHora();
+
+        return empleado.getHorariosLaborales().stream()
+                .anyMatch(horario ->
+                        horario.getDiaSemana() == diaSemana &&
+                                !horaTurno.isBefore(horario.getHoraInicio()) &&
+                                !horaTurno.isAfter(horario.getHoraFin())
+                );
+    }
+
+    private DiaSemana convertirDayOfWeekADiaSemana(DayOfWeek dayOfWeek) {
+        return switch (dayOfWeek) {
+            case MONDAY -> DiaSemana.LUNES;
+            case TUESDAY -> DiaSemana.MARTES;
+            case WEDNESDAY -> DiaSemana.MIERCOLES;
+            case THURSDAY -> DiaSemana.JUEVES;
+            case FRIDAY -> DiaSemana.VIERNES;
+            case SATURDAY -> DiaSemana.SABADO;
+            case SUNDAY -> DiaSemana.DOMINGO;
+        };
+    }
+
+}

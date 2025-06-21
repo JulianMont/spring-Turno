@@ -10,6 +10,7 @@ import com.oo2.grupo3.models.entities.HorarioLaboral;
 @Repository
 public interface IHorarioLaboralRepository extends JpaRepository<HorarioLaboral, Integer> {
     
+	List<HorarioLaboral> findByEmpleado_IdPersonaOrderByDiaSemanaAscHoraInicioAsc(Integer empleadoId);
 
     Empleado findByEmpleado_IdPersona(Integer idEmpleado);
     

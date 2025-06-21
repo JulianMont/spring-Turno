@@ -1,10 +1,16 @@
+
 package com.oo2.grupo3.services.implementations;
 
 
 
 import java.text.MessageFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -15,7 +21,11 @@ import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Especialidad;
+
+import com.oo2.grupo3.models.entities.HorarioLaboral;
 import com.oo2.grupo3.models.entities.UserEntity;
+import com.oo2.grupo3.models.enums.DiaSemana;
+
 import com.oo2.grupo3.models.enums.RoleType;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IEspecialidadRepository;
@@ -186,4 +196,62 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 				.map(empleado -> modelMapper.map(empleado, EmpleadoResponseDTO.class));
 	}
 
+	
+	public List<LocalDate> getDiasDisponiblesParaEmpleado(Integer idEmpleado, LocalDate desde, LocalDate hasta) {
+	    Empleado empleado = empleadoRepository.findById(idEmpleado)
+	            .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+	    // Suponiendo que querés un rango de fechas desde->hasta
+	    List<LocalDate> diasDisponibles = new ArrayList<>();
+
+	    for (LocalDate fecha = desde; !fecha.isAfter(hasta); fecha = fecha.plusDays(1)) {
+	        DiaSemana diaEnum = fromJavaDayOfWeek(fecha.getDayOfWeek());
+	        boolean trabajaEseDia = empleado.getHorariosLaborales().stream()
+	        	    .anyMatch(hl -> hl.getDiaSemana().equals(diaEnum));
+	        if (trabajaEseDia) {
+	            diasDisponibles.add(fecha);
+	        }
+	    }
+	    return diasDisponibles;
+	}
+
+	public List<LocalTime> getHorasDisponiblesParaEmpleadoEnDia(Integer idEmpleado, LocalDate fecha) {
+	    Empleado empleado = empleadoRepository.findById(idEmpleado)
+	            .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+	    DiaSemana diaEnum = fromJavaDayOfWeek(fecha.getDayOfWeek());
+
+	    // Buscar horarios laborales para ese día
+	    List<HorarioLaboral> horariosDia = empleado.getHorariosLaborales().stream()
+	        .filter(hl -> hl.getDiaSemana().equals(diaEnum))
+	        .collect(Collectors.toList());
+
+	    List<LocalTime> horasDisponibles = new ArrayList<>();
+	    for (HorarioLaboral hl : horariosDia) {
+	        LocalTime hora = hl.getHoraInicio();
+	        while (!hora.isAfter(hl.getHoraFin())) {
+	            horasDisponibles.add(hora);
+	            hora = hora.plusMinutes(30); // asumiendo intervalos de 30 min
+	        }
+	    }
+
+	    return horasDisponibles;
+	}
+
+
+	
+	
+	private DiaSemana fromJavaDayOfWeek(DayOfWeek dayOfWeek) {
+	    return switch (dayOfWeek) {
+	        case MONDAY -> DiaSemana.LUNES;
+	        case TUESDAY -> DiaSemana.MARTES;
+	        case WEDNESDAY -> DiaSemana.MIERCOLES;
+	        case THURSDAY -> DiaSemana.JUEVES;
+	        case FRIDAY -> DiaSemana.VIERNES;
+	        case SATURDAY -> DiaSemana.SABADO;
+	        case SUNDAY -> DiaSemana.DOMINGO;
+	    };
+	}
+	
+	
 }

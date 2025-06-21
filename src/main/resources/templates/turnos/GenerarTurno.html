@@ -8,24 +8,22 @@
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 </head>
 
-<!-- BODY -->
 <body>
 <div class="container mt-5">
     <h2 class="mb-4">Generar Nuevo Turno</h2>
 
     <form th:action="@{/turnos/GenerarTurno}" method="post" th:object="${turnoRequest}">
        
-		<!-- Cliente -->
-		<div class="mb-3">
-			<label for="idCliente" class="form-label">Cliente</label>
-			<select th:field="*{idCliente}" class="form-select" required>
-			        <option value="" disabled selected style="color: gray;">Seleccione un cliente</option>
-					    Seleccione un cliente
-					</option>
-			        <option th:each="cliente : ${clientes}"
-			                th:value="${cliente.idPersona}"
-			                th:text="${cliente.getNombreCompleto}"></option>
-			    </select>
+        <!-- Cliente -->
+        <div class="mb-3">
+            <label for="idCliente" class="form-label">Cliente</label>
+            <select th:field="*{idCliente}" class="form-select" required>
+                <option value="" disabled selected style="color: gray;">Seleccione un cliente</option>
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.idPersona}"
+                        th:text="${cliente.getNombreCompleto}"></option>
+            </select>
+        </div>
 
         <!-- Empleado -->
         <div class="mb-3">
@@ -139,13 +137,12 @@
                         "SABADO": 6
                     };
 
+                    // Corregido: diaSemana es un solo valor, no array
                     horarios.forEach(horario => {
-                        horario.diasSemana.forEach(dia => {
-                            const diaNum = diasJS[dia.toUpperCase()];
-                            if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
-                                diasPermitidos.push(diaNum);
-                            }
-                        });
+                        const diaNum = diasJS[horario.diaSemana.toUpperCase()];
+                        if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
+                            diasPermitidos.push(diaNum);
+                        }
                     });
 
                     crearPikaday(diasPermitidos);
@@ -179,3 +176,4 @@
     });
 </script>
 </body>
+</html>

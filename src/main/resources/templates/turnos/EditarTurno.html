@@ -66,10 +66,8 @@
         </div>
     </form>
 </div>
-
-<!-- Script con Thymeleaf embebido -->
-<!-- Script con Thymeleaf embebido -->
-<script th:inline="javascript">
+  
+  
     let picker;
     let diasPermitidos = [];
 
@@ -99,35 +97,44 @@
     document.addEventListener('DOMContentLoaded', () => {
         const horaSelect = document.getElementById('hora');
 
-        if (!empleadoId || empleadoId === 0) {
+        const empleadoInput = document.querySelector('input[name="idEmpleado"]');
+
+        const idEmpleado = empleadoInput?.value;
+
+        if (!idEmpleado) {
             crearPikaday([]);
+            horaSelect.innerHTML = '<option disabled selected>Seleccione una hora</option>';
             return;
         }
 
-        fetch(`/empleados/${empleadoId}/horarios`)
+        fetch(`/empleados/${idEmpleado}/horarios`)
             .then(res => res.json())
             .then(horarios => {
-                horaSelect.innerHTML = '<option value="" disabled>Seleccione una hora</option>';
-                diasPermitidos = [];
-
+                horaSelect.innerHTML = '';
                 if (horarios.length === 0) {
-                    horaSelect.innerHTML += '<option disabled>No hay horarios disponibles</option>';
+                    horaSelect.innerHTML = '<option disabled>No hay horarios disponibles</option>';
+
                     crearPikaday([]);
                     return;
                 }
 
                 const diasJS = {
-                    "DOMINGO": 0, "LUNES": 1, "MARTES": 2,
-                    "MIERCOLES": 3, "JUEVES": 4, "VIERNES": 5, "SABADO": 6
+
+                    "DOMINGO": 0,
+                    "LUNES": 1,
+                    "MARTES": 2,
+                    "MIERCOLES": 3,
+                    "JUEVES": 4,
+                    "VIERNES": 5,
+                    "SABADO": 6
                 };
 
                 horarios.forEach(horario => {
-                    horario.diasSemana.forEach(dia => {
-                        const diaNum = diasJS[dia.toUpperCase()];
-                        if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
-                            diasPermitidos.push(diaNum);
-                        }
-                    });
+                    const diaNum = diasJS[horario.diaSemana.toUpperCase()];
+                    if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
+                        diasPermitidos.push(diaNum);
+                    }
+
                 });
 
                 crearPikaday(diasPermitidos);
@@ -135,6 +142,7 @@
                 horarios.forEach(horario => {
                     const [startH, startM] = horario.horaInicio.split(':').map(Number);
                     const [endH, endM] = horario.horaFin.split(':').map(Number);
+
                     let startMin = startH * 60 + startM;
                     const endMin = endH * 60 + endM;
 
@@ -142,8 +150,9 @@
                         const hh = String(Math.floor(startMin / 60)).padStart(2, '0');
                         const mm = String(startMin % 60).padStart(2, '0');
                         const timeStr = `${hh}:${mm}`;
-						const selected = (timeStr === horaActual) ? 'selected="selected"' : '';
-                        horaSelect.innerHTML += `<option value="${timeStr}" ${selected}>${timeStr}</option>`;
+
+                        horaSelect.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
+
                         startMin += 30;
                     }
                 });
@@ -154,6 +163,7 @@
             });
     });
 </script>
+
 
 </body>
 </html>

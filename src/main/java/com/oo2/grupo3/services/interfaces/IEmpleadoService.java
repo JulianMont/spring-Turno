@@ -1,6 +1,7 @@
 package com.oo2.grupo3.services.interfaces;
 
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -40,6 +41,7 @@ public interface IEmpleadoService {
 	EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado,EmpleadoRequestDTO empleadoRequestDTO) throws Exception;
 	boolean borrarEmpleado(Integer idEmpleado) throws Exception;
 
+	
 	public List<Empleado> getAllEmpleados();
 
 	Object getAll();

@@ -3,6 +3,7 @@ package com.oo2.grupo3.controllers;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -57,9 +58,14 @@ public class EmpleadoController {
     }
 	
 	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
-	@GetMapping("/{idEmpleado}/horarios")
-	public @ResponseBody List<HorarioLaboralResponseDTO> obtenerHorariosEmpleado(@PathVariable Integer idEmpleado) {
-	    return horarioLaboralService.traerHorariosLaborales(idEmpleado);
+	@GetMapping("/empleados/{idEmpleado}/horarios")
+	public List<HorarioLaboralResponseDTO> getHorariosEmpleado(@PathVariable Integer idEmpleado) {
+		EmpleadoResponseDTO empleado = empleadoService.findById(idEmpleado);
+	    List<HorarioLaboralResponseDTO> horarios = empleado.getHorariosLaborales()
+	            .stream()
+	            .map(hl -> modelMapper.map(hl, HorarioLaboralResponseDTO.class))
+	            .collect(Collectors.toList());
+	    return horarios;
 	}
 	
 	

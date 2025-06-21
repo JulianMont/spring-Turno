@@ -1,10 +1,11 @@
-package com.oo2.grupo3.models.dtos.responses;
+package com.oo2.grupo3.models.dtos.requests;
 
 import java.time.LocalTime;
 
-import com.oo2.grupo3.models.entities.HorarioLaboral;
 import com.oo2.grupo3.models.enums.DiaSemana;
 
+
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,17 +17,18 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class HorarioLaboralResponseDTO {
+
+public class HorarioLaboralRequestDTO {
     
     private Integer idHorarioLaboral;
+
+    @NotNull(message = "El día de la semana es obligatorio")
     private DiaSemana diaSemana;
+
+    @NotNull(message = "La hora de inicio es obligatoria")
     private LocalTime horaInicio;
+
+    @NotNull(message = "La hora de fin es obligatoria")
     private LocalTime horaFin;
 
-    public HorarioLaboralResponseDTO(HorarioLaboral hl) {
-        this.idHorarioLaboral = hl.getIdHorarioLaboral();
-        this.diaSemana = hl.getDiaSemana();
-        this.horaInicio = hl.getHoraInicio();
-        this.horaFin = hl.getHoraFin();
-    }
 }

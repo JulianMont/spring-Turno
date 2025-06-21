@@ -15,6 +15,7 @@ import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IHoraService;
 import com.oo2.grupo3.services.interfaces.IServicioService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
+import com.oo2.grupo3.exceptions.HorarioNoDisponibleException;
 import com.oo2.grupo3.exceptions.TurnoOcupadoException;
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 
@@ -88,17 +89,23 @@ public class TurnoController {
         return "turnos/EditarTurno";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/turnos/cancelar/{id}")
-    public String cancelarTurno(@PathVariable Integer id) {
-        turnoService.cancelarTurno(id);
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
+    @PostMapping("/cancelar/{id}")
+    public String cancelarTurno(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            turnoService.cancelarTurno(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Turno cancelado exitosamente.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cancelar el turno: " + e.getMessage());
+        }
+
         return ViewRouteHelper.TURNO_LIST_REDIRECT;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<TurnoResponseDTO> save(@RequestBody @Valid TurnoRequestDTO requestDTO) {
-        Turno turno = turnoMapper.toEntity(requestDTO);
+        Turno turno = turnoMapper.toEntity(requestDTO);	
         Turno saved = turnoService.save(turno);
         return ResponseEntity.ok(turnoMapper.toResponse(saved));
     }
@@ -128,7 +135,7 @@ public class TurnoController {
         return ViewRouteHelper.TURNO_GENERAR;
     }
     
-    @PreAuthorize("hasRole('ADMIN')") // pasarlo a CLIENTE
+    @PreAuthorize("hasRole('ADMIN')") // o cambiar a CLIENTE si hace falta
     @PostMapping("/GenerarTurno")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,
@@ -159,30 +166,37 @@ public class TurnoController {
             }
         }
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("clientes", clienteService.getAllClientes());
-            model.addAttribute("empleados", empleadoService.getAllEmpleados());
-            model.addAttribute("servicios", servicioService.getAll());
-            model.addAttribute("dias", diaService.getAll());
-            model.addAttribute("horas", horaService.getAll());
-            return ViewRouteHelper.TURNO_GENERAR;
+        // Intentar guardar el turno si no hay errores
+        if (!bindingResult.hasErrors()) {
+            try {
+                turnoService.save(turnoRequestDTO);
+                redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+                return ViewRouteHelper.TURNO_LIST_REDIRECT;
+
+            } catch (TurnoOcupadoException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
+
+            } catch (HorarioNoDisponibleException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
+
+            } catch (RuntimeException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Error inesperado: " + e.getMessage());
+            }
         }
 
-        try {
-            turnoService.save(turnoRequestDTO);
-            redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
-            return ViewRouteHelper.TURNO_LIST_REDIRECT;
-        } catch (TurnoOcupadoException e) {
-            e.printStackTrace();
-            model.addAttribute("errorMensaje", "Error al generar el turno: " + e.getMessage());
-            model.addAttribute("clientes", clienteService.getAllClientes());
-            model.addAttribute("empleados", empleadoService.getAllEmpleados());
-            model.addAttribute("servicios", servicioService.getAll());
-            model.addAttribute("dias", diaService.getAll());
-            model.addAttribute("horas", horaService.getAll());
-            return ViewRouteHelper.TURNO_GENERAR;
-        }
+        model.addAttribute("clientes", clienteService.getAllClientes());
+        model.addAttribute("empleados", empleadoService.getAllEmpleados());
+        model.addAttribute("servicios", servicioService.getAll());
+        model.addAttribute("dias", diaService.getAll());
+        model.addAttribute("horas", horaService.getAll());
+
+        return ViewRouteHelper.TURNO_GENERAR;
     }
+
+
+
+    
+    
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/editar/{id}")
@@ -192,10 +206,10 @@ public class TurnoController {
                               RedirectAttributes redirectAttributes,
                               Model model) {
 
+
         if (turnoRequestDTO.getFecha() == null) {
             bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "La fecha es obligatoria");
         }
-
         if (turnoRequestDTO.getHora() == null) {
             bindingResult.rejectValue("hora", "error.turnoRequestDTO", "La hora es obligatoria");
         }
@@ -203,49 +217,48 @@ public class TurnoController {
         if (!bindingResult.hasErrors()) {
             DayOfWeek diaSemana = turnoRequestDTO.getFecha().getDayOfWeek();
             if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
-                bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "No se permiten turnos los fines de semana.");
+                bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "No se pueden generar turnos los sábados ni domingos.");
             }
 
             int minutos = turnoRequestDTO.getHora().getMinute();
             if (minutos != 0 && minutos != 30) {
-                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Solo se permiten intervalos de 30 minutos.");
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden ser en intervalos de 30 minutos.");
             }
 
             int hora = turnoRequestDTO.getHora().getHour();
             if (hora < 8 || hora > 19 || (hora == 19 && minutos == 30)) {
-                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Horario fuera del rango permitido (08:00 a 20:00).");
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden generarse entre las 08:00 y las 20:00.");
             }
         }
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("idTurno", id);
-            model.addAttribute("horas", horaService.getAll());
+        // Si no hay errores, intentar actualizar
+        if (!bindingResult.hasErrors()) {
+            try {
+                turnoService.actualizarFechaYHora(id, turnoRequestDTO.getFecha(), turnoRequestDTO.getHora());
+                redirectAttributes.addFlashAttribute("mensaje", "¡Turno editado correctamente!");
+                return ViewRouteHelper.TURNO_LIST_REDIRECT;
 
-            Turno turno = turnoService.findById(id);
-            model.addAttribute("nombreCliente", turno.getCliente().getNombreCompleto());
-            model.addAttribute("nombreEmpleado", turno.getEmpleado().getNombreCompleto());
-            model.addAttribute("nombreServicio", turno.getServicio().getNombre());
+            } catch (TurnoOcupadoException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
 
-            return "turnos/EditarTurno";
+            } catch (HorarioNoDisponibleException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
+
+            } catch (RuntimeException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Error inesperado: " + e.getMessage());
+            }
         }
 
-        try {
-            turnoService.actualizarFechaYHora(id, turnoRequestDTO.getFecha(), turnoRequestDTO.getHora());
-            redirectAttributes.addFlashAttribute("mensaje", "Turno actualizado correctamente.");
-            return ViewRouteHelper.TURNO_LIST_REDIRECT;
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al actualizar el turno: " + e.getMessage());
-            model.addAttribute("idTurno", id);
-            model.addAttribute("horas", horaService.getAll());
+        // Recargar datos si hubo errores
+        model.addAttribute("clientes", clienteService.getAllClientes());
+        model.addAttribute("empleados", empleadoService.getAllEmpleados());
+        model.addAttribute("servicios", servicioService.getAll());
+        model.addAttribute("dias", diaService.getAll());
+        model.addAttribute("horas", horaService.getAll());
 
-            Turno turno = turnoService.findById(id);
-            model.addAttribute("nombreCliente", turno.getCliente().getNombreCompleto());
-            model.addAttribute("nombreEmpleado", turno.getEmpleado().getNombreCompleto());
-            model.addAttribute("nombreServicio", turno.getServicio().getNombre());
-
-            return "turnos/EditarTurno";
-        }
+        return ViewRouteHelper.TURNO_GENERAR;
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
