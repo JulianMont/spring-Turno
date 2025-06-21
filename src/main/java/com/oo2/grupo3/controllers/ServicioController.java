@@ -89,7 +89,7 @@ public class ServicioController {
     }
     
     @GetMapping("/list")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public String listarServicios(Model model) {
         model.addAttribute("servicios", servicioService.getAll());
         return "servicios/list";

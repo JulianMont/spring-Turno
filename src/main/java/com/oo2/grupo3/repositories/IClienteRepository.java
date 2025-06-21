@@ -22,5 +22,8 @@ public interface IClienteRepository extends JpaRepository<Cliente, Serializable>
 	Optional<Cliente> findByDni(int dni);
 
 
+	public abstract boolean existsByDni(int dni);
+
+
 
 }

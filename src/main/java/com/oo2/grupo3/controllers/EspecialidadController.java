@@ -30,7 +30,7 @@ public class EspecialidadController {
         this.especialidadService = especialidadService;
     }
     
-    @GetMapping("list")
+    @GetMapping("/list")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public String listaEspecialidades(Model model) {
     	

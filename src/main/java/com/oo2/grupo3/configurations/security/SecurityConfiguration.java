@@ -22,72 +22,72 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-//    private final UserServiceImp userServiceImp;
-//
-//    public SecurityConfiguration(UserServiceImp userServiceImp) {
-//        this.userServiceImp = userServiceImp;
-//    }
-	
-	private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-	public SecurityConfiguration(UserDetailsService userDetailsService) {
-	    this.userDetailsService = userDetailsService;
-	}
-
+    public SecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/css/*", "/imgs/*", "/js/*", "/vendor/bootstrap/css/*",
-                            "/vendor/jquery/*", "/vendor/bootstrap/js/*", "/api/v1/**").permitAll();
-                    auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/loginSuccess", "/auth/logout").permitAll();
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> {
+                // Recursos públicos
+                auth.requestMatchers("/css/**", "/js/**", "/imgs/**", "/vendor/**").permitAll();
 
-                    auth.anyRequest().authenticated();
-                })
-                .formLogin(login -> {
-                    login.loginPage("/auth/login");
-                    login.loginProcessingUrl("/auth/loginProcess");//POST
-                    login.usernameParameter("username");
-                    login.passwordParameter("password");
-                    login.defaultSuccessUrl("/auth/loginSuccess", true);
-                    login.permitAll();
-                })
-                .logout(logout -> {
-                    logout.logoutUrl("/auth/logout");//POST
-                    logout.logoutSuccessUrl("/auth/login");
-                    logout.permitAll();
-                })
-                .build();
+                // Páginas públicas
+                auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/register", "/auth/registerProcess", "/auth/logout", "/home/index").permitAll();
+
+                // Acceso para USER (clientes)
+                auth.requestMatchers(
+                    "/turnos/**",
+                    "/especialidades/list",
+                    "/servicios/list"
+                ).hasRole("USER");
+
+                // Todo lo demás: solo ADMIN
+                auth.anyRequest().hasRole("ADMIN");
+            })
+            .formLogin(login -> {
+                login.loginPage("/auth/login");
+                login.loginProcessingUrl("/auth/loginProcess");
+                login.usernameParameter("username");
+                login.passwordParameter("password");
+                login.defaultSuccessUrl("/home/index", true);
+                login.permitAll();
+            })
+            .logout(logout -> {
+                logout.logoutUrl("/auth/logout");
+                logout.logoutSuccessUrl("/auth/login");
+                logout.permitAll();
+            })
+            .build();
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-//        provider.setUserDetailsService(userServiceImp);
         provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
-
 
 

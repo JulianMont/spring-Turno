@@ -70,40 +70,8 @@ public class TurnoServiceImp implements ITurnoService {
                 .hora(turno.getHora().getHora())
                 .build();
     }
+   
     
-    @Override
-    public void cancelarTurno(Integer idTurno) {
-        Turno turno = turnoRepository.findById(idTurno)
-            .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
-        
-        turno.setEstado(EstadoTurno.CANCELADO);
-        turnoRepository.save(turno);
-    }
-    
-    
-    @Override
-    public void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora) {
-        System.out.println("Actualizando turno ID: " + id);
-
-        Turno turno = findById(id);
-
-        Dia dia = diaService.findByFecha(nuevaFecha)
-                .orElseGet(() -> diaService.save(Dia.builder().fecha(nuevaFecha).build()));
-
-        Hora hora = horaRepository.findByHoraAndDia(nuevaHora, dia)
-                .orElseGet(() -> horaRepository.save(Hora.builder().hora(nuevaHora).dia(dia).build()));
-
-        System.out.println("Validando disponibilidad del cliente y el empleado...");
-        validarDisponibilidadClienteYEmpleado(turno.getCliente(), turno.getEmpleado(), dia, hora, id);
-
-        turno.setDia(dia);
-        turno.setHora(hora);
-
-        turnoRepository.save(turno);
-        System.out.println("Turno actualizado con éxito.");
-    }
-
-
     @Override
     public void cancelarTurno(Integer idTurno) {
         Turno turno = turnoRepository.findById(idTurno)
@@ -113,6 +81,7 @@ public class TurnoServiceImp implements ITurnoService {
         turnoRepository.save(turno);
     }
 
+    
     @Override
     public void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora) {
         System.out.println("Actualizando turno ID: " + id);

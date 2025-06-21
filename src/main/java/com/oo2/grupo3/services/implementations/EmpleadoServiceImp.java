@@ -91,7 +91,9 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		if(empleadoRepository.existsByLegajo(empleadoRequestDTO.getLegajo())) {
 			 throw new IllegalArgumentException("Ya existe un empleado con el legajo " + empleadoRequestDTO.getLegajo());
 		}
-		
+		if(empleadoRepository.existsByDni(empleadoRequestDTO.getDni())){
+			throw new IllegalArgumentException("Ya existe un empleado con este DNI " + empleadoRequestDTO.getDni());
+		}
 		//especialidad existe?
 		 Especialidad especialidad = especialidadRepository.findById(empleadoRequestDTO.getEspecialidadId())
 			        .orElseThrow(() -> new EntityNotFoundException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));

@@ -59,7 +59,7 @@ public class TurnoController {
     private TurnoMapper turnoMapper;
 
     // --- API REST ---
-
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     public List<TurnoResponseDTO> findAll() {
         return turnoService.findAll().stream()
@@ -73,7 +73,7 @@ public class TurnoController {
         return turnoMapper.toResponse(turno);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEditarTurno(@PathVariable Integer id, Model model) {
         Turno turno = turnoService.findById(id);
@@ -99,6 +99,7 @@ public class TurnoController {
             redirectAttributes.addFlashAttribute("error", "Error al cancelar el turno: " + e.getMessage());
         }
 
+
         return ViewRouteHelper.TURNO_LIST_REDIRECT;
     }
 
@@ -121,7 +122,7 @@ public class TurnoController {
     
     // pasarlo a CLIENTE
 
-    @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/GenerarTurno")
     public String mostrarFormularioTurno(Model model, Principal principal) {
         TurnoRequestDTO turnoRequest = new TurnoRequestDTO();
@@ -135,7 +136,9 @@ public class TurnoController {
         return ViewRouteHelper.TURNO_GENERAR;
     }
     
-    @PreAuthorize("hasRole('ADMIN')") // o cambiar a CLIENTE si hace falta
+
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')") // pasarlo a CLIENTE
+
     @PostMapping("/GenerarTurno")
     public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
                                               BindingResult bindingResult,
@@ -196,9 +199,9 @@ public class TurnoController {
 
 
     
-    
+   
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/editar/{id}")
     public String editarTurno(@PathVariable Integer id,
                               @Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
@@ -260,7 +263,8 @@ public class TurnoController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     @GetMapping("/list")
     public String listarTurnos(
             @RequestParam(required = false) Integer clienteId,
