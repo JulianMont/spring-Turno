@@ -1,5 +1,7 @@
 package com.oo2.grupo3.controllers;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oo2.grupo3.helpers.ViewRouteHelper;
 import com.oo2.grupo3.models.dtos.requests.HorarioLaboralRequestDTO;
@@ -45,7 +48,7 @@ public class HorarioLaboralController {
             model.addAttribute("idEmpleado", idEmpleado);
             return ViewRouteHelper.HORARIO_FORM;
         }
-        
+
         try {
             horarioLaboralService.agregarHorario(idEmpleado, dto);
         } catch (Exception e) {
@@ -108,4 +111,13 @@ public class HorarioLaboralController {
         }
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
+    
+    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
+    @GetMapping
+    @ResponseBody
+    public List<HorarioLaboralResponseDTO> obtenerHorariosLaboralesDelEmpleado(@PathVariable Integer idEmpleado) {
+        return horarioLaboralService.obtenerHorariosDelEmpleado(idEmpleado);
+    }
+    
+    
 }

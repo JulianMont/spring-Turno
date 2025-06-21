@@ -3,10 +3,10 @@ package com.oo2.grupo3.controllers;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,9 +58,14 @@ public class EmpleadoController {
     }
 	
 	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
-	@GetMapping("/{idEmpleado}/horarios")
-	public @ResponseBody List<HorarioLaboralResponseDTO> obtenerHorariosEmpleado(@PathVariable Integer idEmpleado) {
-	    return horarioLaboralService.traerHorariosLaborales(idEmpleado);
+	@GetMapping("/empleados/{idEmpleado}/horarios")
+	public List<HorarioLaboralResponseDTO> getHorariosEmpleado(@PathVariable Integer idEmpleado) {
+		EmpleadoResponseDTO empleado = empleadoService.findById(idEmpleado);
+	    List<HorarioLaboralResponseDTO> horarios = empleado.getHorariosLaborales()
+	            .stream()
+	            .map(hl -> modelMapper.map(hl, HorarioLaboralResponseDTO.class))
+	            .collect(Collectors.toList());
+	    return horarios;
 	}
 	
 	
@@ -74,26 +79,9 @@ public class EmpleadoController {
             Pageable pageable,
             Model model
     ) {
-        Page<EmpleadoResponseDTO> empleados;
-
-        //TODO: Crear listarEmpleadosByLegajo , listarEmpleadosByNombre y listarEmpleadosByEspecialidad
-        
-        //Generado temporalmente para mostrar en video el funcionamiento de los filtros
-        
-        if (legajo != null && !legajo.isBlank()) {
-            EmpleadoResponseDTO empleado = empleadoService.findByLegajo(legajo);
-            if (empleado != null) {
-                empleados = new PageImpl<>(List.of(empleado), pageable, 1);
-            } else {
-                empleados = Page.empty(pageable);
-            }
-        } else if (nombre != null && !nombre.isBlank()) {
-            empleados = empleadoService.findByNombre(nombre, pageable);
-        } else if (especialidadId != null && especialidadId > 0) {
-            empleados = empleadoService.findByIdEspecialidad(especialidadId, pageable);
-        } else {
-            empleados = empleadoService.findAll(pageable);
-        }
+		
+		
+        Page<EmpleadoResponseDTO> empleados = empleadoService.buscarEmpleadosFiltrados(nombre, legajo, especialidadId, pageable);
 
         List<EspecialidadResponseDTO> especialidades = especialidadService.traerEspecialidades();
 
