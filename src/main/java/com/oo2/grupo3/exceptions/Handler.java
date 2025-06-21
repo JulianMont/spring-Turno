@@ -5,22 +5,33 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+
+import jakarta.servlet.http.HttpServletRequest;
+
 @ControllerAdvice
 public class Handler {
 
-
 	@ExceptionHandler(TurnoOcupadoException.class)
+	public String handleTurnoOcupadoException(TurnoOcupadoException ex, Model model, HttpServletRequest request) {
+	    model.addAttribute("errorMensaje", ex.getMessage());
 
-    public String manejarTurnoOcupado(TurnoOcupadoException ex, Model model) {
-        model.addAttribute("mensaje", ex.getMessage());
-        return "error/turnoOcupado";
-    }
+	    String referer = request.getHeader("referer");
+	    if (referer != null && referer.contains("/editar/")) {
+	        model.addAttribute("urlVolver", referer); 
+	    } else {
+	        model.addAttribute("urlVolver", "/turnos/GenerarTurno"); 
+	    }
 
+	    return "error/turnoOcupado";
+	}
+	
 
     @ExceptionHandler(HorarioNoDisponibleException.class)
     public String handleHorarioNoDisponibleException(HorarioNoDisponibleException ex, Model model) {
         model.addAttribute("errorMensaje", ex.getMessage());
-        return "error/horarioNoDisponible";  // Otra vista para otro error
+
+        return "error/horarioNoDisponible";  
+
 
     }
 
@@ -28,7 +39,8 @@ public class Handler {
     public String handleGeneralException(Exception ex, Model model) {
         model.addAttribute("errorMensaje", "Ha ocurrido un error inesperado: " + ex.getMessage());
 
-        return "error/errorGeneral";  // Vista genérica para errores no contemplados
+        return "error/errorGeneral";  
+
     }
 }
 
