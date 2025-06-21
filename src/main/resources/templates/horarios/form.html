@@ -6,62 +6,34 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
+	
+	<div th:if="${errorMessage}" class="error">
+	    <p th:text="${errorMessage}"></p>
+	</div>
 
-<h2 th:text="${modo == 'editar' ? 'Editar Horario Laboral' : 'Crear Nuevo Horario Laboral'}"></h2>
+<h2 th:text="${horarioLaboral.idHorarioLaboral == null ? 'Crear Nuevo Horario Laboral' : 'Editar Horario Laboral'}"></h2>
 
 <form th:object="${horarioLaboral}"
-      th:action="@{${modo == 'editar'} ? 
-                  '/empleados/' + ${idEmpleado} + '/horarios/' + ${idHorario} + '/actualizar' : 
-                  '/empleados/' + ${idEmpleado} + '/horarios/save'}"
+      th:action="@{${horarioLaboral.idHorarioLaboral == null} ? 
+                  '/empleados/' + ${idEmpleado} + '/horarios/save' : 
+                  '/empleados/' + ${idEmpleado} + '/horarios/' + ${horarioLaboral.idHorarioLaboral} + '/actualizar'}"
       method="post">
 
+    <input type="hidden" th:field="*{idHorarioLaboral}" />
+
     <div>
-        <label>Días de la Semana:</label><br/>
-
-        <label>
-            <input type="checkbox" name="diasSemana" value="LUNES"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).LUNES)}"/>
-            Lunes
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="MARTES"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).MARTES)}"/>
-            Martes
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="MIERCOLES"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).MIERCOLES)}"/>
-            Miércoles
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="JUEVES"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).JUEVES)}"/>
-            Jueves
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="VIERNES"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).VIERNES)}"/>
-            Viernes
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="SABADO"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).SABADO)}"/>
-            Sábado
-        </label><br/>
-        
-        <label>
-            <input type="checkbox" name="diasSemana" value="DOMINGO"
-                   th:checked="${horarioLaboral.diasSemana != null and horarioLaboral.diasSemana.contains(T(com.oo2.grupo3.models.enums.DiaSemana).DOMINGO)}"/>
-            Domingo
-        </label><br/>
-
-        <div th:if="${#fields.hasErrors('diasSemana')}" th:errors="*{diasSemana}" class="error"></div>
-
+        <label for="diaSemana">Día de la Semana:</label>
+        <select id="diaSemana" name="diaSemana" th:field="*{diaSemana}">
+            <option value="" disabled>Seleccione un día</option>
+            <option value="LUNES" th:selected="${horarioLaboral.diaSemana == 'LUNES'}">Lunes</option>
+            <option value="MARTES" th:selected="${horarioLaboral.diaSemana == 'MARTES'}">Martes</option>
+            <option value="MIERCOLES" th:selected="${horarioLaboral.diaSemana == 'MIERCOLES'}">Miércoles</option>
+            <option value="JUEVES" th:selected="${horarioLaboral.diaSemana == 'JUEVES'}">Jueves</option>
+            <option value="VIERNES" th:selected="${horarioLaboral.diaSemana == 'VIERNES'}">Viernes</option>
+            <option value="SABADO" th:selected="${horarioLaboral.diaSemana == 'SABADO'}">Sábado</option>
+            <option value="DOMINGO" th:selected="${horarioLaboral.diaSemana == 'DOMINGO'}">Domingo</option>
+        </select>
+        <div th:if="${#fields.hasErrors('diaSemana')}" th:errors="*{diaSemana}" class="error"></div>
     </div>
 
     <div>
