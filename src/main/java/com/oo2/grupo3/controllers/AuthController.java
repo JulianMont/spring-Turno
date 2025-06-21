@@ -29,7 +29,7 @@ public class AuthController {
         this.modelMapper = modelMapper;
 	}
 	
-    //GET auth/login --> Return the view in path authentication/login
+ 
     @GetMapping("/login")
     public String login(Model model,
                         @RequestParam(name="error",required=false) String error,
@@ -39,7 +39,7 @@ public class AuthController {
         return ViewRouteHelper.USER_LOGIN;
     }
 
-    //GET auth/loginSuccess --> Return the view in path home/index if login is successful
+    
     @GetMapping("/loginSuccess")
     public String loginCheck() {
         return "redirect:/home/index";
@@ -62,7 +62,7 @@ public class AuthController {
         }
 
         try {
-            clienteService.save(clienteDTO); // Este método debe crear Cliente + User
+            clienteService.save(clienteDTO); 
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorDni", e.getMessage());
             return "authentication/register";

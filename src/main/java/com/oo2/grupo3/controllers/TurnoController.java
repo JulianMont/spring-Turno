@@ -144,7 +144,7 @@ public class TurnoController {
                                               BindingResult bindingResult,
                                               RedirectAttributes redirectAttributes,
                                               Model model) {
-
+		
         if (turnoRequestDTO.getFecha() == null) {
             bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "La fecha es obligatoria");
         }
@@ -162,16 +162,17 @@ public class TurnoController {
             if (minutos != 0 && minutos != 30) {
                 bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden ser en intervalos de 30 minutos.");
             }
-
+            
             int hora = turnoRequestDTO.getHora().getHour();
             if (hora < 8 || hora > 19 || (hora == 19 && minutos == 30)) {
                 bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden generarse entre las 08:00 y las 20:00.");
             }
         }
-
+        
         // Intentar guardar el turno si no hay errores
         if (!bindingResult.hasErrors()) {
             try {
+            
                 turnoService.save(turnoRequestDTO);
                 redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
                 return ViewRouteHelper.TURNO_LIST_REDIRECT;
@@ -186,13 +187,13 @@ public class TurnoController {
                 bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Error inesperado: " + e.getMessage());
             }
         }
-
+        
         model.addAttribute("clientes", clienteService.getAllClientes());
         model.addAttribute("empleados", empleadoService.getAllEmpleados());
         model.addAttribute("servicios", servicioService.getAll());
         model.addAttribute("dias", diaService.getAll());
         model.addAttribute("horas", horaService.getAll());
-
+        System.out.println("FIN GENERAr TURNO");
         return ViewRouteHelper.TURNO_GENERAR;
     }
 

@@ -8,21 +8,27 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class Handler {
 
+
 	@ExceptionHandler(TurnoOcupadoException.class)
+
     public String manejarTurnoOcupado(TurnoOcupadoException ex, Model model) {
         model.addAttribute("mensaje", ex.getMessage());
         return "error/turnoOcupado";
     }
-	
-	@ExceptionHandler(HorarioNoDisponibleException.class)
+
+
+    @ExceptionHandler(HorarioNoDisponibleException.class)
     public String handleHorarioNoDisponibleException(HorarioNoDisponibleException ex, Model model) {
         model.addAttribute("errorMensaje", ex.getMessage());
-        return "error/horarioNoDisponible";
+        return "error/horarioNoDisponible";  // Otra vista para otro error
+
     }
 
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception ex, Model model) {
         model.addAttribute("errorMensaje", "Ha ocurrido un error inesperado: " + ex.getMessage());
-        return "error/errorGeneral";  
+
+        return "error/errorGeneral";  // Vista genérica para errores no contemplados
     }
 }
+

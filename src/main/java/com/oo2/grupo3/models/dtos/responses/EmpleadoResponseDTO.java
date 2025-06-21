@@ -18,9 +18,6 @@ import lombok.Setter;
 public class EmpleadoResponseDTO extends PersonaResponseDTO {
 
   
-	
-	//faltan datos de persona
-
     private String legajo;
 
     private EspecialidadResponseDTO especialidad;

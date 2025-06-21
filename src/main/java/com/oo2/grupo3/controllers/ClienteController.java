@@ -49,12 +49,6 @@ public class ClienteController {
         return "cliente/list";
     }
 
-/*    @GetMapping ("/listTurnos")
-    public String listarTurnos(Model model) {
-    	List<TurnoResponseDTO> turnos = clienteService.obtenerTurnosDelCliente(id); 
-        model.addAttribute("turnos", turnos);
-        return "cliente/list";
-		*/
     @GetMapping("/guardar")
     public String mostrarFormularioNuevoCliente(Model model) {
         model.addAttribute("cliente", new ClienteRequestDTO());
@@ -92,11 +86,11 @@ public class ClienteController {
         return "redirect:/cliente/list";
     }
 
-    /*@GetMapping("/eliminar/{id}")
+    @GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable int id) {
         clienteService.remove(id);
-        return "redirect:/cliente";
-    }*/
+        return "redirect:/cliente/list";
+    }
 }
 
 //// --- SOLO ADMIN ---

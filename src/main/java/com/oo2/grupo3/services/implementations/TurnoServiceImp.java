@@ -218,7 +218,8 @@ public class TurnoServiceImp implements ITurnoService {
 
     @Override
     public Turno save(TurnoRequestDTO requestDTO) {
-        Cliente cliente = clienteRepository.findById(requestDTO.getIdCliente())
+    	 
+    	Cliente cliente = clienteRepository.findById(requestDTO.getIdCliente())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         Empleado empleado = empleadoRepository.findById(requestDTO.getIdEmpleado())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
@@ -265,7 +266,7 @@ public class TurnoServiceImp implements ITurnoService {
         validarDisponibilidadClienteYEmpleado(cliente, empleado, dia, horaDia);
 
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, horaDia);
-        return turnoRepository.save(turno);
+        return  turnoRepository.save(turno);
     }
 
 

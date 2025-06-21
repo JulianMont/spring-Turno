@@ -39,21 +39,18 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> {
-                // Recursos públicos
-                auth.requestMatchers("/css/**", "/js/**", "/imgs/**", "/vendor/**").permitAll();
+            	// Recursos públicos
+            	auth.requestMatchers("/css/**", "/js/**", "/imgs/**", "/vendor/**").permitAll();
 
-                // Páginas públicas
-                auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/register", "/auth/registerProcess", "/auth/logout", "/home/index").permitAll();
+            	// Páginas públicas
+            	auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/register", "/auth/registerProcess", "/auth/logout", "/home/index").permitAll();
 
-                // Acceso para USER (clientes)
-                auth.requestMatchers(
-                    "/turnos/**",
-                    "/especialidades/list",
-                    "/servicios/list"
-                ).hasRole("USER");
+            	// Acceso común a ambos roles
+            	auth.requestMatchers("/especialidades/list", "/servicios/list", "/turnos/**").hasAnyRole("USER", "ADMIN");
 
-                // Todo lo demás: solo ADMIN
-                auth.anyRequest().hasRole("ADMIN");
+            	// Todo lo demás solo ADMIN
+            	auth.anyRequest().hasRole("ADMIN");
+
             })
             .formLogin(login -> {
                 login.loginPage("/auth/login");

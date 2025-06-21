@@ -27,15 +27,6 @@ public class HorarioLaboralResponseDTO {
     private DiaSemana diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-
-
-    /*public HorarioLaboralResponseDTO(HorarioLaboral hl) {
-        this.idHorarioLaboral = hl.getIdHorarioLaboral();
-        this.diaSemana = hl.getDiaSemana();
-        this.horaInicio = hl.getHoraInicio();
-        this.horaFin = hl.getHoraFin();
-    }*/
-
 }
 
 

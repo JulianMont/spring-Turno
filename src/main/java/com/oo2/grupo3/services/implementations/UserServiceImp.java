@@ -108,12 +108,6 @@ public class UserServiceImp implements UserDetailsService, IUserService {
     }
     
     
-//    @Override
-//    public void deleteUser(Integer userId) throws Exception {
-//        UserEntity user = userRepository.findById(userId)
-//            .orElseThrow(() -> new EntityNotFoundException("Usuario con id " + userId + " no existe"));
-//        userRepository.delete(user);
-//    }
 
 		
 		
