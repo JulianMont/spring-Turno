@@ -134,13 +134,14 @@ public class TurnoController {
 
         return ViewRouteHelper.TURNO_GENERAR;
     }
-    
-    @PreAuthorize("hasRole('ADMIN')") // o cambiar a CLIENTE si hace falta
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/GenerarTurno")
-    public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
-                                              BindingResult bindingResult,
-                                              RedirectAttributes redirectAttributes,
-                                              Model model) {
+    public String guardarTurnoDesdeFormulario(
+            @Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
 
         if (turnoRequestDTO.getFecha() == null) {
             bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "La fecha es obligatoria");
@@ -151,47 +152,37 @@ public class TurnoController {
 
         if (!bindingResult.hasErrors()) {
             DayOfWeek diaSemana = turnoRequestDTO.getFecha().getDayOfWeek();
+            int minutos = turnoRequestDTO.getHora().getMinute();
+            int hora = turnoRequestDTO.getHora().getHour();
+
             if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
                 bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "No se pueden generar turnos los sábados ni domingos.");
             }
 
-            int minutos = turnoRequestDTO.getHora().getMinute();
             if (minutos != 0 && minutos != 30) {
                 bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden ser en intervalos de 30 minutos.");
             }
 
-            int hora = turnoRequestDTO.getHora().getHour();
             if (hora < 8 || hora > 19 || (hora == 19 && minutos == 30)) {
                 bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Los turnos solo pueden generarse entre las 08:00 y las 20:00.");
             }
         }
 
-        // Intentar guardar el turno si no hay errores
-        if (!bindingResult.hasErrors()) {
-            try {
-                turnoService.save(turnoRequestDTO);
-                redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
-                return ViewRouteHelper.TURNO_LIST_REDIRECT;
-
-            } catch (TurnoOcupadoException e) {
-                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
-
-            } catch (HorarioNoDisponibleException e) {
-                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
-
-            } catch (RuntimeException e) {
-                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Error inesperado: " + e.getMessage());
-            }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("clientes", clienteService.getAllClientes());
+            model.addAttribute("empleados", empleadoService.getAllEmpleados());
+            model.addAttribute("servicios", servicioService.getAll());
+            model.addAttribute("dias", diaService.getAll());
+            model.addAttribute("horas", horaService.getAll());
+            return ViewRouteHelper.TURNO_GENERAR;
         }
 
-        model.addAttribute("clientes", clienteService.getAllClientes());
-        model.addAttribute("empleados", empleadoService.getAllEmpleados());
-        model.addAttribute("servicios", servicioService.getAll());
-        model.addAttribute("dias", diaService.getAll());
-        model.addAttribute("horas", horaService.getAll());
-
-        return ViewRouteHelper.TURNO_GENERAR;
+        // Acá no se captura la excepción
+        turnoService.save(turnoRequestDTO);
+        redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+        return ViewRouteHelper.TURNO_LIST_REDIRECT;
     }
+
 
 
 
