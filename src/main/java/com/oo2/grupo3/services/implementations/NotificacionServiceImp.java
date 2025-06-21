@@ -14,8 +14,14 @@ import com.oo2.grupo3.services.interfaces.INotificacionService;
 
 @Service
 public class NotificacionServiceImp implements INotificacionService {
-	private INotificacionRepository notificacionRepository;
-	private JavaMailSender mailSender;
+	private final INotificacionRepository notificacionRepository;
+	private final JavaMailSender mailSender;
+	
+	public NotificacionServiceImp(INotificacionRepository notificacionRepository, JavaMailSender mailSender) {
+        this.notificacionRepository = notificacionRepository;
+        this.mailSender = mailSender;
+    }
+	
 	@Override
 	public List<Notificacion> getAll() {
 		
@@ -50,20 +56,31 @@ public class NotificacionServiceImp implements INotificacionService {
 	}
 
 	@Override
+	
 	public Notificacion save(Notificacion notificacion) {
-		enviarCorreo(notificacion);
-		return notificacionRepository.save(notificacion);
+	    try {
+	        enviarCorreo(notificacion);
+	    } catch (Exception e) {
+	        System.err.println("Error enviando correo: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return notificacionRepository.save(notificacion);
 	}
+
 	
 	private void enviarCorreo(Notificacion notificacion) {
-        SimpleMailMessage mensaje = new SimpleMailMessage();
-       //implemtentar cuando user sea padre de persona, porque si no mo va aggarar el mail del cleinte
-       
-       mensaje.setTo(notificacion.getPersona().getUser().getEmail());// quizas tenga que ser get cliente
-        //mensaje.setTo(notificacion.getPersona().getEmail());
-        mensaje.setSubject("Notificación: " + notificacion.getTipo());
-        mensaje.setText(notificacion.getMensaje());
+	    Persona persona = notificacion.getPersona();
 
-        mailSender.send(mensaje);
-    }
+	    if (persona == null || persona.getUser() == null || persona.getUser().getEmail() == null) {
+	        throw new IllegalStateException("La persona no tiene usuario o email asociado.");
+	    }
+	    System.out.println("Enviando email a: " + persona.getUser().getEmail());
+	    SimpleMailMessage mensaje = new SimpleMailMessage();
+	    mensaje.setTo(persona.getUser().getEmail());
+	    mensaje.setSubject("Notificación: " + notificacion.getTipo());
+	    mensaje.setText(notificacion.getMensaje());
+
+	    mailSender.send(mensaje);
+	}
+
 }
