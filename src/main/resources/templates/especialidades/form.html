@@ -1,30 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <title th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'">Especialidad</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-</head>
-<body>
-	<div th:if="${errorMessage}" class="error">
-	    <p th:text="${errorMessage}"></p>
-	</div>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-    <div class="container mt-4">
-        <h1 th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'"></h1>
-        
-        <form th:action="${id != null} ? @{/especialidades/update/{id}(id=${id})} : @{/especialidades/save}" 
-              th:object="${especialidadRequestDTO}" method="post">
-            
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" th:field="*{nombre}" id="nombre" class="form-control" placeholder="Ingrese nombre" />
-                <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
-            </div>
-            
-            <button type="submit" class="btn btn-success" th:text="${id != null} ? 'Actualizar' : 'Guardar'"></button>
-            <a class="btn btn-secondary" th:href="@{/especialidades/list}">Cancelar</a>
-        </form>
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'">Especialidad</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+
+<body class="d-flex flex-column min-vh-100 bg-light">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white fw-semibold" th:href="@{/home/index}"
+         onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+        Sistema de Turnos
+      </a>
+
+      <div class="d-flex align-items-center ms-auto gap-3">
+        <div class="dropdown">
+          <button
+            class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 fw-semibold"
+            type="button"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            onmouseover="this.style.color='#ffc107'"
+            onmouseout="this.style.color='white'">
+            <i class="bi bi-person-circle fs-4"></i>
+            <span sec:authentication="name"></span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li class="px-3 py-2">
+              <form th:action="@{/auth/logout}" method="post" class="m-0 p-0">
+                <button type="submit" class="btn btn-danger btn-sm rounded w-100">
+                  Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="container mt-4 flex-grow-1">
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+      <p th:text="${errorMessage}"></p>
+    </div>
+
+    <h1 th:text="${id != null} ? 'Editar Especialidad' : 'Nueva Especialidad'" class="mb-4"></h1>
+
+    <form th:action="${id != null} ? @{/especialidades/update/{id}(id=${id})} : @{/especialidades/save}"
+          th:object="${especialidadRequestDTO}" method="post">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" th:field="*{nombre}" id="nombre" class="form-control" placeholder="Ingrese nombre" />
+        <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+      </div>
+
+      <button type="submit" class="btn btn-success" th:text="${id != null} ? 'Actualizar' : 'Guardar'"></button>
+      <a class="btn btn-secondary ms-2" th:href="@{/especialidades/list}">Cancelar</a>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

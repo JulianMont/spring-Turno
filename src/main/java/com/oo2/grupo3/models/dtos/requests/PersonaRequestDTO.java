@@ -1,5 +1,6 @@
 package com.oo2.grupo3.models.dtos.requests;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,6 +38,7 @@ public class PersonaRequestDTO {
     @Min(value = 1000000, message = "El DNI debe ser mayor o igual a 1000000.")
     private int dni;
     
+    @Valid
     @NotNull(message = "El usuario es obligatorio")
     private UserRequestDTO user;
     

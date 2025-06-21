@@ -1,49 +1,106 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8" />
-    <title>Lista de Especialidades</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <meta charset="UTF-8" />
+  <title>Lista de Especialidades</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
-<body>
-	
-	<a th:href="@{/home/index}">
-	    <button type="button">Volver al Inicio</button>
-	</a>
-	
-    <div class="container mt-4">
-        <h1>Especialidades</h1>
-		
 
-		<div th:if="${errorMessage}" class="error">
-		    <p th:text="${errorMessage}"></p>
-		</div>
+<body class="d-flex flex-column min-vh-100 bg-light">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white fw-semibold" th:href="@{/home/index}"
+        onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+        Sistema de Turnos
+      </a>
 
-        
-        <a class="btn btn-primary mb-3" th:href="@{/especialidades/form}">Nueva Especialidad</a>
-        
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-			<tbody>
-			    <tr th:each="esp : ${especialidades}">
-			        <td th:text="${esp.nombre}">Nombre</td>
-			        <td>
-						<a class="btn btn-warning btn-sm" th:href="@{'/especialidades/edit/' + ${esp.idEspecialidad}}">Editar</a>
+      <div class="d-flex align-items-center ms-auto gap-3">
+        <div class="dropdown">
+          <button
+            class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 fw-semibold"
+            type="button"
+            id="userDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            onmouseover="this.style.color='#ffc107'"
+            onmouseout="this.style.color='white'">
+            <i class="bi bi-person-circle fs-4"></i>
+            <span sec:authentication="name"></span>
+          </button>
 
-						<form th:action="@{'/especialidades/delete/' + ${esp.idEspecialidad}}" method="post" style="display:inline" 
-						      onsubmit="return confirm('¿Está seguro que desea eliminar esta especialidad?');">
-						    <input type="hidden" name="_method" value="post" />
-						    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-						</form>
-			        </td>
-			    </tr>
-			</tbody>
-        </table>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li class="px-3 py-2">
+              <form th:action="@{/auth/logout}" method="post" class="m-0 p-0">
+                <button type="submit" class="btn btn-danger btn-sm rounded w-100">
+                  Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="container mt-4 flex-grow-1">
+	<div class="d-flex justify-content-start mb-3">
+	  <a class="btn btn-secondary" th:href="@{/home/index}">
+	    <i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+	  </a>
+	</div>
+    <h1 class="mb-4 text-center">Especialidades</h1>
+
+    <!-- VISTA PARA USUARIO con rol USER: cards centradas -->
+    <div sec:authorize="hasRole('USER')">
+      <div class="d-flex flex-wrap justify-content-center gap-4">
+        <div th:each="esp : ${especialidades}" class="card" style="width: 18rem;">
+          <div class="card-body d-flex align-items-center justify-content-center" style="height: 100px;">
+            <h5 class="card-title mb-0" th:text="${esp.nombre}">Nombre Especialidad</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISTA PARA ADMIN con rol ADMIN: tabla con acciones -->
+    <div sec:authorize="hasRole('ADMIN')">
+
+      <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <p th:text="${errorMessage}"></p>
+      </div>
+
+      <a class="btn btn-primary mb-3" th:href="@{/especialidades/form}">Nueva Especialidad</a>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="esp : ${especialidades}">
+            <td th:text="${esp.nombre}">Nombre</td>
+            <td>
+              <a class="btn btn-warning btn-sm" th:href="@{'/especialidades/edit/' + ${esp.idEspecialidad}}">Editar</a>
+
+              <form th:action="@{'/especialidades/delete/' + ${esp.idEspecialidad}}" method="post" style="display:inline"
+                onsubmit="return confirm('¿Está seguro que desea eliminar esta especialidad?');">
+                <input type="hidden" name="_method" value="post" />
+                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

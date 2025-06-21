@@ -100,7 +100,7 @@ public class UsersSeeder implements CommandLineRunner {
             clienteUser = clienteRepository.save(c);
         }
     	
-        userRepository.save(buildUserUser(clienteUser,"user@gmail.com", passwordGeneric));
+        userRepository.save(buildUserUser(clienteUser,"user@hotmail.com", passwordGeneric));
     }
 
     private UserEntity buildUserUser(Cliente clienteUser,String email, String password) {

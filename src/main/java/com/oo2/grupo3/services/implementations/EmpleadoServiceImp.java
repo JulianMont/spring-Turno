@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
+import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
@@ -34,7 +36,7 @@ import com.oo2.grupo3.repositories.IEspecialidadRepository;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IUserService;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 
 @Service
@@ -73,30 +75,30 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 	@Override
 	public EmpleadoResponseDTO findById(Integer id) {
 		Empleado empleado = empleadoRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Empleado con id " + id + " no existe"));
+				.orElseThrow(() -> new EntidadNoEncontradaException("Empleado con id " + id + " no existe"));
 		return modelMapper.map(empleado , EmpleadoResponseDTO.class);
 	} 
 
 	@Override
 	public EmpleadoResponseDTO findByLegajo(String legajo) {
 		Empleado empleado = empleadoRepository.findByLegajo(legajo)
-				.orElseThrow(()-> new EntityNotFoundException("Empleado con legajo " + legajo + " no existe"));
+				.orElseThrow(()-> new EntidadNoEncontradaException("Empleado con legajo " + legajo + " no existe"));
 		return modelMapper.map(empleado, EmpleadoResponseDTO.class) ;
 	}
 
 	//TODO:Revisar el createEmpleado debido al UserEntity
 	@Override
-	public EmpleadoResponseDTO createEmpleado(EmpleadoRequestDTO empleadoRequestDTO){
+	public EmpleadoResponseDTO createEmpleado(EmpleadoRequestDTO empleadoRequestDTO) throws EntidadNoEncontradaException, ErrorValidacionDatosException{
 		
 		if(empleadoRepository.existsByLegajo(empleadoRequestDTO.getLegajo())) {
-			 throw new IllegalArgumentException("Ya existe un empleado con el legajo " + empleadoRequestDTO.getLegajo());
+			 throw new ErrorValidacionDatosException("Ya existe un empleado con el legajo " + empleadoRequestDTO.getLegajo());
 		}
 		if(empleadoRepository.existsByDni(empleadoRequestDTO.getDni())){
-			throw new IllegalArgumentException("Ya existe un empleado con este DNI " + empleadoRequestDTO.getDni());
+			throw new ErrorValidacionDatosException("Ya existe un empleado con este DNI " + empleadoRequestDTO.getDni());
 		}
 		//especialidad existe?
 		 Especialidad especialidad = especialidadRepository.findById(empleadoRequestDTO.getEspecialidadId())
-			        .orElseThrow(() -> new EntityNotFoundException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));
+			        .orElseThrow(() -> new EntidadNoEncontradaException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));
 
 		//seteo de datos
 		Empleado empleado = modelMapper.map(empleadoRequestDTO, Empleado.class);
@@ -121,21 +123,21 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 	}
 
 	@Override
-	public EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado, EmpleadoRequestDTO empleadoRequestDTO) throws Exception {
+	public EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado, EmpleadoRequestDTO empleadoRequestDTO) throws EntidadNoEncontradaException, ErrorValidacionDatosException{
 		
 		Empleado empleadoExiste = empleadoRepository.findById(idEmpleado)
-		        .orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Empleado con id {0} no existe", idEmpleado)));
+		        .orElseThrow(() -> new EntidadNoEncontradaException(MessageFormat.format("Empleado con id {0} no existe", idEmpleado)));
 		
 		//legajo en uso
 		Optional<Empleado> posibleDuplicado = empleadoRepository.findByLegajo(empleadoRequestDTO.getLegajo());
 		if (posibleDuplicado.isPresent() && !posibleDuplicado.get().getIdPersona().equals(idEmpleado)) {
-			throw new IllegalArgumentException("Ya existe otro empleado con el legajo " + empleadoRequestDTO.getLegajo());
+			throw new ErrorValidacionDatosException("Ya existe otro empleado con el legajo " + empleadoRequestDTO.getLegajo());
 		}
 		
 		//especialidad existe?
 		
 	    Especialidad especialidad = especialidadRepository.findById(empleadoRequestDTO.getEspecialidadId())
-	            .orElseThrow(() -> new EntityNotFoundException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));
+	            .orElseThrow(() -> new EntidadNoEncontradaException("Especialidad con id " + empleadoRequestDTO.getEspecialidadId() + " no existe"));
 
 		//seteo de datos
 		modelMapper.map(empleadoRequestDTO, empleadoExiste);
@@ -153,9 +155,9 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 	}
 
 	@Override
-	public boolean borrarEmpleado(Integer idEmpleado) throws Exception {
+	public boolean borrarEmpleado(Integer idEmpleado) throws EntidadNoEncontradaException, ErrorValidacionDatosException{
 		Empleado empleadoExiste = empleadoRepository.findById(idEmpleado)
-				.orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("Empleado con id {0} no existe",idEmpleado)));
+				.orElseThrow(() -> new EntidadNoEncontradaException(MessageFormat.format("Empleado con id {0} no existe",idEmpleado)));
 		
 //		if(empleadoExiste.getUser() != null) {
 //			userService.deleteUser(empleadoExiste.getUser().getId());
