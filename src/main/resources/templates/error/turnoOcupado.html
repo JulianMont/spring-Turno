@@ -3,50 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Turno Ocupado</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	
-	<style>
-	        body {
-	            background-color: black;
-	            color: white;
-	            height: 100vh;
-	            margin: 0;
-	            display: flex;
-	            align-items: center;
-	            justify-content: center;
-	        }
-
-	        .error-box {
-	            background-color: #dc3545; /* rojo Bootstrap */
-	            padding: 20px 30px;
-	            border-radius: 12px;
-	            text-align: center;
-	            width: 100%;
-	            max-width: 360px;
-	            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-	        }
-
-	        .error-message {
-	            font-size: 1.1rem;
-	            font-weight: bold;
-	            color: white;
-	            margin-bottom: 20px;
-	        }
-
-	        .btn-outline-light {
-	            border-color: white;
-	            color: white;
-	            padding: 6px 16px;
-	            font-size: 0.95rem;
-	        }
-
-	        .btn-outline-light:hover {
-	            background-color: white;
-	            color: #dc3545;
-	        }
-	    </style>
-		
 </head>
 <body>
 <div class="container mt-5">
@@ -55,6 +15,7 @@
             <h4 class="mb-0">Turno Ocupado</h4>
         </div>
         <div class="card-body">
+
             <!-- Mensaje dinámico o fallback -->
             <p class="card-text" th:if="${errorMensaje}" th:text="${errorMensaje}"></p>
             <p class="card-text" th:unless="${errorMensaje}">
@@ -63,10 +24,13 @@
 
             <!-- Botón de volver -->
             <a th:href="${urlVolver}" class="btn btn-outline-danger mt-3">Volver al formulario</a>
+
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+
 </html>

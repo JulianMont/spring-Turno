@@ -27,24 +27,26 @@ import lombok.Setter;
 
 public class HorarioLaboral {
     
+    
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      @Setter(AccessLevel.NONE)
 
      private Integer idHorarioLaboral;
 
-  
-     
+
+
      @Enumerated(EnumType.STRING)
      private DiaSemana diaSemana;
-     
+
      private LocalTime horaInicio;
      private LocalTime horaFin;
-     
+
 
      @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "empleado_legajo")
      private Empleado empleado;
-      
+
+
 
 }

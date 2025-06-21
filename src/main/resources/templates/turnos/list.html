@@ -1,100 +1,103 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Lista de Turnos</title>
-	
+	<title>Lista de Turnos</title>
+
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
 	<script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
 </head>
+
 <body>
-<h1>Listado de Turnos</h1>
-
-<form method="get" th:action="@{/turnos/list}">
-
-    <label>Cliente:</label>
-	<select name="clienteId">
-	    <option value="">-- Seleccione Cliente --</option>
-	    <th:block th:each="cliente : ${clientes}">
-	        <option th:value="${cliente.idPersona}" th:text="${cliente.getNombreCompleto()}"></option>
-	    </th:block>
-	</select>
-
-    <label>Empleado:</label>
-	<select name="empleadoId">
-	    <option value="">-- Seleccione Empleado --</option>
-	    <th:block th:each="empleado : ${empleados}">
-	        <option th:value="${empleado.idPersona}" th:text="${empleado.getNombreCompleto()}"></option>
-	    </th:block>
-	</select>
-
-    <label>Servicio:</label>
-    <select name="servicioId">
-        <option value="">-- Seleccione Servicio --</option>
-        <option th:each="servicio : ${servicios}" 
-                th:value="${servicio.id}" 
-                th:text="${servicio.nombre}"
-                th:selected="${servicio.id == servicioId}">Servicio</option>
-    </select>
-
-    <label>Día:</label>
-	<input type="text" id="fecha" name="fecha" th:value="${fecha}" placeholder="Seleccionar fecha" />
-
-    <button type="submit">Buscar</button>
-	
-	<a th:href="@{/index}">
-	    <button type="button">Regresar al inicio</button>
+	<h1>Listado de Turnos</h1>
+	<a th:href="@{/home/index}">
+		<button type="button">Regresar al inicio</button>
 	</a>
-	
-</form>
+	<form method="get" th:action="@{/turnos/list}">
 
-<hr/>
+		<label>Cliente:</label>
+		<select name="clienteId">
+			<option value="">-- Seleccione Cliente --</option>
+			<th:block th:each="cliente : ${clientes}">
+				<option th:value="${cliente.idPersona}" th:text="${cliente.getNombreCompleto()}"></option>
+			</th:block>
+		</select>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID Turno</th>
-        <th>Cliente</th>
-        <th>Empleado</th>
-        <th>Servicio</th>
-        <th>Día</th>
-        <th>Hora</th>
-        <th>Estado</th> 
-        <th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="turno : ${turnos}">
-        <td th:text="${turno.idTurno}">ID</td>
-        <td th:text="${turno.clienteNombre}">Cliente</td>
-        <td th:text="${turno.empleadoNombre}">Empleado</td>
-        <td th:text="${turno.servicioNombre}">Servicio</td>
-        <td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
-        <td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
-        <td th:text="${turno.estado}">Estado</td>
-        <td>
-			<form th:action="@{/turnos/editar/{id}(id=${turno.idTurno})}" method="get" style="display:inline;">
-			        <button type="submit" class="btn btn-primary btn-sm">Editar</button>
-			    </form>
-            
-			<form th:action="@{/turnos/cancelar/{id}(id=${turno.idTurno})}" method="post" style="display:inline;">
-			    <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
-			    <button type="submit" onclick="return confirm('¿Seguro que desea cancelar este turno?');">Cancelar</button>
-			</form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+		<label>Empleado:</label>
+		<select name="empleadoId">
+			<option value="">-- Seleccione Empleado --</option>
+			<th:block th:each="empleado : ${empleados}">
+				<option th:value="${empleado.idPersona}" th:text="${empleado.getNombreCompleto()}"></option>
+			</th:block>
+		</select>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        new Pikaday({
-            field: document.getElementById('fecha'),
-            format: 'YYYY-MM-DD',
-            minDate: new Date(),  
-            disableWeekends: true 
-        });
-    });
-</script>
+		<label>Servicio:</label>
+		<select name="servicioId">
+			<option value="">-- Seleccione Servicio --</option>
+			<option th:each="servicio : ${servicios}" th:value="${servicio.id}" th:text="${servicio.nombre}"
+				th:selected="${servicio.id == servicioId}">Servicio</option>
+		</select>
+
+		<label>Día:</label>
+		<input type="text" id="fecha" name="fecha" th:value="${fecha}" placeholder="Seleccionar fecha" />
+
+		<button type="submit">Buscar</button>
+
+
+
+	</form>
+
+	<hr />
+
+	<table border="1">
+		<thead>
+			<tr>
+				<th>ID Turno</th>
+				<th>Cliente</th>
+				<th>Empleado</th>
+				<th>Servicio</th>
+				<th>Día</th>
+				<th>Hora</th>
+				<th>Estado</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="turno : ${turnos}">
+				<td th:text="${turno.idTurno}">ID</td>
+				<td th:text="${turno.clienteNombre}">Cliente</td>
+				<td th:text="${turno.empleadoNombre}">Empleado</td>
+				<td th:text="${turno.servicioNombre}">Servicio</td>
+				<td th:text="${#temporals.format(turno.dia, 'dd/MM/yyyy')}">Día</td>
+				<td th:text="${#temporals.format(turno.hora, 'HH:mm')}">Hora</td>
+				<td th:text="${turno.estado}">Estado</td>
+				<td>
+					<form th:action="@{/turnos/editar/{id}(id=${turno.idTurno})}" method="get" style="display:inline;">
+						<button type="submit" class="btn btn-primary btn-sm">Editar</button>
+					</form>
+
+					<form th:action="@{/turnos/cancelar/{id}(id=${turno.idTurno})}" method="post"
+						style="display:inline;">
+						<!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+						<button type="submit"
+							onclick="return confirm('¿Seguro que desea cancelar este turno?');">Cancelar</button>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			new Pikaday({
+				field: document.getElementById('fecha'),
+				format: 'YYYY-MM-DD',
+				minDate: new Date(),
+				disableWeekends: true
+			});
+		});
+	</script>
 
 </body>
+
 </html>

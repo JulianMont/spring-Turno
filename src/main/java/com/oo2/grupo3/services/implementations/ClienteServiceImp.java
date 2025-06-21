@@ -20,12 +20,14 @@ import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
 
 import com.oo2.grupo3.models.entities.Turno;
+import com.oo2.grupo3.models.entities.UserEntity;
+import com.oo2.grupo3.models.enums.RoleType;
 import com.oo2.grupo3.repositories.IClienteRepository;
 import com.oo2.grupo3.repositories.ITurnoRepository;
 
 
 import com.oo2.grupo3.services.interfaces.IClienteService;
-
+import com.oo2.grupo3.services.interfaces.IUserService;
 
 import jakarta.persistence.EntityNotFoundException;
 @Service
@@ -33,11 +35,13 @@ public class ClienteServiceImp implements IClienteService{
 	
 	private IClienteRepository clienteRepository;
 	private ITurnoRepository turnoRepository;
+	private final IUserService userService;
 	private final ModelMapper modelMapper;
 	 
-	 public ClienteServiceImp(IClienteRepository clienteRepository, ModelMapper modelMapper) {
+	 public ClienteServiceImp(IClienteRepository clienteRepository, ModelMapper modelMapper,IUserService userService) {
 	        this.clienteRepository = clienteRepository;
-	        this.modelMapper = modelMapper;}
+	        this.modelMapper = modelMapper;
+	        this.userService = userService;}
 	
 	 @Override
 	 public Page<ClienteResponseDTO> getAll(Pageable pageable) {
@@ -114,9 +118,29 @@ public class ClienteServiceImp implements IClienteService{
 
 
 	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
-		Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
-		Cliente saved = clienteRepository.save(cliente);
-        return modelMapper.map(saved, ClienteResponseDTO.class);
+		 
+		if(clienteRepository.existsByDni(clienteRequestDTO.getDni())){
+			throw new IllegalArgumentException("Ya existe un cliente con este DNI " + clienteRequestDTO.getDni());
+		}
+		    // Mapear sin el user
+		    Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
+		    cliente.setUser(null);
+
+		    // Guardar cliente base
+		    clienteRepository.save(cliente);
+
+		    // Crear usuario y asociarlo
+		    UserEntity user = userService.createUser(
+		        clienteRequestDTO.getUser(), RoleType.USER, cliente);
+		    cliente.setUser(user);
+
+		    // Guardar cliente ya con user asociado
+		    clienteRepository.save(cliente);
+
+		    // Mapear y devolver
+		    return modelMapper.map(cliente, ClienteResponseDTO.class);
+		
+
 	}
 
 

@@ -1,9 +1,6 @@
 package com.oo2.grupo3.services.implementations;
 
 import java.time.Duration;
-
-import java.util.Comparator;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,13 +30,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 		this.modelMapper = modelMapper;
 	}
 
-    @Override
-    public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
-        List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdPersonaOrderByDiaSemanaAscHoraInicioAsc(idEmpleado);
-        return horarios.stream()
-                .map(h -> modelMapper.map(h, HorarioLaboralResponseDTO.class))
-                .collect(Collectors.toList());
-    }
+   
 
     @Override
     public HorarioLaboralResponseDTO agregarHorario(Integer idEmpleado, HorarioLaboralRequestDTO dto) {
@@ -138,11 +129,7 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
         }
         
         
-        
-        
-        
-        
-        
+
 
         horario.setDiaSemana(dto.getDiaSemana());
         horario.setHoraInicio(dto.getHoraInicio());
@@ -173,6 +160,18 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 		return modelMapper.map(horario, HorarioLaboralResponseDTO.class);
 	}
 	
+	//Metodo servicio horario
+	 @Override
+	    public List<HorarioLaboralResponseDTO> traerHorariosLaborales(Integer idEmpleado) {
+	        List<HorarioLaboral> horarios = horarioLaboralRepository.findByEmpleado_IdPersonaOrderByDiaSemanaAscHoraInicioAsc(idEmpleado);
+	        
+	        return horarios.stream()
+	                .map(h -> modelMapper.map(h, HorarioLaboralResponseDTO.class))
+	                .collect(Collectors.toList());
+	    }
+
+	//Metodo servicio turno
+
 	@Override
 	public List<HorarioLaboralResponseDTO> obtenerHorariosDelEmpleado(Integer idEmpleado) {
 	    Empleado empleado = empleadoRepository.findById(idEmpleado)
@@ -189,3 +188,6 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
 	}
 	
 }
+
+
+

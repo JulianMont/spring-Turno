@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -24,13 +25,13 @@ public class Handler {
 	    return "error/turnoOcupado";
 	}
 	
-	
-	
 
     @ExceptionHandler(HorarioNoDisponibleException.class)
     public String handleHorarioNoDisponibleException(HorarioNoDisponibleException ex, Model model) {
         model.addAttribute("errorMensaje", ex.getMessage());
+
         return "error/horarioNoDisponible";  
+
 
     }
 
@@ -39,6 +40,7 @@ public class Handler {
         model.addAttribute("errorMensaje", "Ha ocurrido un error inesperado: " + ex.getMessage());
 
         return "error/errorGeneral";  
+
     }
 }
 

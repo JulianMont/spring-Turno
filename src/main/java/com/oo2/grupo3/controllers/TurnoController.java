@@ -171,10 +171,28 @@ public class TurnoController {
         
         // Intentar guardar el turno si no hay errores
         if (!bindingResult.hasErrors()) {
+
             turnoService.save(turnoRequestDTO); // Si hay conflicto, lanza excepción
             redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
             return ViewRouteHelper.TURNO_LIST_REDIRECT;
         
+/* No usa el Handler ---------------------------------
+            try {
+            
+                turnoService.save(turnoRequestDTO);
+                redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+                return ViewRouteHelper.TURNO_LIST_REDIRECT;
+
+            } catch (TurnoOcupadoException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
+
+            } catch (HorarioNoDisponibleException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", e.getMessage());
+
+            } catch (RuntimeException e) {
+                bindingResult.rejectValue("hora", "error.turnoRequestDTO", "Error inesperado: " + e.getMessage());
+            }
+*/ --------------------------------------------------
         }
         
         model.addAttribute("clientes", clienteService.getAllClientes());
@@ -182,6 +200,7 @@ public class TurnoController {
         model.addAttribute("servicios", servicioService.getAll());
         model.addAttribute("dias", diaService.getAll());
         model.addAttribute("horas", horaService.getAll());
+
         return ViewRouteHelper.TURNO_GENERAR;
     }
 
@@ -241,6 +260,7 @@ public class TurnoController {
 
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
 
     @GetMapping("/list")
     public String listarTurnos(

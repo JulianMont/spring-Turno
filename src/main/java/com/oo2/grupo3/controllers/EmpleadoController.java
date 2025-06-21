@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -57,6 +58,7 @@ public class EmpleadoController {
         this.horarioLaboralService = horarioLaboralService;
     }
 	
+    //CHECK
 	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
 	@GetMapping("/empleados/{idEmpleado}/horarios")
 	public List<HorarioLaboralResponseDTO> getHorariosEmpleado(@PathVariable Integer idEmpleado) {
@@ -67,7 +69,7 @@ public class EmpleadoController {
 	            .collect(Collectors.toList());
 	    return horarios;
 	}
-	
+
 	
 	
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -130,7 +132,12 @@ public class EmpleadoController {
             model.addAttribute("errorLegajo", e.getMessage());
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("errorDni", "Ya existe una persona con ese DNI.");
+            model.addAttribute("especialidades", especialidadService.traerEspecialidades());
+            return ViewRouteHelper.EMPLEADOS_FORM;
         }
+
 
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }

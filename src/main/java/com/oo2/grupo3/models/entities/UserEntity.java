@@ -48,12 +48,16 @@ public class UserEntity implements UserDetails {
     )
     private Set<RoleEntity> roleEntities;
 
+   
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoleEntities().stream()
-                .map(roleEntity -> new SimpleGrantedAuthority(roleEntity.getType().getPrefixedName()))
-                .collect(Collectors.toSet());
+        Set<SimpleGrantedAuthority> authorities = this.getRoleEntities().stream()
+            .map(roleEntity -> new SimpleGrantedAuthority(roleEntity.getType().getPrefixedName()))
+            .collect(Collectors.toSet());
+
+        return authorities;
     }
+
 
     @Override
     public String getUsername() {

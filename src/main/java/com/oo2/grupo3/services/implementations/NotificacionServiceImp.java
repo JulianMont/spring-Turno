@@ -59,7 +59,7 @@ public class NotificacionServiceImp implements INotificacionService {
         SimpleMailMessage mensaje = new SimpleMailMessage();
        //implemtentar cuando user sea padre de persona, porque si no mo va aggarar el mail del cleinte
        
-       // mensaje.setTo(notificacion.getPersona().getEmail()); quizas tenga que ser get cliente
+       mensaje.setTo(notificacion.getPersona().getUser().getEmail());// quizas tenga que ser get cliente
         //mensaje.setTo(notificacion.getPersona().getEmail());
         mensaje.setSubject("Notificación: " + notificacion.getTipo());
         mensaje.setText(notificacion.getMensaje());

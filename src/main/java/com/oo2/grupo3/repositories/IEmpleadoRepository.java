@@ -37,5 +37,7 @@ public interface IEmpleadoRepository extends JpaRepository<Empleado, Integer> {
 	
 	boolean existsByLegajo(String legajo);
 
+	boolean existsByDni(int dni);
+
 }
 

@@ -35,7 +35,7 @@ public class PersonaRequestDTO {
 
     @NotNull(message = "El DNI es obligatorio.")
     @Min(value = 1000000, message = "El DNI debe ser mayor o igual a 1000000.")
-    private Integer dni;
+    private int dni;
     
     @NotNull(message = "El usuario es obligatorio")
     private UserRequestDTO user;

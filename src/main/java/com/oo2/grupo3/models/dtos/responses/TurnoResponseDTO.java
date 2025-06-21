@@ -18,7 +18,7 @@ public class TurnoResponseDTO {
     private Integer idEmpleado;     // agregado
     private Integer idServicio;     // agregado
     
-
+    //TODO REPARAR ESTO
     private String clienteNombre;
 
     private String empleadoNombre;

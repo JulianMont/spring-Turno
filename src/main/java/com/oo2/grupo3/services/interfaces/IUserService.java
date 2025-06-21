@@ -16,6 +16,6 @@ public interface IUserService {
 	void assignRolesToUser(Integer userId, Set<String> roles) throws Exception;
 
 
-//	void deleteUser(Integer userId) throws Exception;
+
 
 }
