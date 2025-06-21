@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.oo2.grupo3.helpers.ViewRouteHelper;
+import com.oo2.grupo3.helpers.exceptions.ClienteRepetidoException;
 import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
@@ -73,18 +74,18 @@ public class ClienteController {
 
         try {
             clienteService.save(clienteDTO);
-        }  catch (IllegalArgumentException e) {
-            model.addAttribute("errorDni", e.getMessage()); // por ejemplo: "Ya existe un cliente con este DNI"
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorDni", e.getMessage());
             return "cliente/form";
-            
-            }catch (DataIntegrityViolationException e) {
-            // Si ya existe un cliente con ese DNI (clave única)
+        } catch (DataIntegrityViolationException e) {
             model.addAttribute("errorDni", "Ya existe un cliente con ese DNI.");
             return "cliente/form";
         }
 
         return "redirect:/cliente/list";
     }
+
+
 
     @GetMapping("/eliminar/{id}")
     public String eliminarCliente(@PathVariable int id) {

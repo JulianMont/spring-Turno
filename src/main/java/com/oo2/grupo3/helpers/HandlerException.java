@@ -4,10 +4,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.oo2.grupo3.helpers.exceptions.ClienteRepetidoException;
 import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
 import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.helpers.exceptions.HorarioNoDisponibleException;
 import com.oo2.grupo3.helpers.exceptions.TurnoOcupadoException;
+import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -47,7 +49,15 @@ public class HandlerException {
 
 		return "error/turnoOcupado";
 	}
+    @ExceptionHandler(ClienteRepetidoException.class)
+    public String handleClienteRepetidoException(ClienteRepetidoException ex, Model model) {
+        model.addAttribute("errorMensaje", ex.getMessage());
+        model.addAttribute("urlVolver", "cliente/form"); // o cambiá esta ruta si querés que vuelva a otro lado 
 
+        return "error/clienteRepetido";
+    }
+
+   
 
 
 }

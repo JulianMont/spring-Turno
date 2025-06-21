@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.oo2.grupo3.helpers.exceptions.ClienteRepetidoException;
 import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
 
@@ -120,7 +121,7 @@ public class ClienteServiceImp implements IClienteService{
 	public ClienteResponseDTO save(ClienteRequestDTO clienteRequestDTO ) {
 		 
 		if(clienteRepository.existsByDni(clienteRequestDTO.getDni())){
-			throw new IllegalArgumentException("Ya existe un cliente con este DNI " + clienteRequestDTO.getDni());
+			throw new ClienteRepetidoException("Ya existe un cliente con este DNI " + clienteRequestDTO.getDni());
 		}
 		    // Mapear sin el user
 		    Cliente cliente = modelMapper.map(clienteRequestDTO, Cliente.class);
