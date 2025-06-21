@@ -5,7 +5,9 @@ import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.*;
+
 import com.oo2.grupo3.models.enums.DiaSemana;
+
 import com.oo2.grupo3.models.enums.EstadoTurno;
 import com.oo2.grupo3.repositories.*;
 import com.oo2.grupo3.services.interfaces.IDiaService;
@@ -68,6 +70,39 @@ public class TurnoServiceImp implements ITurnoService {
                 .hora(turno.getHora().getHora())
                 .build();
     }
+    
+    @Override
+    public void cancelarTurno(Integer idTurno) {
+        Turno turno = turnoRepository.findById(idTurno)
+            .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
+        
+        turno.setEstado(EstadoTurno.CANCELADO);
+        turnoRepository.save(turno);
+    }
+    
+    
+    @Override
+    public void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        System.out.println("Actualizando turno ID: " + id);
+
+        Turno turno = findById(id);
+
+        Dia dia = diaService.findByFecha(nuevaFecha)
+                .orElseGet(() -> diaService.save(Dia.builder().fecha(nuevaFecha).build()));
+
+        Hora hora = horaRepository.findByHoraAndDia(nuevaHora, dia)
+                .orElseGet(() -> horaRepository.save(Hora.builder().hora(nuevaHora).dia(dia).build()));
+
+        System.out.println("Validando disponibilidad del cliente y el empleado...");
+        validarDisponibilidadClienteYEmpleado(turno.getCliente(), turno.getEmpleado(), dia, hora, id);
+
+        turno.setDia(dia);
+        turno.setHora(hora);
+
+        turnoRepository.save(turno);
+        System.out.println("Turno actualizado con éxito.");
+    }
+
 
     @Override
     public void cancelarTurno(Integer idTurno) {
@@ -155,8 +190,22 @@ public class TurnoServiceImp implements ITurnoService {
 
         Turno turnoGuardado = turnoRepository.save(turno);
 
+        
+       //agregarrr para que cuadno se crea el turno, se manda el email
+        /*Notificacion noti = Notificacion.builder()
+        	    .persona(turno.getCliente().getUser()) // si la persona es el UserEntity
+        	    .tipo("Confirmación de turno")
+        	    .mensaje("Hola " + turno.getCliente().getUser().getFirstname() +
+        	             ", tu turno ha sido registrado para el día " +
+        	             turno.getDia().getFecha() + " a las " + turno.getHora().getHora() + ".")
+        	    .fechaEnvio(LocalDateTime.now())
+        	    .build();
+
+        	notificacionService.save(noti);*/ // Esto también enviará el correo
+
         return turnoMapper.toResponse(turnoGuardado);
     }
+
 
     @Override
     public List<TurnoResponseDTO> obtenerTodosLosTurnos() {
@@ -207,6 +256,8 @@ public class TurnoServiceImp implements ITurnoService {
         Servicio servicio = servicioRepository.findById(requestDTO.getIdServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
 
+        // Validación hora
+      
         LocalTime horaTurno = requestDTO.getHora();
         int hora = horaTurno.getHour();
         int minutos = horaTurno.getMinute();
@@ -233,6 +284,7 @@ public class TurnoServiceImp implements ITurnoService {
                 .orElseGet(() -> {
                     Hora nuevaHora = new Hora();
                     nuevaHora.setHora(requestDTO.getHora());
+
                     nuevaHora.setDia(dia);
                     return horaRepository.save(nuevaHora);
                 });
@@ -246,6 +298,7 @@ public class TurnoServiceImp implements ITurnoService {
         Turno turno = turnoMapper.toEntityWithAll(requestDTO, cliente, empleado, servicio, dia, horaDia);
         return turnoRepository.save(turno);
     }
+
 
     @Override
     public void deleteById(Integer id) {

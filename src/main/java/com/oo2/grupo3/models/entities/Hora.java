@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "hora")
@@ -28,4 +30,19 @@ public class Hora {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_dia", nullable = false)
     private Dia dia;
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Hora)) return false;
+        Hora other = (Hora) o;
+        return Objects.equals(hora, other.hora) &&
+               Objects.equals(dia != null ? dia.getId() : null, other.dia != null ? other.dia.getId() : null);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hora, dia != null ? dia.getId() : null);
+    }
+    
 }

@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.models.entities.Contacto;
 import com.oo2.grupo3.repositories.IContactoRepository;
 import com.oo2.grupo3.services.interfaces.IContactoService;

@@ -66,12 +66,14 @@
         </div>
     </form>
 </div>
-
-
-<script>
+  
+  
     let picker;
     let diasPermitidos = [];
 
+	const empleadoId = /*[[${turnoRequest.idEmpleado} ?: 0]]*/ 0;
+	const horaActual = /*[['${turnoRequest.hora.toString()}']]*/ "";
+	
     function crearPikaday(dias) {
         if (picker) picker.destroy();
 
@@ -94,6 +96,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const horaSelect = document.getElementById('hora');
+
         const empleadoInput = document.querySelector('input[name="idEmpleado"]');
 
         const idEmpleado = empleadoInput?.value;
@@ -110,11 +113,13 @@
                 horaSelect.innerHTML = '';
                 if (horarios.length === 0) {
                     horaSelect.innerHTML = '<option disabled>No hay horarios disponibles</option>';
+
                     crearPikaday([]);
                     return;
                 }
 
                 const diasJS = {
+
                     "DOMINGO": 0,
                     "LUNES": 1,
                     "MARTES": 2,
@@ -129,6 +134,7 @@
                     if (diaNum !== undefined && !diasPermitidos.includes(diaNum)) {
                         diasPermitidos.push(diaNum);
                     }
+
                 });
 
                 crearPikaday(diasPermitidos);
@@ -144,7 +150,9 @@
                         const hh = String(Math.floor(startMin / 60)).padStart(2, '0');
                         const mm = String(startMin % 60).padStart(2, '0');
                         const timeStr = `${hh}:${mm}`;
+
                         horaSelect.innerHTML += `<option value="${timeStr}">${timeStr}</option>`;
+
                         startMin += 30;
                     }
                 });

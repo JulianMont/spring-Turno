@@ -1,7 +1,7 @@
 package com.oo2.grupo3.models.dtos.responses;
 
 import java.util.List;
-
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,10 +26,12 @@ public class EmpleadoResponseDTO extends PersonaResponseDTO {
     private EspecialidadResponseDTO especialidad;
 
 
-    private List<HorarioLaboralResponseDTO> horariosLaborales;
 
+    @Builder.Default
+    private List<HorarioLaboralResponseDTO> horariosLaborales = new ArrayList<>();
 
-    private List<AusenciaEmpleadoResponseDTO> diasAusentes;
+    @Builder.Default
+    private List<AusenciaEmpleadoResponseDTO> diasAusentes = new ArrayList<>();
 	
 
 }

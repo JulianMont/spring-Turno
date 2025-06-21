@@ -23,10 +23,11 @@ import lombok.Setter;
 
 public class HorarioLaboralRequestDTO {
 	
+	private Integer idHorarioLaboral;
 
-    @NotEmpty(message = "Debe seleccionar al menos un día de la semana")
-    private List<DiaSemana> diasSemana;
-    
+    @NotNull(message = "El día de la semana es obligatorio")
+    private DiaSemana diaSemana;
+
 
     @NotNull(message = "La hora es obligatoria")
     @DateTimeFormat(pattern = "HH:mm")

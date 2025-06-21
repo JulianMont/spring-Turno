@@ -10,6 +10,10 @@
 
 <h1>Detalle del Empleado</h1>
 
+<div th:if="${errorMessage}" class="error">
+    <p th:text="${errorMessage}"></p>
+</div>
+
 <section>
     <h2>Información Básica</h2>
     <p><strong>Nombre:</strong> <span th:text="${empleado.nombre}"></span></p>
@@ -17,10 +21,8 @@
     <p><strong>Legajo:</strong> <span th:text="${empleado.legajo}"></span></p>
     <p><strong>DNI:</strong> <span th:text="${empleado.dni}"></span></p>
     <p><strong>Especialidad:</strong> <span th:text="${empleado.especialidad.nombre}"></span></p>
+	<p><strong>Email:</strong> <span th:text="${empleado.user.email}"></span></p>
 </section>
-
-<hr/>
-
 <section>
     <h2>Horarios Laborales</h2>
     <table border="1">
@@ -34,9 +36,9 @@
         </thead>
         <tbody>
             <tr th:each="horario : ${empleado.horariosLaborales}">
-                <td th:text="${horario.dia}"></td>
-                <td th:text="${horario.horaInicio}"></td>
-                <td th:text="${horario.horaFin}"></td>
+                <td th:text="${#strings.capitalize(horario.diaSemana.name().toLowerCase())}">Día</td>  
+                <td th:text="${#temporals.format(horario.horaInicio, 'HH:mm')}">Hora Inicio</td>
+                <td th:text="${#temporals.format(horario.horaFin, 'HH:mm')}">Hora Fin</td>               
                 <td>
                     <a th:href="@{/empleados/{idEmpleado}/horarios/{idHorario}/editar(idEmpleado=${empleado.idPersona}, idHorario=${horario.idHorarioLaboral})}">Editar</a>
                     |
@@ -49,7 +51,6 @@
     </table>
     <a th:href="@{/empleados/{id}/horarios/form(id=${empleado.idPersona})}">Agregar Horario</a>
 </section>
-
 <section>
     <h2>Días Ausentes</h2>
     <table border="1">
@@ -62,8 +63,8 @@
         </thead>
         <tbody>
             <tr th:each="ausencia : ${empleado.diasAusentes}">
-                <td th:text="${ausencia.fecha}"></td>
-                <td th:text="${ausencia.motivo}"></td>
+                <td th:text="${#temporals.format(ausencia.fecha, 'dd/MM/yyyy')}"></td>
+                <td th:text="${ausencia.motivo}">Motivo</td>
                 <td>
                     <a th:href="@{/empleados/{idEmpleado}/ausencias/{idAusencia}/editar(idEmpleado=${empleado.idPersona}, idAusencia=${ausencia.idAusenciaEmpleado})}">Editar</a>
                     |
@@ -76,6 +77,5 @@
     </table>
     <a th:href="@{/empleados/{id}/ausencias/form(id=${empleado.idPersona})}">Agregar Ausencia</a>
 </section>
-
 </body>
 </html>

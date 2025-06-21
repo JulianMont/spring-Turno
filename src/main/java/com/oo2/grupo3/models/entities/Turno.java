@@ -1,5 +1,7 @@
 package com.oo2.grupo3.models.entities;
 
+import com.oo2.grupo3.models.enums.EstadoTurno;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -48,7 +50,8 @@ public class Turno {
     @JoinColumn(name = "id_hora", nullable = false)
     private Hora hora;
     
-    
+    @Enumerated(EnumType.STRING)
+    private EstadoTurno estado;
     
 
 }

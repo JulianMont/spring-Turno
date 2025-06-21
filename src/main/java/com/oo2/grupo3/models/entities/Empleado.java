@@ -16,9 +16,11 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
@@ -26,6 +28,7 @@ import lombok.Setter;
 @DiscriminatorValue("EMPLEADO")
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 
 public class Empleado extends Persona{
 
@@ -39,10 +42,10 @@ public class Empleado extends Persona{
     private Especialidad especialidad;
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
-
+    @Builder.Default
     private List<HorarioLaboral> horariosLaborales = new ArrayList<>();
 
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
-
+    @Builder.Default
     private List<AusenciaEmpleado> diasAusentes = new ArrayList<>();
 }

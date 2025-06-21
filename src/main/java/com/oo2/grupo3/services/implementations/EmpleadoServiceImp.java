@@ -21,9 +21,11 @@ import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Especialidad;
+
 import com.oo2.grupo3.models.entities.HorarioLaboral;
 import com.oo2.grupo3.models.entities.UserEntity;
 import com.oo2.grupo3.models.enums.DiaSemana;
+
 import com.oo2.grupo3.models.enums.RoleType;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.repositories.IEspecialidadRepository;
@@ -193,6 +195,7 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 		return empleadoRepository.buscarEmpleadosFiltrados(nombre, legajo, especialidadId, pageable)
 				.map(empleado -> modelMapper.map(empleado, EmpleadoResponseDTO.class));
 	}
+
 	
 	public List<LocalDate> getDiasDisponiblesParaEmpleado(Integer idEmpleado, LocalDate desde, LocalDate hasta) {
 	    Empleado empleado = empleadoRepository.findById(idEmpleado)

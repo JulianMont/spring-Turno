@@ -45,11 +45,11 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	@Override
 	public AusenciaEmpleadoResponseDTO agregarAusencia(Integer idEmpleado, AusenciaEmpleadoRequestDTO dtoAusencia) {
 		
-//		LocalDate fechaMin = LocalDate.now().plusDays(1);
-//		if(dtoAusencia.getFecha().isBefore(fechaMin)) {
-//			throw new IllegalArgumentException("La fecha de la ausencia debe ser al menos un día posterior a hoy");
-//
-//		}
+		LocalDate fechaMin = LocalDate.now().minusDays(7);
+		if(dtoAusencia.getFecha().isBefore(fechaMin)) {
+			throw new IllegalArgumentException("Solo se pueden registrar ausencias de los últimos 7 días en adelante");
+
+		}
 		
 		Empleado empleado = empleadoRepository.findById(idEmpleado)
 				.orElseThrow(()-> new EntityNotFoundException("Empleado no encontrado"));
@@ -69,6 +69,12 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	@Override
 	public AusenciaEmpleadoResponseDTO modificarAusencia(Integer idEmpleado, Integer idAusencia,
 			AusenciaEmpleadoRequestDTO dto) {
+		
+		LocalDate fechaMin = LocalDate.now().minusDays(7);
+		if(dto.getFecha().isBefore(fechaMin)) {
+			throw new IllegalArgumentException("Solo se pueden modificar ausencias de los últimos 7 días en adelante");
+
+		}
 		
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(idAusencia)
 				.orElseThrow(() -> new EntityNotFoundException("La Ausencia no existe"));
