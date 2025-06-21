@@ -42,6 +42,14 @@ public class HorarioLaboralImp implements IHorarioLaboralService  {
             throw new ErrorValidacionDatosException("La hora de fin debe ser posterior a la hora de inicio.");
         }
         
+        if (!(
+        	    (dto.getHoraInicio().getMinute() == 0 || dto.getHoraInicio().getMinute() == 30) &&
+        	    (dto.getHoraFin().getMinute() == 0 || dto.getHoraFin().getMinute() == 30)
+        	)) {
+        	    throw new ErrorValidacionDatosException("Las horas de inicio y fin deben tener minutos 00 o 30.");
+        	}
+
+        
         long tiempoExistente = empleado.getHorariosLaborales().stream()
                 .filter(h -> h.getDiaSemana().equals(dto.getDiaSemana()))
                 .mapToLong(h -> Duration.between(h.getHoraInicio(), h.getHoraFin()).toMinutes())

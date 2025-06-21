@@ -15,9 +15,9 @@ import com.oo2.grupo3.services.interfaces.IEmpleadoService;
 import com.oo2.grupo3.services.interfaces.IHoraService;
 import com.oo2.grupo3.services.interfaces.IServicioService;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
-import com.oo2.grupo3.exceptions.HorarioNoDisponibleException;
-import com.oo2.grupo3.exceptions.TurnoOcupadoException;
 import com.oo2.grupo3.helpers.ViewRouteHelper;
+import com.oo2.grupo3.helpers.exceptions.HorarioNoDisponibleException;
+import com.oo2.grupo3.helpers.exceptions.TurnoOcupadoException;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
