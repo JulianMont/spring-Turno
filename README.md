@@ -1,11 +1,11 @@
 # Proyecto de Ejemplo de un ABM con MVC para la materia Programacion Orientada a Objetos 2 de la oo2.
 
 Pasos a seguir para levantar el proyecto:
- * Version de Java 17 o superior.
+ * Version de Java 22 o superior.
  * Maven 3 o superior.
  * Plugin de lombok configurado en su IDE.
  * MySQL como Base de Datos.
- * Crear una Base de Datos con la siguiente instruccion **create database nombre;** 
+ * Crear una Base de Datos con la siguiente instruccion **create database bd-oo2spring;** 
  * Abrir el proyecto y revisar que se descarguen las dependencias, en caso de que no abrir una terminal en la raiz del proyecto y ejecutar esta instruccion: **mvn clean install**
  * Configurar las variables de entorno para que el archivo application.properties las reconozca antes de iniciar la aplicacion:
    * DB_URL -> colocar la url de la base de datos.
