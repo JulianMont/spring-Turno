@@ -67,7 +67,6 @@ public class TurnoController {
 	public List<TurnoResponseDTO> findAll() {
 		return turnoService.findAll().stream().map(turnoMapper::toResponse).collect(Collectors.toList());
 	}
-
 	@GetMapping("/{id}")
 	public TurnoResponseDTO findById(@PathVariable Integer id) {
 		Turno turno = turnoService.findById(id);
@@ -303,5 +302,5 @@ public class TurnoController {
 
         return turnoService.obtenerHorasDisponiblesPorEmpleadoYFecha(empleado, fecha);
     }
-	
+
 }

@@ -1,7 +1,9 @@
-# Proyecto de Ejemplo de un ABM con MVC para la materia Programacion Orientada a Objetos 2 de la oo2.
+# Proyecto de un sistema de turnos con MVC para la materia Programacion Orientada a Objetos 2 de la oo2.
 
 Pasos a seguir para levantar el proyecto:
- * Version de Java 17 o superior (En JAVA 22 asegurado).
+
+ * Version de Java 22 o superior.
+
  * Maven 3 o superior.
  * Plugin de lombok configurado en su IDE.
  * MySQL como Base de Datos.
@@ -16,4 +18,5 @@ Pasos a seguir para levantar el proyecto:
  * En la carpeta de configurations/seeder una vez creadas las tablas de la bd se ejecuta la clase UsersSeeder que inicializa la bd con dos usuarios:
    * **ADMIN: username: admin@gmail.com password: foo1234.**
    * **USER: username: user@hotmail.com password: foo1234.**
- * Iniciar sesion con algun usuario.  
+ * Iniciar sesion con el admin y agregar horarios laborales a un Empleado desde su detalle , generar una nueva ubicacion y servicio.
+ * 🎉🎉Listo , ya puedes generar un turno desde el lado cliente y admin🎉🎉

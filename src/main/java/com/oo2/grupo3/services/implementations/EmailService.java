@@ -17,4 +17,13 @@ public class EmailService {
         mensaje.setText(cuerpo);
         mailSender.send(mensaje);
     }
+    
+    public void enviarMailTest() {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo("matiasorueta2000@gmail.com"); // poné tu mail real para pruebas
+        message.setSubject("Prueba de correo");
+        message.setText("Este es un correo de prueba desde Spring Boot.");
+        mailSender.send(message);
+        System.out.println("Mail de prueba enviado.");
+    }
 }

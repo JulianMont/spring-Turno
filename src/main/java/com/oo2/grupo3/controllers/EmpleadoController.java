@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.oo2.grupo3.helpers.ViewRouteHelper;
+import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
+import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.models.dtos.requests.EmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 
@@ -121,23 +123,16 @@ public class EmpleadoController {
         if (result.hasErrors()) {
         	model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
-
-          
         }
 
+        
         try {
             empleadoService.createEmpleado(dto);
-        } catch (IllegalArgumentException e) { 	
-
-            model.addAttribute("errorLegajo", e.getMessage());
-            model.addAttribute("especialidades", especialidadService.traerEspecialidades());
-            return ViewRouteHelper.EMPLEADOS_FORM;
-        } catch (DataIntegrityViolationException e) {
-            model.addAttribute("errorDni", "Ya existe una persona con ese DNI.");
+        } catch (EntidadNoEncontradaException | ErrorValidacionDatosException e) {
+            model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
         }
-
 
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
@@ -147,9 +142,6 @@ public class EmpleadoController {
     public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
         EmpleadoResponseDTO empleado = empleadoService.findById(id);
 
-
-
-        
         //TODO: CHECKEAR ESTO
 
         EmpleadoRequestDTO requestDTO = modelMapper.map(empleado, EmpleadoRequestDTO.class);
@@ -164,7 +156,7 @@ public class EmpleadoController {
     public String editarEmpleado(@PathVariable Integer id,
                                  @ModelAttribute("empleadoRequestDTO") @Valid EmpleadoRequestDTO empleadoRequestDTO,
                                  BindingResult result,
-                                 Model model) {
+                                 Model model) throws EntidadNoEncontradaException, ErrorValidacionDatosException {
         if (result.hasErrors()) {
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
@@ -172,26 +164,21 @@ public class EmpleadoController {
 
         try {
             empleadoService.actualizarEmpleado(id, empleadoRequestDTO);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error al actualizar el empleado: " + e.getMessage());
+        } catch (EntidadNoEncontradaException | ErrorValidacionDatosException e) {
+            model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("especialidades", especialidadService.traerEspecialidades());
             return ViewRouteHelper.EMPLEADOS_FORM;
         }
         
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
+   
     
-  
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/eliminar/{id}")
 
     public String eliminarEmpleado(@PathVariable Integer id,Model model) {
-        try {
-            empleadoService.borrarEmpleado(id);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error al eliminar el empleado: " + e.getMessage());
-        }
-
+        empleadoService.borrarEmpleado(id);
         return ViewRouteHelper.REDIRECT_EMPLEADOS_LIST;
     }
 

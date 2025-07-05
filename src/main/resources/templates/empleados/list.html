@@ -1,70 +1,122 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Listado de Empleados</title>
+	<meta charset="UTF-8" />
+	<title>Listado de Empleados</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
-<body>
-    
-    <a th:href="@{/home/index}">
-        <button type="button">Volver al Inicio</button>
-    </a>
 
-    <h1>Listado de Empleados</h1>
-    <span sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/empleados/form}">
-            <button type="button">Crear Nuevo Empleado</button>
-        </a>
-    </span>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<div class="container-fluid">
+			<a class="navbar-brand text-white fw-semibold" th:href="@{/home/index}"
+				onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+				Sistema de Turnos
+			</a>
 
-    <form th:action="@{/empleados/list}" method="get">
-        <input type="text" name="nombre" placeholder="Buscar por nombre" th:value="${nombre}">
-        
- 
-        <span sec:authorize="hasRole('ADMIN')">
-            <input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}">
-        </span>
+			<div class="d-flex align-items-center ms-auto gap-3">
+				<div class="dropdown">
+					<button class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 fw-semibold"
+						type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+						onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+						<i class="bi bi-person-circle fs-4"></i>
+						<span sec:authentication="name"></span>
+					</button>
 
-        <select name="especialidadId">
-            <option value="0">Todas las especialidades</option>
-            <option th:each="esp : ${especialidades}"
-                    th:value="${esp.idEspecialidad}"
-                    th:text="${esp.nombre}"
-                    th:selected="${esp.idEspecialidad == especialidadId}"></option>
-        </select>
+					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+						<li class="px-3 py-2">
+							<form th:action="@{/auth/logout}" method="post" class="m-0 p-0">
+								<button type="submit" class="btn btn-danger btn-sm rounded w-100">
+									Cerrar sesión
+								</button>
+							</form>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
 
-        <button type="submit">Filtrar</button>
-    </form>
+	<!-- Contenido -->
+	<div class="container mt-4 flex-grow-1">
 
+		<div class="mb-3 d-flex justify-content-start">
+			<a class="btn btn-secondary" th:href="@{/home/index}">
+				<i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+			</a>
+		</div>
 
-    <div th:if="${empleados.content.size() > 0}">
-        <div th:each="empleado : ${empleados.content}">
-            <hr>
-            <h3>
-                <span th:text="|${empleado.nombre} ${empleado.apellido}|"></span>
-                <span sec:authorize="hasRole('ADMIN')" th:text="| (Legajo: ${empleado.legajo})|"></span>
-            </h3>
+		<h1 class="mb-4 text-center">Listado de Empleados</h1>
 
-            <p th:text="|DNI: ${empleado.dni}|"></p>
-            <p th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
-			<p><strong>Email:</strong> <span th:text="${empleado.user.email}"></span></p> 
+		<div class="mb-4 d-flex justify-content-start gap-3 flex-wrap">
 
-            <a th:href="@{'/empleados/' + ${empleado.idPersona}}">Ver Detalles</a>
+			<span sec:authorize="hasRole('ADMIN')">
+				<a class="btn btn-primary" th:href="@{/empleados/form}">Crear Nuevo Empleado</a>
+			</span>
 
+		</div>
 
-            <span sec:authorize="hasRole('ADMIN')">
-                <a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}">Editar</a>
-                <a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}"
-                   onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
-            </span>
-        </div>
-    </div>
+		<form th:action="@{/empleados/list}" method="get" class="row g-2 align-items-center mb-4">
+			<div class="col-auto">
+				<input type="text" name="nombre" placeholder="Buscar por nombre" th:value="${nombre}"
+					class="form-control form-control-sm" />
+			</div>
 
-    <div th:if="${empleados.content.size() == 0}">
-        <p>No se encontraron empleados con esos filtros.</p>
-    </div>
+			<div class="col-auto">
+				<input type="text" name="legajo" placeholder="Buscar por legajo" th:value="${legajo}"
+					class="form-control form-control-sm" sec:authorize="hasRole('ADMIN')" />
+			</div>
 
+			<div class="col-auto">
+				<select name="especialidadId" class="form-select form-select-sm">
+					<option value="0">Todas las especialidades</option>
+					<option th:each="esp : ${especialidades}" th:value="${esp.idEspecialidad}" th:text="${esp.nombre}"
+						th:selected="${esp.idEspecialidad == especialidadId}">
+					</option>
+				</select>
+			</div>
+
+			<div class="col-auto">
+				<button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+			</div>
+		</form>
+
+		<div th:if="${empleados.content.size() > 0}">
+			<div class="list-group">
+				<div th:each="empleado : ${empleados.content}"
+					class="list-group-item list-group-item-action mb-3 rounded shadow-sm bg-white">
+					<h5>
+						<span th:text="|${empleado.nombre} ${empleado.apellido}|"></span>
+						<span sec:authorize="hasRole('ADMIN')" th:text="| (Legajo: ${empleado.legajo})|"></span>
+					</h5>
+					<p class="mb-1" th:text="|DNI: ${empleado.dni}|"></p>
+					<p class="mb-1" th:text="|Especialidad: ${empleado.especialidad.nombre}|"></p>
+					<p class="mb-2"><strong>Email:</strong> <span th:text="${empleado.user.email}"></span></p>
+
+					<a th:href="@{'/empleados/' + ${empleado.idPersona}}"
+						class="btn btn-outline-primary btn-sm me-2">Ver Detalles</a>
+
+					<span sec:authorize="hasRole('ADMIN')">
+						<a th:href="@{'/empleados/editar/' + ${empleado.idPersona}}"
+							class="btn btn-warning btn-sm me-2">Editar</a>
+						<a th:href="@{'/empleados/eliminar/' + ${empleado.idPersona}}" class="btn btn-danger btn-sm"
+							onclick="return confirm('¿Estás seguro de eliminar este empleado?')">Eliminar</a>
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div th:if="${empleados.content.size() == 0}">
+			<p class="text-center">No se encontraron empleados con esos filtros.</p>
+		</div>
+
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

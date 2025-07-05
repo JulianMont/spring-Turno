@@ -11,7 +11,7 @@ public interface IUserService {
 
     UserEntity createUser(UserRequestDTO userRequestDTO, RoleType user, Persona persona);
 
-	UserEntity updateUser(Integer userId, UserRequestDTO userRequestDTO) throws Exception;
+	UserEntity updateUser(Integer userId, UserRequestDTO userRequestDTO);
 
 	void assignRolesToUser(Integer userId, Set<String> roles) throws Exception;
 

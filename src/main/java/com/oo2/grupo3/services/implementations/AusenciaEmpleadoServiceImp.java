@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
+import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.models.dtos.requests.AusenciaEmpleadoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.AusenciaEmpleadoResponseDTO;
 import com.oo2.grupo3.models.entities.AusenciaEmpleado;
@@ -15,7 +17,6 @@ import com.oo2.grupo3.repositories.IAusenciaEmpleadoRepository;
 import com.oo2.grupo3.repositories.IEmpleadoRepository;
 import com.oo2.grupo3.services.interfaces.IAusenciaEmpleadoService;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 
@@ -47,15 +48,15 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 		
 		LocalDate fechaMin = LocalDate.now().minusDays(7);
 		if(dtoAusencia.getFecha().isBefore(fechaMin)) {
-			throw new IllegalArgumentException("Solo se pueden registrar ausencias de los últimos 7 días en adelante");
+			throw new ErrorValidacionDatosException("Solo se pueden registrar ausencias de los últimos 7 días en adelante");
 
 		}
 		
 		Empleado empleado = empleadoRepository.findById(idEmpleado)
-				.orElseThrow(()-> new EntityNotFoundException("Empleado no encontrado"));
+				.orElseThrow(()-> new EntidadNoEncontradaException("Empleado no encontrado"));
 		
 	    if (ausenciaEmpleadoRepository.existsByEmpleado_IdPersonaAndFecha(idEmpleado, dtoAusencia.getFecha())) {
-	        throw new IllegalArgumentException("Ya existe una ausencia para esa fecha.");
+	        throw new ErrorValidacionDatosException("Ya existe una ausencia para esa fecha.");
 	    }
 		
 		AusenciaEmpleado ausencia = modelMapper.map(dtoAusencia, AusenciaEmpleado.class);
@@ -72,15 +73,15 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 		
 		LocalDate fechaMin = LocalDate.now().minusDays(7);
 		if(dto.getFecha().isBefore(fechaMin)) {
-			throw new IllegalArgumentException("Solo se pueden modificar ausencias de los últimos 7 días en adelante");
+			throw new ErrorValidacionDatosException("Solo se pueden modificar ausencias de los últimos 7 días en adelante");
 
 		}
 		
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(idAusencia)
-				.orElseThrow(() -> new EntityNotFoundException("La Ausencia no existe"));
+				.orElseThrow(() -> new EntidadNoEncontradaException("La Ausencia no existe"));
 		
 		if(!ausencia.getEmpleado().getIdPersona().equals(idEmpleado)) {
-			throw new IllegalArgumentException("La ausencia no le pertenece a este empleado");
+			throw new ErrorValidacionDatosException("La ausencia no le pertenece a este empleado");
 		}
 		
 		ausencia.setFecha(dto.getFecha());
@@ -96,10 +97,10 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	public boolean eliminarAusencia(Integer idEmpleado, Integer idAusencia) {
 		
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(idAusencia)
-				.orElseThrow(() -> new EntityNotFoundException("La Ausencia no existe"));
+				.orElseThrow(() -> new EntidadNoEncontradaException("La Ausencia no existe"));
 		
 		if(!ausencia.getEmpleado().getIdPersona().equals(idEmpleado)) {
-			throw new IllegalArgumentException("La ausencia no le pertenece a este empleado");
+			throw new ErrorValidacionDatosException("La ausencia no le pertenece a este empleado");
 		}
 		
 		//TODO: Agregar tryCatch
@@ -111,7 +112,7 @@ public class AusenciaEmpleadoServiceImp implements IAusenciaEmpleadoService {
 	@Override
 	public AusenciaEmpleadoResponseDTO findbyId(Integer id) {
 		AusenciaEmpleado ausencia = ausenciaEmpleadoRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Ausencia con id " + id + " no existe"));
+				.orElseThrow(() -> new EntidadNoEncontradaException("Ausencia con id " + id + " no existe"));
 		return modelMapper.map(ausencia,AusenciaEmpleadoResponseDTO.class );
 	}
 }

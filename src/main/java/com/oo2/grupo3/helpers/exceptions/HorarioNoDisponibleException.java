@@ -1,4 +1,4 @@
-package com.oo2.grupo3.exceptions;
+package com.oo2.grupo3.helpers.exceptions;
 
 public class HorarioNoDisponibleException extends RuntimeException {
     public HorarioNoDisponibleException(String mensaje) {

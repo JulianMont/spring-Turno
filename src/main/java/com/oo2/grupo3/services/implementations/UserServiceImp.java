@@ -1,5 +1,7 @@
 package com.oo2.grupo3.services.implementations;
 
+import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
+import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.models.dtos.requests.UserRequestDTO;
 import com.oo2.grupo3.models.entities.Persona;
 import com.oo2.grupo3.models.entities.RoleEntity;
@@ -9,7 +11,7 @@ import com.oo2.grupo3.repositories.IRoleRepository;
 import com.oo2.grupo3.repositories.IUserRepository;
 import com.oo2.grupo3.services.interfaces.IUserService;
 
-import jakarta.persistence.EntityNotFoundException;
+
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
@@ -54,7 +56,7 @@ public class UserServiceImp implements UserDetailsService, IUserService {
 	public UserEntity createUser(UserRequestDTO userRequestDTO, RoleType role,Persona persona){
 		
 		if(userRepository.existsByEmail(userRequestDTO.getEmail())) {
-			throw new IllegalArgumentException("El email ya está en uso: " + userRequestDTO.getEmail());
+			throw new ErrorValidacionDatosException("El email ya está en uso: " + userRequestDTO.getEmail());
 		}
 		
 		UserEntity user = modelMapper.map(userRequestDTO,UserEntity.class);
@@ -63,7 +65,7 @@ public class UserServiceImp implements UserDetailsService, IUserService {
 		user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 		
 		RoleEntity rolDefault = roleRepository.findByType(role)
-	            .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + role));
+	            .orElseThrow(() -> new ErrorValidacionDatosException("Rol no encontrado: " + role));
 
 
 		user.setRoleEntities(new HashSet<>(Set.of(rolDefault)));
@@ -74,14 +76,14 @@ public class UserServiceImp implements UserDetailsService, IUserService {
 	}
 	
 	@Override
-	public UserEntity updateUser(Integer userId, UserRequestDTO userRequestDTO) throws Exception {
+	public UserEntity updateUser(Integer userId, UserRequestDTO userRequestDTO)throws EntidadNoEncontradaException, ErrorValidacionDatosException{
 		
 		 UserEntity userExistente = userRepository.findById(userId)
-	                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id " + userId));
+	                .orElseThrow(() -> new EntidadNoEncontradaException("Usuario no encontrado con id " + userId));
 
 	        if (!userExistente.getEmail().equals(userRequestDTO.getEmail())
 	                && userRepository.existsByEmail(userRequestDTO.getEmail())) {
-	            throw new IllegalArgumentException("El email ya está en uso: " + userRequestDTO.getEmail());
+	            throw new ErrorValidacionDatosException("El email ya está en uso: " + userRequestDTO.getEmail());
 	        }
 
 	        userExistente.setEmail(userRequestDTO.getEmail());
@@ -96,11 +98,11 @@ public class UserServiceImp implements UserDetailsService, IUserService {
     @Override
     public void assignRolesToUser(Integer userId, Set<String> roles) throws Exception {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id " + userId));
+                .orElseThrow(() -> new EntidadNoEncontradaException("Usuario no encontrado con id " + userId));
 
         Set<RoleEntity> newRoles = roles.stream()
                 .map(r -> roleRepository.findByType(RoleType.valueOf(r.toUpperCase()))
-                        .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado: " + r)))
+                        .orElseThrow(() -> new EntidadNoEncontradaException("Rol no encontrado: " + r)))
                 .collect(Collectors.toSet());
 
         user.setRoleEntities(newRoles);

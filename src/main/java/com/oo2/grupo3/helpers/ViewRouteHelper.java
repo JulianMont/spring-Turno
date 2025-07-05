@@ -40,6 +40,7 @@ public class ViewRouteHelper {
     public static final String TURNO_GENERAR_REDIRECT = "redirect:/turnos/GenerarTurno";
     public static final String TURNO_LIST = "turnos/list";
     public static final String TURNO_LIST_REDIRECT = "redirect:/turnos/list";
+    public static final String TURNO_EDITAR = "turnos/EditarTurno";
     
 
     // Servicio
