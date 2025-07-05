@@ -38,13 +38,15 @@ public interface IEmpleadoService {
 	EmpleadoResponseDTO findByLegajo(String legajo);
 	
 	EmpleadoResponseDTO createEmpleado(EmpleadoRequestDTO empleadoRequestDTO);
-	EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado,EmpleadoRequestDTO empleadoRequestDTO) throws Exception;
-	boolean borrarEmpleado(Integer idEmpleado) throws Exception;
+	EmpleadoResponseDTO actualizarEmpleado(Integer idEmpleado,EmpleadoRequestDTO empleadoRequestDTO);
+	boolean borrarEmpleado(Integer idEmpleado);
 
 	
 	public List<Empleado> getAllEmpleados();
 
 	Object getAll();
+
+	Empleado findEntityById(Integer id);
 
 
 }
