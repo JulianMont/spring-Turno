@@ -10,6 +10,11 @@
 
 <body>
 	<h1>Listado de Turnos</h1>
+	
+	<div th:if="${mensaje}" class="alert alert-success" role="alert" style="margin: 10px 0;">
+	    <span th:text="${mensaje}"></span>
+	</div>
+	
 	<a th:href="@{/home/index}">
 		<button type="button">Regresar al inicio</button>
 	</a>

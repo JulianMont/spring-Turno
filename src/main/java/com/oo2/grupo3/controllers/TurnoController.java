@@ -2,8 +2,10 @@ package com.oo2.grupo3.controllers;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
+import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Cliente;
+import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.models.enums.EstadoTurno;
 import com.oo2.grupo3.repositories.IClienteRepository;
@@ -33,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +67,6 @@ public class TurnoController {
 	public List<TurnoResponseDTO> findAll() {
 		return turnoService.findAll().stream().map(turnoMapper::toResponse).collect(Collectors.toList());
 	}
-
 	@GetMapping("/{id}")
 	public TurnoResponseDTO findById(@PathVariable Integer id) {
 		Turno turno = turnoService.findById(id);
@@ -177,11 +179,9 @@ public class TurnoController {
 			return ViewRouteHelper.TURNO_GENERAR;
 		}
 
-		// Acá no se captura la excepción
 		turnoService.save(turnoRequestDTO);
-		// redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado
-		// correctamente!");
-		return ViewRouteHelper.TURNO_LIST_REDIRECT;
+		redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+		return "redirect:/turnos/list";
 	}
 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -193,6 +193,11 @@ public class TurnoController {
 			Model model) {
 
 		List<TurnoResponseDTO> turnos = turnoService.obtenerTodosLosTurnos();
+		
+		LocalDate hoy = LocalDate.now();
+	    turnos = turnos.stream()
+	            .filter(t -> !t.getDia().isBefore(hoy))  // sólo fechas hoy o futuras
+	            .collect(Collectors.toList());
 
 		if (clienteId != null) {
 			turnos = turnos.stream().filter(t -> clienteId.equals(t.getIdCliente())).collect(Collectors.toList());
@@ -282,4 +287,20 @@ public class TurnoController {
 
 		return ViewRouteHelper.TURNO_GENERAR;
 	}
+	
+	
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/horas-disponibles")
+	@ResponseBody
+    public List<LocalTime> getHorasDisponiblesPorEmpleadoYFecha(
+            @RequestParam Integer empleadoId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+
+        // Buscar entidad Empleado por ID
+        Empleado empleado = empleadoService.findEntityById(empleadoId); // Método que devuelve entidad Empleado
+
+        return turnoService.obtenerHorasDisponiblesPorEmpleadoYFecha(empleado, fecha);
+    }
+
 }

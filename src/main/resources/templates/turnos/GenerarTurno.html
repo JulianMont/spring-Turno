@@ -61,16 +61,20 @@
         </div>
 
         <!-- Hora -->
-        <div class="mb-3">
-            <label for="hora" class="form-label">Hora</label>
-            <select id="hora" th:field="*{hora}" class="form-select" required>
-                <option value="" disabled selected>Seleccione una hora</option>
-            </select>
-        </div>
+		<div class="mb-3">
+		    <label for="hora" class="form-label">Hora</label>
+		    <select id="hora" th:field="*{hora}" class="form-select" required>
+		        <option value="" disabled selected>Seleccione una hora</option>
+		        <option th:each="h : ${horarios}"
+		                th:value="${h.hora}"
+		                th:text="${#temporals.format(h.hora, 'HH:mm')}">
+		        </option>
+		    </select>
+		</div>
 
         <!-- Botones -->
         <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Generar Turno</button>
+			<button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.innerText='Generando...'; this.form.submit();">Generar Turno</button>
             <a href="/home/index" class="btn btn-secondary">Regresar al inicio</a>
         </div>
     </form>
@@ -174,6 +178,35 @@
 	            empleadoSelect.dispatchEvent(new Event('change'));
 	        }
 	    });
+		document.addEventListener('DOMContentLoaded', function () {
+		    const empleadoSelect = document.getElementById('empleado'); // Ajustá el ID según tu formulario
+		    const fechaInput = document.getElementById('fecha'); // Ajustá el ID también si es distinto
+		    const horaSelect = document.getElementById('hora');
+
+		    function cargarHorasDisponibles() {
+		        const empleadoId = empleadoSelect.value;
+		        const fecha = fechaInput.value;
+
+		        if (empleadoId && fecha) {
+		            fetch(`/turnos/horas-disponibles?empleadoId=${empleadoId}&fecha=${fecha}`)
+		                .then(response => response.json())
+		                .then(horas => {
+		                    // Limpiar opciones actuales
+		                    horaSelect.innerHTML = '<option value="" disabled selected>Seleccione una hora</option>';
+		                    horas.forEach(hora => {
+		                        const option = document.createElement('option');
+								const horaFormateada = hora.substring(0, 5);
+		                        option.value = horaFormateada;
+		                        option.textContent = horaFormateada;
+		                        horaSelect.appendChild(option);
+		                    });
+		                });
+		        }
+		    }
+
+		    empleadoSelect.addEventListener('change', cargarHorasDisponibles);
+		    fechaInput.addEventListener('change', cargarHorasDisponibles);
+		});
 </script>
 </body>
 </html>

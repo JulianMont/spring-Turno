@@ -46,5 +46,7 @@ public interface IEmpleadoService {
 
 	Object getAll();
 
+	Empleado findEntityById(Integer id);
+
 
 }

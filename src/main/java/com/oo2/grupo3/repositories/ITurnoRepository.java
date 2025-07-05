@@ -6,6 +6,8 @@ import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Hora;
 import com.oo2.grupo3.models.entities.Turno;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +23,9 @@ public interface ITurnoRepository extends JpaRepository<Turno, Integer> {
 
 	boolean existsByClienteAndDiaAndHoraAndIdTurnoNot(Cliente cliente, Dia dia, Hora hora, Integer idTurnoActual);
 
-	
-	
+	List<Turno> findAllByEmpleadoAndDia(Empleado empleado, Dia dia);
+
+	List<Turno> findAllByClienteAndDia(Cliente cliente, Dia dia);
+
+
 }

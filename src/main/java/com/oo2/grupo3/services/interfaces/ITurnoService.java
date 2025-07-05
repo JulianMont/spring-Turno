@@ -40,7 +40,7 @@ public interface ITurnoService {
 	void actualizarFechaYHora(Integer id, LocalDate nuevaFecha, LocalTime nuevaHora);
 	void cancelarTurno(Integer id);
 
-	
+	public List<LocalTime> obtenerHorasDisponiblesPorEmpleadoYFecha(Empleado empleado, LocalDate fecha);
 	
 	boolean empleadoTrabajaEseDiaYHora(Empleado empleado, Dia dia, Hora hora);
 	

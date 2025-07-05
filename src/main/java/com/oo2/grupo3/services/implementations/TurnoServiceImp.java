@@ -371,18 +371,79 @@ public class TurnoServiceImp implements ITurnoService {
             throw e;  // o manejar según convenga
         }
 
-    System.out.println("Turno guardado con id: " + turnoGuardado.getIdTurno());
-        
-       //agregarrr para que cuadno se crea el turno, se manda el email
+	    System.out.println("Turno guardado con id: " + turnoGuardado.getIdTurno());
+	        
+       //agregar para que cuadno se crea el turno, se manda el email
         Notificacion noti = Notificacion.builder()
-                .persona(turno.getCliente())  // Persona, no UserEntity
-                .tipo("Confirmación de turno")
-                .mensaje("Hola " + turno.getCliente().getNombre() + ", tu turno ha sido registrado para el día "
-                         + turno.getDia().getFecha() + " a las " + turno.getHora().getHora() + ".")
-                .fechaEnvio(LocalDateTime.now())
-                .build();
+            .persona(turno.getCliente())  // Persona, no UserEntity
+            .tipo("Confirmación de turno")
+            .mensaje("Hola " + turno.getCliente().getNombre() + ", tu turno ha sido registrado para el día "
+                     + turno.getDia().getFecha() + " a las " + turno.getHora().getHora() + ".")
+            .fechaEnvio(LocalDateTime.now())
+            .build();
 
-            notificacionService.save(noti); // Esto también enviará el correo
-            System.out.println("Notificación creada y guardada.");
+        notificacionService.save(noti); // Esto también enviará el correo
+        System.out.println("Notificación creada y guardada.");
         return turnoMapper.toResponse(turnoGuardado);
-}}
+	}
+    
+    //--------------------------------------
+    
+    
+    public Dia obtenerODiaPorFecha(LocalDate fecha) {
+        return diaRepository.findByFecha(fecha)
+                .orElseGet(() -> diaRepository.save(Dia.builder().fecha(fecha).build()));
+    }
+    
+    
+    
+    public List<Turno> obtenerTurnosPorEmpleadoYFecha(Empleado empleado, LocalDate fecha) {
+        Dia dia = obtenerODiaPorFecha(fecha);
+        return turnoRepository.findAllByEmpleadoAndDia(empleado, dia);
+    }
+    
+    
+    
+    public List<Turno> obtenerTurnosPorClienteYFecha(Cliente cliente, LocalDate fecha) {
+        Dia dia = obtenerODiaPorFecha(fecha);
+        return turnoRepository.findAllByClienteAndDia(cliente, dia);
+    }
+    
+    
+    @Override
+    public List<LocalTime> obtenerHorasDisponiblesPorEmpleadoYFecha(Empleado empleado, LocalDate fecha) {
+        Dia dia = obtenerODiaPorFecha(fecha);
+        List<Turno> turnosOcupados = turnoRepository.findAllByEmpleadoAndDia(empleado, dia);
+
+        
+        List<LocalTime> horasOcupadas = turnosOcupados.stream()
+                .map(turno -> turno.getHora().getHora())
+                .collect(Collectors.toList());
+        
+        DiaSemana diaSemana = convertirDayOfWeekADiaSemana(fecha.getDayOfWeek());
+
+        List<LocalTime> todasHoras = empleado.getHorariosLaborales().stream()
+                .filter(hl -> hl.getDiaSemana() == diaSemana)
+                .flatMap(hl -> {
+                    LocalTime start = hl.getHoraInicio();
+                    LocalTime end = hl.getHoraFin();
+                    // Slots de 30 min
+                    List<LocalTime> slots = new java.util.ArrayList<>();
+                    LocalTime hora = start;
+                    while (hora.isBefore(end)) {
+                        slots.add(hora);
+                        hora = hora.plusMinutes(30);
+                    }
+                    return slots.stream();
+                })
+                .collect(Collectors.toList());
+
+        // Filtrar horas ya ocupadas
+        return todasHoras.stream()
+                .filter(h -> !horasOcupadas.contains(h))
+                .collect(Collectors.toList());
+    }
+
+    
+    
+}
