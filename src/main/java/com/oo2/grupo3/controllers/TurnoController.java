@@ -2,15 +2,9 @@ package com.oo2.grupo3.controllers;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
-import com.oo2.grupo3.models.dtos.responses.EmpleadoResponseDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
-import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Turno;
-import com.oo2.grupo3.models.enums.EstadoTurno;
-import com.oo2.grupo3.repositories.IClienteRepository;
-import com.oo2.grupo3.repositories.IEmpleadoRepository;
-import com.oo2.grupo3.repositories.ITurnoRepository;
 import com.oo2.grupo3.services.interfaces.IClienteService;
 import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
@@ -67,6 +61,7 @@ public class TurnoController {
 	public List<TurnoResponseDTO> findAll() {
 		return turnoService.findAll().stream().map(turnoMapper::toResponse).collect(Collectors.toList());
 	}
+
 	@GetMapping("/{id}")
 	public TurnoResponseDTO findById(@PathVariable Integer id) {
 		Turno turno = turnoService.findById(id);
@@ -185,7 +180,6 @@ public class TurnoController {
 	}
 
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-
 	@GetMapping("/list")
 	public String listarTurnos(@RequestParam(required = false) Integer clienteId,
 			@RequestParam(required = false) Integer empleadoId, @RequestParam(required = false) Integer servicioId,
@@ -302,5 +296,5 @@ public class TurnoController {
 
         return turnoService.obtenerHorasDisponiblesPorEmpleadoYFecha(empleado, fecha);
     }
-
+	
 }
