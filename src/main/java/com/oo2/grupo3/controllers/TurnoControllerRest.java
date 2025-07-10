@@ -1,6 +1,7 @@
 package com.oo2.grupo3.controllers;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
+import com.oo2.grupo3.models.dtos.record.TurnoRecordDTO;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Turno;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 @RestController
 @RequestMapping("/api/turnos")
@@ -46,13 +48,19 @@ public class TurnoControllerRest {
         return ResponseEntity.ok(creado);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<String> editarTurno(
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarTurno(
             @PathVariable Integer id,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate nuevaFecha,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime nuevaHora) {
-        turnoService.actualizarFechaYHora(id, nuevaFecha, nuevaHora);
-        return ResponseEntity.ok("Turno actualizado correctamente.");
+            @RequestBody @Valid TurnoRecordDTO dto) {
+
+        try {
+            LocalDate fecha = LocalDate.parse(dto.dia());  
+            LocalTime hora = LocalTime.parse(dto.hora());
+            turnoService.actualizarFechaYHora(id, fecha, hora);
+            return ResponseEntity.ok("Turno actualizado correctamente.");
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("Formato de fecha u hora inválido. Usa 'YYYY-MM-DD' y 'HH:mm'");
+        }
     }
 
     @DeleteMapping("/{id}")
