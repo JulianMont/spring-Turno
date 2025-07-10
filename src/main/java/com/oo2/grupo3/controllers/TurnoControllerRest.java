@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/turnos")
@@ -31,9 +32,9 @@ public class TurnoControllerRest {
     @Autowired
     private TurnoMapper turnoMapper;
 
-    @GetMapping
-    public ResponseEntity<Page<TurnoResponseDTO>> getAllTurnos(Pageable pageable) {
-        return ResponseEntity.ok(turnoService.findAll(pageable));
+    @GetMapping("/all")
+    public ResponseEntity<List<TurnoResponseDTO>> getAllTurnos() {
+        return ResponseEntity.ok(turnoService.obtenerTodosLosTurnos());
     }
 
     @GetMapping("/{id}")
