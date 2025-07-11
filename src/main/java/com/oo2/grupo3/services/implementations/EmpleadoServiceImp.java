@@ -256,6 +256,12 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 	        case SUNDAY -> DiaSemana.DOMINGO;
 	    };
 	}
+
+	@Override
+	public Empleado findEntityById(Integer id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }
