@@ -31,7 +31,7 @@ import com.oo2.grupo3.services.interfaces.IClienteService;
 
 import jakarta.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping("/cliente")
 public class ClienteController {
 

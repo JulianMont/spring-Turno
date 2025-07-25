@@ -2,9 +2,14 @@ package com.oo2.grupo3.controllers;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
+import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
+import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
+
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Turno;
+import com.oo2.grupo3.models.entities.UserEntity;
+import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.services.interfaces.IClienteService;
 import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
@@ -20,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +39,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/turnos")
 public class TurnoController {
 
@@ -116,7 +122,7 @@ public class TurnoController {
 
 	// pasarlo a CLIENTE
 
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/GenerarTurno")
 	public String mostrarFormularioTurno(Model model, Principal principal) {
 		TurnoRequestDTO turnoRequest = new TurnoRequestDTO();
@@ -132,7 +138,7 @@ public class TurnoController {
 
 	// @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // pasarlo a CLIENTE
 
-	@PreAuthorize("hasRole('ADMIN')")
+	 @PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping("/GenerarTurno")
 	public String guardarTurnoDesdeFormulario(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
@@ -284,7 +290,7 @@ public class TurnoController {
 	
 	
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	@GetMapping("/horas-disponibles")
 	@ResponseBody
     public List<LocalTime> getHorasDisponiblesPorEmpleadoYFecha(
@@ -296,5 +302,91 @@ public class TurnoController {
 
         return turnoService.obtenerHorasDisponiblesPorEmpleadoYFecha(empleado, fecha);
     }
+	
+	
+	
+	@PreAuthorize("hasRole('USER')")
+	@GetMapping("/generarTurnoCliente")
+	public String mostrarFormularioTurnoCliente(Model model, @AuthenticationPrincipal UserEntity userEntity) {
+		TurnoRequestDTO turnoRequest = new TurnoRequestDTO();
+
+		// Obtener el cliente desde el id de persona asociada al usuario
+		Integer idPersona = userEntity.getPersona().getIdPersona();
+		ClienteResponseDTO cliente = clienteService.findById(idPersona); // método que implementás abajo
+
+		// Prellenar el idCliente
+		turnoRequest.setIdCliente(cliente.getIdPersona());
+
+		model.addAttribute("turnoRequest", turnoRequest);
+		model.addAttribute("clienteNombre", cliente.getNombreCompleto());
+		model.addAttribute("empleados", empleadoService.getAllEmpleados());
+		model.addAttribute("servicios", servicioService.getAll());
+		model.addAttribute("dias", diaService.getAll());
+		model.addAttribute("horas", horaService.getAll());
+		
+
+		return "turnos/generarTurnoCliente";
+	}
+
+
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping("/generarTurnoCliente")
+	public String guardarTurnoDesdeFormularioCliente(@Valid @ModelAttribute("turnoRequest") TurnoRequestDTO turnoRequestDTO,
+			BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+		System.out.println(turnoRequestDTO.getIdCliente());
+		if (turnoRequestDTO.getFecha() == null) {
+			bindingResult.rejectValue("fecha", "error.turnoRequestDTO", "La fecha es obligatoria");
+		}
+		if (turnoRequestDTO.getHora() == null) {
+			bindingResult.rejectValue("hora", "error.turnoRequestDTO", "La hora es obligatoria");
+		}
+
+		if (!bindingResult.hasErrors()) {
+			DayOfWeek diaSemana = turnoRequestDTO.getFecha().getDayOfWeek();
+			int minutos = turnoRequestDTO.getHora().getMinute();
+			int hora = turnoRequestDTO.getHora().getHour();
+
+			if (diaSemana == DayOfWeek.SATURDAY || diaSemana == DayOfWeek.SUNDAY) {
+				bindingResult.rejectValue("fecha", "error.turnoRequestDTO",
+						"No se pueden generar turnos los sábados ni domingos.");
+			}
+
+			if (minutos != 0 && minutos != 30) {
+				bindingResult.rejectValue("hora", "error.turnoRequestDTO",
+						"Los turnos solo pueden ser en intervalos de 30 minutos.");
+			}
+
+			if (hora < 8 || hora > 19 || (hora == 19 && minutos == 30)) {
+				bindingResult.rejectValue("hora", "error.turnoRequestDTO",
+						"Los turnos solo pueden generarse entre las 08:00 y las 20:00.");
+			}
+		}
+		
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("clientes", clienteService.getAllClientes());
+			model.addAttribute("empleados", empleadoService.getAllEmpleados());
+			model.addAttribute("servicios", servicioService.getAll());
+			model.addAttribute("dias", diaService.getAll());
+			model.addAttribute("horas", horaService.getAll());
+			return ViewRouteHelper.TURNO_GENERAR_CLIENTE;
+		}
+
+		turnoService.save(turnoRequestDTO);
+		redirectAttributes.addFlashAttribute("mensaje", "¡Turno generado correctamente!");
+		return "redirect:/turnos/list";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

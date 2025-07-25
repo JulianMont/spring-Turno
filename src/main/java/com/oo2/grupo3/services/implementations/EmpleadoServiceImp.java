@@ -259,8 +259,8 @@ public class EmpleadoServiceImp implements IEmpleadoService {
 
 	@Override
 	public Empleado findEntityById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		return empleadoRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 	}
 	
 	

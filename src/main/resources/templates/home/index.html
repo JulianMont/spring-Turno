@@ -78,7 +78,7 @@
 				</ul>
 			</div>
 
-			<div class="btn-group h-100" sec:authorize="hasAnyRole('ADMIN', 'USER')">
+			<div class="btn-group h-100" sec:authorize="hasAnyRole('ADMIN')">
 				<button class="btn btn-primary dropdown-toggle h-100 d-flex align-items-center"
 					data-bs-toggle="dropdown">Turnos</button>
 				<ul class="dropdown-menu">
@@ -86,6 +86,14 @@
 					<li><a class="dropdown-item" th:href="@{/turnos/GenerarTurno}">Generar Turno</a></li>
 				</ul>
 			</div>
+			<div class="btn-group h-100" sec:authorize="hasAnyRole('USER')">
+							<button class="btn btn-primary dropdown-toggle h-100 d-flex align-items-center"
+								data-bs-toggle="dropdown">Turnos</button>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" th:href="@{/turnos/list}">Ver Turnos</a></li>
+								<li><a class="dropdown-item" th:href="@{/turnos/generarTurnoCliente}">Generar Turno</a></li>
+							</ul>
+						</div>
 		</div>
 	</main>
 </body>

@@ -38,7 +38,7 @@ import com.oo2.grupo3.services.interfaces.IHorarioLaboralService;
 
 import jakarta.validation.Valid;
 
-@RestController
+@Controller
 @RequestMapping("/empleados")
 public class EmpleadoController {
 
@@ -62,7 +62,7 @@ public class EmpleadoController {
     }
 	
     //CHECK
-	@PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/empleados/{idEmpleado}/horarios")
 	public List<HorarioLaboralResponseDTO> getHorariosEmpleado(@PathVariable Integer idEmpleado) {
 		EmpleadoResponseDTO empleado = empleadoService.findById(idEmpleado);
