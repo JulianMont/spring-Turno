@@ -32,8 +32,10 @@ public class TurnoRequestDTO {
     @NotNull(message = "La hora es obligatoria")
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime hora;
-
-    private EstadoTurno estado;
+    
+    @Builder.Default
+    @NotNull
+    private EstadoTurno estado= EstadoTurno.EN_PROCESO;
 	
 }
 

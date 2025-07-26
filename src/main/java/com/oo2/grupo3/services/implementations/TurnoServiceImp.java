@@ -357,12 +357,13 @@ public class TurnoServiceImp implements ITurnoService {
                 .dia(dia)
                 .hora(horaEntidad)
                 .servicio(servicio)
+                .estado(turnoRequestDTO.getEstado())
                 .build();
 
        //Turno turnoGuardado = turnoRepository.save(turno);
         Turno turnoGuardado = null;
         try {
-        	System.out.println("A VERRRRRRR");
+        	
             turnoGuardado = turnoRepository.save(turno);
             System.out.println("Turno guardado con id: " + turnoGuardado.getIdTurno());
         } catch (Exception e) {

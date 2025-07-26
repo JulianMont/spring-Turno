@@ -64,39 +64,7 @@ public class ClienteRestController {
             modelMapper.map(cliente.getUser(), UserRequestDTO.class)
         );}
 
-   /* @PostMapping
-    public ClienteRecordDTO createCliente(@RequestBody ClienteRecordDTO dto) {
-        Cliente nuevo = new Cliente();
-
-        nuevo.setNombre(dto.nombre());
-        nuevo.setApellido(dto.apellido());
-        nuevo.setDni(dto.dni());
-
-        UserEntity user = new UserEntity();
-        user.setEmail(dto.user().getEmail());
-        user.setPassword(dto.user().getPassword()); // Recuerda codificar la contraseña si corresponde
-
-        Set<RoleEntity> roles = new HashSet<>();
-        for (String rol : dto.user().getRoles()) {
-            RoleType tipo = RoleType.valueOf(rol);
-            RoleEntity roleEntity = roleRepository.findByType(tipo)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + rol));
-            roles.add(roleEntity);
-        }
-        user.setRoleEntities(roles);
-
-        nuevo.setUser(user);
-
-        Cliente guardado = clienteService.save(nuevo);
-
-        // Mapeo manual a record para evitar error de ModelMapper
-        return new ClienteRecordDTO(
-            guardado.getNombre(),
-            guardado.getApellido(),
-            guardado.getDni(),
-            modelMapper.map(guardado.getUser(), UserRequestDTO.class)
-        );
-    }*/
+   
     @PostMapping
     public ClienteRecordDTO createCliente(@RequestBody ClienteRecordDTO dto) {
         Cliente nuevo = new Cliente();
@@ -138,17 +106,5 @@ public class ClienteRestController {
         );
     }
 
-
-
-
-
-
-    @Operation(summary = "Eliminar cliente por ID")
-    @ApiResponse(responseCode = "204", description = "Cliente eliminado correctamente")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
-        clienteService.remove(id);
-        return ResponseEntity.noContent().build();
-    }
 }
 

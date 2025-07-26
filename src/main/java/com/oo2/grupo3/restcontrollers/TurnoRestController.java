@@ -48,6 +48,7 @@ public class TurnoRestController {
     @PostMapping
     public ResponseEntity<TurnoResponseDTO> crearTurno(@RequestBody @Valid TurnoRequestDTO requestDTO) {
         TurnoResponseDTO creado = turnoService.solicitarTurno(requestDTO);
+         
         return ResponseEntity.ok(creado);
     }
 

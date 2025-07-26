@@ -56,7 +56,8 @@ public class SecurityConfiguration {
             	auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/register", "/auth/registerProcess", "/auth/logout", "/home/index").permitAll();
 
             	// Acceso común a ambos roles
-            	auth.requestMatchers("/especialidades/list", "/servicios/list","/empleados/**","/turnos/**").hasAnyRole("USER", "ADMIN");
+            	auth.requestMatchers("/especialidades/list", "/servicios/list","/empleados/**","/turnos/**",
+            			"/horariosLaborales/**" ).hasAnyRole("USER", "ADMIN");
 
             	// Todo lo demás solo ADMIN
             	auth.anyRequest().hasRole("ADMIN");
