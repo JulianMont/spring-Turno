@@ -1,15 +1,20 @@
 package com.oo2.grupo3.helpers;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.oo2.grupo3.helpers.exceptions.ClienteRepetidoException;
+import com.oo2.grupo3.helpers.exceptions.DiaNoEncontradoException;
 import com.oo2.grupo3.helpers.exceptions.EntidadNoEncontradaException;
 import com.oo2.grupo3.helpers.exceptions.ErrorValidacionDatosException;
 import com.oo2.grupo3.helpers.exceptions.HorarioNoDisponibleException;
 import com.oo2.grupo3.helpers.exceptions.TurnoOcupadoException;
-import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -57,8 +62,19 @@ public class HandlerException {
         return "error/clienteRepetido";
     }
 
-   
-
-
+    @ExceptionHandler(DiaNoEncontradoException.class)
+    public ResponseEntity<?> handleDiaNoEncontrado(DiaNoEncontradoException ex) {
+    	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+    		    Map.of(
+    		        "timestamp", LocalDateTime.now(),
+    		        "error", "Día no encontrado",
+    		        "message", ex.getMessage(),
+    		        "fechaIngresada", ex.getFecha(), // si agregás este dato en la excepción
+    		        "status", 404
+    		    )
+    		
+        );
+    }
+    
 }
 
