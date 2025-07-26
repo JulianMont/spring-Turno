@@ -19,7 +19,7 @@ public class OpenApiConfig {
                         .description("Documentación de la API REST para gestionar el proyecto de turnos en Spring para OO2")
                         .contact(new Contact()
                                 .name("Grupo 3")
-                                .email("grupo3@empresa.com"))
+                                .email("matiasspringorueta@gmail.com"))
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }
 }

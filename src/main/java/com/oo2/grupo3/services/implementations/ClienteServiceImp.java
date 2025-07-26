@@ -154,8 +154,8 @@ public class ClienteServiceImp implements IClienteService{
 
 	@Override
 	public Cliente save(Cliente cliente) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		 return clienteRepository.save(cliente);
 	}
 
 	
