@@ -3,13 +3,11 @@ package com.oo2.grupo3.controllers;
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.requests.TurnoRequestDTO;
 import com.oo2.grupo3.models.dtos.responses.ClienteResponseDTO;
-import com.oo2.grupo3.models.dtos.requests.ClienteRequestDTO;
 
 import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Empleado;
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.models.entities.UserEntity;
-import com.oo2.grupo3.models.entities.Cliente;
 import com.oo2.grupo3.services.interfaces.IClienteService;
 import com.oo2.grupo3.services.interfaces.IDiaService;
 import com.oo2.grupo3.services.interfaces.IEmpleadoService;
@@ -113,14 +111,11 @@ public class TurnoController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/horas/dia/{id}")
-	@ResponseBody
 	public List<?> obtenerHorasPorDia(@PathVariable Integer id) {
 		return horaService.getHorasPorDia(id);
 	}
 
 	// --- Formulario WEB ---
-
-	// pasarlo a CLIENTE
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/GenerarTurno")
@@ -135,8 +130,6 @@ public class TurnoController {
 
 		return ViewRouteHelper.TURNO_GENERAR;
 	}
-
-	// @PreAuthorize("hasAnyRole('USER', 'ADMIN')") // pasarlo a CLIENTE
 
 	 @PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping("/GenerarTurno")
@@ -292,7 +285,6 @@ public class TurnoController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 	@GetMapping("/horas-disponibles")
-	@ResponseBody
     public List<LocalTime> getHorasDisponiblesPorEmpleadoYFecha(
             @RequestParam Integer empleadoId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {

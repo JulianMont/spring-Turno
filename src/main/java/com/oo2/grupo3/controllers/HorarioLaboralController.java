@@ -114,7 +114,6 @@ public class HorarioLaboralController {
     
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
-    @ResponseBody
     public List<HorarioLaboralResponseDTO> obtenerHorariosLaboralesDelEmpleado(@PathVariable Integer idEmpleado) {
         return horarioLaboralService.obtenerHorariosDelEmpleado(idEmpleado);
     }
