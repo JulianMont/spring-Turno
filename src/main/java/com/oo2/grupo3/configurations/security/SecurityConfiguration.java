@@ -41,12 +41,20 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> {
             	// Recursos públicos
             	auth.requestMatchers("/css/**", "/js/**", "/imgs/**", "/vendor/**").permitAll();
-
+            	
+            	// Swagger
+            	auth.requestMatchers(
+            		    "/v3/api-docs/**",
+            		    "/swagger-ui/**",
+            		    "/swagger-ui.html"
+            		).authenticated();
+            	
+            
             	// Páginas públicas
             	auth.requestMatchers("/auth/login", "/auth/loginProcess", "/auth/register", "/auth/registerProcess", "/auth/logout", "/home/index").permitAll();
 
             	// Acceso común a ambos roles
-            	auth.requestMatchers("/especialidades/list", "/servicios/list", "/turnos/**").hasAnyRole("USER", "ADMIN");
+            	auth.requestMatchers("/especialidades/list", "/servicios/list","/empleados/**","/turnos/**").hasAnyRole("USER", "ADMIN");
 
             	// Todo lo demás solo ADMIN
             	auth.anyRequest().hasRole("ADMIN");
