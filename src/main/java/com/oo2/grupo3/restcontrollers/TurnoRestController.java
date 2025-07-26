@@ -7,11 +7,10 @@ import com.oo2.grupo3.models.dtos.responses.TurnoResponseDTO;
 import com.oo2.grupo3.models.entities.Turno;
 import com.oo2.grupo3.services.interfaces.ITurnoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/turnos")
-//@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@Tag(name = "Turnos", description = "Operaciones CRUD sobre turnos")
 public class TurnoRestController {
 
     @Autowired
@@ -32,23 +31,27 @@ public class TurnoRestController {
     @Autowired
     private TurnoMapper turnoMapper;
 
+    @Operation(summary = "Trae todos los turnos")
     @GetMapping("/all")
     public ResponseEntity<List<TurnoResponseDTO>> getAllTurnos() {
         return ResponseEntity.ok(turnoService.obtenerTodosLosTurnos());
     }
 
+    @Operation(summary = "Trae el turno seleccionado por ID.")
     @GetMapping("/{id}")
     public ResponseEntity<TurnoResponseDTO> getTurnoById(@PathVariable Integer id) {
         Turno turno = turnoService.findById(id);
         return ResponseEntity.ok(turnoMapper.toResponse(turno));
     }
 
+    @Operation(summary = "Crea un nuevo turno.")
     @PostMapping
     public ResponseEntity<TurnoResponseDTO> crearTurno(@RequestBody @Valid TurnoRequestDTO requestDTO) {
         TurnoResponseDTO creado = turnoService.solicitarTurno(requestDTO);
         return ResponseEntity.ok(creado);
     }
 
+    @Operation(summary = "Modifica la fecha y hora del turno. Para que no haya error, la fecha y hora deben ingresarse de la siguiente manera: ")
     @PutMapping("/{id}")
     public ResponseEntity<?> editarTurno(
             @PathVariable Integer id,
