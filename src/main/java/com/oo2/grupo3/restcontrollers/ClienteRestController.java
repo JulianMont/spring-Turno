@@ -1,4 +1,4 @@
-package com.oo2.grupo3.controllers;
+package com.oo2.grupo3.restcontrollers;
 
 import java.util.List;
 

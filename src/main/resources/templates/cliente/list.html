@@ -1,47 +1,101 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8" />
     <title>Clientes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
-<div class="container mt-4">
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-    <h1 class="mb-4">Lista de Clientes</h1>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-semibold" th:href="@{/home/index}"
+               onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+                Sistema de Turnos
+            </a>
 
-    <a th:href="@{/cliente/guardar}" class="btn btn-success mb-3">Agregar nuevo cliente</a>
+            <div class="d-flex align-items-center ms-auto gap-3">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle d-flex align-items-center gap-2 fw-semibold"
+                            type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                            onmouseover="this.style.color='#ffc107'" onmouseout="this.style.color='white'">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        <span sec:authentication="name"></span>
+                    </button>
 
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-        <tr>
-            <th>DNI</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="cliente : ${clientes}">
-            <td th:text="${cliente.dni}">DNI</td>
-            <td th:text="${cliente.nombre}">Nombre</td>
-            <td th:text="${cliente.apellido}">Apellido</td>
-            <td>
-                <a th:href="@{/cliente/editar/{id}(id=${cliente.idPersona})}" class="btn btn-primary btn-sm me-1">Editar</a>
-                <a th:href="@{/cliente/eliminar/{id}(id=${cliente.idPersona})}" 
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('¿Seguro que desea eliminar este cliente?');">Eliminar</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li class="px-3 py-2">
+                            <form th:action="@{/auth/logout}" method="post" class="m-0 p-0">
+                                <button type="submit" class="btn btn-danger btn-sm rounded w-100">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <a th:href="@{/home/index}" class="btn btn-secondary mt-3">Volver al Inicio</a>
-</div>
+    <!-- Contenido -->
+    <div class="container mt-4 flex-grow-1">
 
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="mb-3 d-flex justify-content-start">
+            <a class="btn btn-secondary" th:href="@{/home/index}">
+                <i class="bi bi-arrow-left-circle me-1"></i> Volver al Inicio
+            </a>
+        </div>
+
+        <h1 class="mb-4 text-center">Lista de Clientes</h1>
+
+        <div class="mb-4 d-flex justify-content-start gap-3 flex-wrap">
+            <a th:href="@{/cliente/guardar}" class="btn btn-primary">
+                <i class="bi bi-person-plus-fill me-1"></i> Agregar nuevo cliente
+            </a>
+        </div>
+
+        <div th:if="${clientes.size() > 0}">
+            <table class="table table-striped table-bordered shadow-sm">
+                <thead class="table-dark">
+                <tr>
+                    <th>DNI</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.dni}">DNI</td>
+                    <td th:text="${cliente.nombre}">Nombre</td>
+                    <td th:text="${cliente.apellido}">Apellido</td>
+                    <td>
+                        <a th:href="@{/cliente/editar/{id}(id=${cliente.idPersona})}" class="btn btn-warning btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a th:href="@{/cliente/eliminar/{id}(id=${cliente.idPersona})}" 
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('¿Seguro que desea eliminar este cliente?');">
+                            <i class="bi bi-trash-fill"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${clientes.size() == 0}">
+            <p class="text-center">No se encontraron clientes registrados.</p>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

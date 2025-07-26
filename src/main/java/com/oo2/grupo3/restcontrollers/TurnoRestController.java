@@ -1,4 +1,4 @@
-package com.oo2.grupo3.controllers;
+package com.oo2.grupo3.restcontrollers;
 
 import com.oo2.grupo3.mappers.TurnoMapper;
 import com.oo2.grupo3.models.dtos.record.TurnoRecordDTO;
@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/turnos")
 //@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-public class TurnoControllerRest {
+public class TurnoRestController {
 
     @Autowired
     private ITurnoService turnoService;
