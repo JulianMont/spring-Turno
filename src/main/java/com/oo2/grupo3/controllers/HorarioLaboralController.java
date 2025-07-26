@@ -112,7 +112,7 @@ public class HorarioLaboralController {
         return ViewRouteHelper.EMPLEADOS_DETALLE_REDIRECT + idEmpleado;
     }
     
-    @PreAuthorize("hasRole('CLIENTE') or hasRole('ADMIN') or hasRole('EMPLEADO')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     @ResponseBody
     public List<HorarioLaboralResponseDTO> obtenerHorariosLaboralesDelEmpleado(@PathVariable Integer idEmpleado) {
