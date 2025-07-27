@@ -21,6 +21,7 @@ public interface IEmpleadoService {
 	
 	Page<EmpleadoResponseDTO> buscarEmpleadosFiltrados(String nombre, String legajo, Long especialidadId, Pageable pageable);
 
+	
 	Page<EmpleadoResponseDTO> findAll(Pageable pageable);
 	
 	Page<EmpleadoResponseDTO> findByIdEspecialidad(Long idEspecialidad , Pageable pageable);
