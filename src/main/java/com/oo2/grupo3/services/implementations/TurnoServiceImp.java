@@ -337,13 +337,13 @@ public class TurnoServiceImp implements ITurnoService {
         }
 
         Dia dia = diaService.findByFecha(turnoRequestDTO.getFecha())
-                .orElseThrow(() -> new RuntimeException("Día no encontrado con fecha: " + turnoRequestDTO.getFecha()));
+                .orElseGet(() -> diaRepository.save(Dia.builder().fecha(turnoRequestDTO.getFecha()).build()));
 
-        List<Hora> horas = horaRepository.findAllByHora(turnoRequestDTO.getHora());
-        if (horas.isEmpty()) {
-            throw new RuntimeException("Hora no encontrada: " + turnoRequestDTO.getHora());
-        }
-        Hora horaEntidad = horas.get(0);
+        Hora horaEntidad = horaRepository.findByHoraAndDia(turnoRequestDTO.getHora(), dia)
+        	    .orElseGet(() -> horaRepository.save(Hora.builder()
+        	            .hora(turnoRequestDTO.getHora())
+        	            .dia(dia)
+        	            .build()));
 
         if (!empleadoTrabajaEseDiaYHora(empleado, dia, horaEntidad)) {
             throw new RuntimeException("El empleado no trabaja en ese día y horario.");

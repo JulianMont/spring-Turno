@@ -23,32 +23,32 @@ import lombok.Setter;
 // ----- @SuperBuilder
 
 public class PersonaRequestDTO {
-	
-	
 
-	@Schema(hidden = true)
-	private Integer idPersona;
 
-	
+
+    @Schema(hidden = true)
+    private Integer idPersona;
+
+
     @NotBlank(message = "La Persona debe tener un nombre.")
     @Size(max = 20)
     @Schema(description = "Nombre de la persona", example = "Julian")
     private String nombre;
-    
-	@NotBlank(message = "La Persona debe tener un apellido.")
-	@Size(max = 20)
-	@Schema(description = "Apellido de la persona", example = "Montenegro")
+
+    @NotBlank(message = "La Persona debe tener un apellido.")
+    @Size(max = 20)
+    @Schema(description = "Apellido de la persona", example = "Montenegro")
     private String apellido;
 
     @NotNull(message = "El DNI es obligatorio.")
     @Min(value = 1000000, message = "El DNI debe ser mayor o igual a 1000000.")
     @Schema(description = "DNI", example = "11222333")
     private int dni;
-    
+
     @Valid
     @NotNull(message = "El usuario es obligatorio")
     @Schema(description = "Datos del usuario")
     private UserRequestDTO user;
-    
-    
+
+
 }

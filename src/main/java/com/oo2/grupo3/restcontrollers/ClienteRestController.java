@@ -42,14 +42,14 @@ public class ClienteRestController {
         this.roleRepository = roleRepository;
     }
     
-    @GetMapping
+    @GetMapping 
     public List<ClienteRecordDTO> getAllClientes() {
         return clienteService.getAllClientes().stream()
             .map(cliente -> new ClienteRecordDTO(
                 cliente.getNombre(),
                 cliente.getApellido(),
                 cliente.getDni(),
-                modelMapper.map(cliente.getUser(), UserRequestDTO.class)
+                cliente.getUser() != null ? modelMapper.map(cliente.getUser(), UserRequestDTO.class) : null
             ))
             .collect(Collectors.toList());
     }
