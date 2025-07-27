@@ -1,5 +1,6 @@
 package com.oo2.grupo3.models.dtos.requests;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -17,6 +19,7 @@ import lombok.Setter;
 
 public class EspecialidadRequestDTO {
 	
+	@Schema(description = "Nombre de la especialidad", example = "Cardiología")
 	@NotBlank(message = "El nombre no puede estar vacío")
 	@Size(max = 30, message = "El nombre no puede tener más de 30 caracteres")
 	@Pattern(regexp = "^[\\p{L} ]+$", message = "El nombre solo puede contener letras y espacios")

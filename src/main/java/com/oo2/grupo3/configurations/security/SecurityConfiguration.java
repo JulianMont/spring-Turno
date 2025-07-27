@@ -42,6 +42,9 @@ public class SecurityConfiguration {
             	// Recursos públicos
             	auth.requestMatchers("/css/**", "/js/**", "/imgs/**", "/vendor/**").permitAll();
             	
+            
+            	auth.requestMatchers("/api/**").permitAll();
+            	
             	// Swagger
             	auth.requestMatchers(
             		    "/v3/api-docs/**",

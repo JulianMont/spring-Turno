@@ -1,6 +1,8 @@
 package com.oo2.grupo3.models.dtos.responses;
 
 import java.util.List;
+
+
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,9 +16,8 @@ import lombok.Setter;
 @Setter
 @Builder
 
-
-public class EmpleadoResponseDTO extends PersonaResponseDTO {
-
+public class EmpleadoResponseDTO extends PersonaResponseDTO  {
+	
   
     private String legajo;
 
