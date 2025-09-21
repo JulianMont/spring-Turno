@@ -24,10 +24,12 @@ import com.oo2.grupo3.services.interfaces.IClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/clientes")
+@Tag(name = "Clientes", description = "Gestion de Clientes")
 public class ClienteRestController {
 
     private final IClienteService clienteService;
@@ -42,6 +44,7 @@ public class ClienteRestController {
         this.roleRepository = roleRepository;
     }
     
+    @Operation(summary = "Obtener todos los clientes")
     @GetMapping 
     public List<ClienteRecordDTO> getAllClientes() {
         return clienteService.getAllClientes().stream()
@@ -53,7 +56,7 @@ public class ClienteRestController {
             ))
             .collect(Collectors.toList());
     }
-
+    @Operation(summary = "Obtener a un cliente en especifico")
     @GetMapping("/{id}")
     public ClienteRecordDTO getById(@PathVariable Integer id) {
         ClienteResponseDTO cliente = clienteService.findById(id);
@@ -63,8 +66,9 @@ public class ClienteRestController {
             cliente.getDni(),
             modelMapper.map(cliente.getUser(), UserRequestDTO.class)
         );}
-
-   
+    
+    
+    @Operation(summary = "Crear Cliente")
     @PostMapping
     public ClienteRecordDTO createCliente(@RequestBody ClienteRecordDTO dto) {
         Cliente nuevo = new Cliente();
@@ -105,6 +109,17 @@ public class ClienteRestController {
             userDTO
         );
     }
+    @Operation(summary = "Eliminar un cliente por id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCliente(@PathVariable Integer id) {
+        boolean eliminado = clienteService.remove(id);
+        if (eliminado) {
+            return ResponseEntity.ok("Cliente eliminado correctamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no encontrado");
+        }
+    }
+
 
 }
 

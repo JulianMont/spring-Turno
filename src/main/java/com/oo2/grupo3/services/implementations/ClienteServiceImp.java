@@ -143,6 +143,24 @@ public class ClienteServiceImp implements IClienteService{
 		
 
 	}
+	
+	@Override
+	public ClienteResponseDTO update(ClienteRequestDTO dto) {
+	    Cliente cliente = clienteRepository.findByIdPersona(dto.getIdPersona())
+	        .orElseThrow(() -> new EntityNotFoundException("Cliente no encontrado con ID: " + dto.getIdPersona()));
+
+	    cliente.setNombre(dto.getNombre());
+	    cliente.setApellido(dto.getApellido());
+	    cliente.setDni(dto.getDni());
+
+	    if (cliente.getUser() != null) {
+	        cliente.getUser().setEmail(dto.getUser().getEmail());
+	        //cliente.getUser().setPassword(dto.getUser().getPassword());
+	    }
+
+	    Cliente clienteActualizado = clienteRepository.save(cliente);
+	    return modelMapper.map(clienteActualizado, ClienteResponseDTO.class);
+	}
 
 
 	

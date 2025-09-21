@@ -48,33 +48,38 @@ public class ClienteController {
     public String listarClientes(Model model) {
         List<ClienteResponseDTO> clientes = clienteService.ordenadosPorNombre(); 
         model.addAttribute("clientes", clientes);
-        return "cliente/list";
+        return ViewRouteHelper.CLIENTE_LIST;
     }
 
     @GetMapping("/guardar")
     public String mostrarFormularioNuevoCliente(Model model) {
         model.addAttribute("cliente", new ClienteRequestDTO());
-        return "cliente/form";
+        return ViewRouteHelper.CLIENTE_FORM;
     }
-    //TODO: No edita porque no tenes update,post o save
+    
     @GetMapping("/editar/{id}")
     public String editarCliente(@PathVariable int id, Model model) {
         ClienteResponseDTO cliente = clienteService.findById(id);
         model.addAttribute("cliente", cliente);
-        return "cliente/form";
+        return ViewRouteHelper.CLIENTE_FORM;
     }
     
     
+   
     @PostMapping("/guardar")
     public String guardarCliente(@Valid @ModelAttribute("cliente") ClienteRequestDTO clienteDTO,
                                  BindingResult result,
                                  Model model) {
         if (result.hasErrors()) {
-            return "cliente/form";
+            return  ViewRouteHelper.CLIENTE_FORM;
         }
 
         try {
-            clienteService.save(clienteDTO);
+            if (clienteDTO.getIdPersona() != null) {
+                clienteService.update(clienteDTO);
+            } else {
+                clienteService.save(clienteDTO);
+            }
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorDni", e.getMessage());
             return "cliente/form";
@@ -103,5 +108,25 @@ public String mostrarFormularioCrear(Model model) {
   model.addAttribute("clienteRequestDTO", new ClienteRequestDTO());
   return ViewRouteHelper.CLIENTES_FORM;
 }*/
+/*@PostMapping("/guardar")
+public String guardarCliente(@Valid @ModelAttribute("cliente") ClienteRequestDTO clienteDTO,
+                             BindingResult result,
+                             Model model) {
+    if (result.hasErrors()) {
+        return "cliente/form";
+    }
 
+    try {
+        clienteService.save(clienteDTO);
+    } catch (IllegalArgumentException e) {
+        model.addAttribute("errorDni", e.getMessage());
+        return "cliente/form";
+    } catch (DataIntegrityViolationException e) {
+        model.addAttribute("errorDni", "Ya existe un cliente con ese DNI.");
+        return "cliente/form";
+    }
+
+    return "redirect:/cliente/list";
+}
+*/
 

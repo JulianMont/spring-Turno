@@ -51,7 +51,7 @@ public class SecurityConfiguration {
             		    "/swagger-ui/**",
             		    "/swagger-ui.html"
 
-            		).permitAll();
+            		).hasRole("ADMIN");
 
             	
             

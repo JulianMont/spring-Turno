@@ -18,6 +18,8 @@ public interface IClienteService {
 	
 	ClienteResponseDTO findById(int id);
 	
+	ClienteResponseDTO update(ClienteRequestDTO clienteRequestDTO);
+
 
 	ClienteResponseDTO findByNombre(String nombre);
 	
