@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.oo2.grupo3.models.dtos.record.ClienteRecordDTO;
@@ -34,14 +35,17 @@ public class ClienteRestController {
 
     private final IClienteService clienteService;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
     
     private IRoleRepository roleRepository;
     
     @Autowired
-    public ClienteRestController(IClienteService clienteService, ModelMapper modelMapper, IRoleRepository roleRepository ) {
+    public ClienteRestController(IClienteService clienteService, ModelMapper modelMapper, PasswordEncoder passwordEncoder,IRoleRepository roleRepository ) {
         this.clienteService = clienteService;
         this.modelMapper = modelMapper;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     
     @Operation(summary = "Obtener todos los clientes")
@@ -67,48 +71,51 @@ public class ClienteRestController {
             modelMapper.map(cliente.getUser(), UserRequestDTO.class)
         );}
     
-    
     @Operation(summary = "Crear Cliente")
     @PostMapping
     public ClienteRecordDTO createCliente(@RequestBody ClienteRecordDTO dto) {
-        Cliente nuevo = new Cliente();
 
-        nuevo.setNombre(dto.nombre());
-        nuevo.setApellido(dto.apellido());
-        nuevo.setDni(dto.dni());
+        
+        Cliente cliente = new Cliente();
+        cliente.setNombre(dto.nombre());
+        cliente.setApellido(dto.apellido());
+        cliente.setDni(dto.dni());
 
+     
         UserEntity user = new UserEntity();
         user.setEmail(dto.user().getEmail());
-        user.setPassword(dto.user().getPassword()); // Hashear antes de guardar preferiblemente
+        user.setPassword(passwordEncoder.encode(dto.user().getPassword()));
+        user.setPersona(cliente);
 
-        Set<RoleEntity> roles = new HashSet<>();
-        for (String rol : dto.user().getRoles()) {
-            RoleType tipo = RoleType.valueOf(rol);
-            RoleEntity roleEntity = roleRepository.findByType(tipo)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + rol));
-            roles.add(roleEntity);
-        }
-        user.setRoleEntities(roles);
+        
+        RoleEntity rolUser = roleRepository.findByType(RoleType.USER)
+                .orElseThrow(() -> new RuntimeException("Rol USER no encontrado"));
+        user.setRoleEntities(Set.of(rolUser));
 
-        nuevo.setUser(user);
+        
+        cliente.setUser(user);
 
-        Cliente guardado = clienteService.save(nuevo);
+        
+        Cliente guardado = clienteService.save(cliente);
 
-        // Crear UserRequestDTO para respuesta sin devolver password
+        
         UserRequestDTO userDTO = new UserRequestDTO();
         userDTO.setEmail(guardado.getUser().getEmail());
         userDTO.setRoles(guardado.getUser().getRoleEntities().stream()
-            .map(role -> role.getType().name())
-            .collect(Collectors.toSet()));
-        // No seteamos password en respuesta por seguridad
+                .map(role -> role.getType().name())
+                .collect(Collectors.toSet()));
 
         return new ClienteRecordDTO(
-            guardado.getNombre(),
-            guardado.getApellido(),
-            guardado.getDni(),
-            userDTO
+                guardado.getNombre(),
+                guardado.getApellido(),
+                guardado.getDni(),
+                userDTO
         );
     }
+
+
+
+    
     @Operation(summary = "Eliminar un cliente por id")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCliente(@PathVariable Integer id) {
