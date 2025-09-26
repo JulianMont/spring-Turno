@@ -1,4 +1,4 @@
-# Proyecto de un sistema de turnos con MVC para la materia Programacion Orientada a Objetos 2 de la oo2.
+# Proyecto de un sistema de turnos con MVC para la materia Programacion Orientada a Objetos 2.
 
 Pasos a seguir para levantar el proyecto:
 
